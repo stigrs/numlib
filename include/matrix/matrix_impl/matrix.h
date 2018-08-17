@@ -86,11 +86,11 @@ Matrix<T, N>::Matrix(Exts... exts)
 template <typename T, std::size_t N>
 Matrix<T, N>::Matrix(Matrix_initializer<T, N> init)
 {
-    desc.extents = matrix_impl::derive_extents(init);
-    matrix_impl::compute_strides(desc);
-    elems.reserve(desc.size);
+    this->desc.extents = matrix_impl::derive_extents(init);
+    matrix_impl::compute_strides(this->desc);
+    elems.reserve(this->desc.size);
     matrix_impl::insert_flat(init, elems);
-    assert(elems.size() == desc.size);
+    assert(elems.size() == this->desc.size);
 }
 
 }  // namespace numlib

@@ -45,11 +45,16 @@ constexpr bool Requesting_element()
 
 // Matrix list initialization:
 
+// Forward declaration:
+
+template <std::size_t N, typename List>
+bool check_non_jagged(const List& list);
+
 // Describes the structure of a nested std::initializer_list with
 // Matrix_init<T, N - 1> as its member type.
 template <typename T, std::size_t N>
 struct Matrix_init {
-    using type = std::initializer_list < typename Matrix_init<T, N - 1>::type;
+    using type = std::initializer_list<typename Matrix_init<T, N - 1>::type>;
 };
 
 // The N == 1 is special; that is were we go to the (most deeply nested)
@@ -63,18 +68,10 @@ struct Matrix_init<T, 1> {
 template <typename T>
 struct Matrix_init<T, 0>;
 
-// Determine the shape of the Matrix:
-//   + Checks that the tree is really N deep
-//   + Checks that each row has the same number of elements
-//   + Sets the extent of each row
-//
-template <std::size_t N, typename List>
-std::array<std::size_t, N> derive_extents(const List& list)
+template <std::size_t N, typename I, typename List>
+Enable_if<(N == 1), void> add_extents(I& first, const List& list)
 {
-    std::array<std::size_t N> a;
-    auto f = a.begin();
-    add_extents<N>(f.list);  // add sizes (extents) to a
-    return a;
+    *first++ = list.size();
 }
 
 // Recursion through nested std::initializer_list.
@@ -86,10 +83,18 @@ Enable_if<(N > 1), void> add_extents(I& first, const List& list)
     add_extents<N - 1>(first, *list.begin());
 }
 
-template <std::size_t N, typename I, typename List>
-Enable_if<(N == 1), void> add_extents(I& first, const List& list)
+// Determine the shape of the Matrix:
+//   + Checks that the tree is really N deep
+//   + Checks that each row has the same number of elements
+//   + Sets the extent of each row
+//
+template <std::size_t N, typename List>
+std::array<std::size_t, N> derive_extents(const List& list)
 {
-    *first++ = list.size();
+    std::array<std::size_t, N> a;
+    auto f = a.begin();
+    add_extents<N>(f, list);  // add sizes (extents) to a
+    return a;
 }
 
 // Check that all rows have the same number of elements.
@@ -104,6 +109,7 @@ bool check_non_jagged(const List& list)
     }
     return true;
 }
+
 
 // Copy elements of the tree of std::initializer_list to a Matrix<T, N>.
 template <typename T, typename Vec>
