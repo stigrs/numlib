@@ -1,0 +1,23 @@
+# Files:
+*~
+*.x
+*.exe
+*.o
+*.d
+*.dat
+*.out
+*.log
+*.tmp
+*.swp
+tmp.*
+.vscode/.cmaketools.json
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/settings.json
+
+# Directories:
+build
+tmp
+.vs
+.vscode
+/CMakeSettings.json
