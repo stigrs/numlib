@@ -49,8 +49,12 @@ struct Matrix_slice {
     // Calculate index from a set of subscripts:
     // clang-format off
     template <typename... Dims>
+#ifdef _MSC_VER // Workaround for internal compiler error in VS 2017
+    std::size_t operator()(Dims... dims) const;
+#else
     Enable_if<All(Convertible<Dims, std::size_t>()...), std::size_t> 
     operator()(Dims... dims) const;
+#endif // _MSC_VER
     // clang-format on
 
     std::size_t size;                    // total number of elements
@@ -94,7 +98,11 @@ Matrix_slice<N>::Matrix_slice(Dims... dims) : start{0}
 
 template <std::size_t N>
 template <typename... Dims>
-Enable_if<All(Convertible<Dims, std::size_t>()...), std::size_t>
+#ifdef _MSC_VER  // Workaround for internal compiler error in VS 2017
+inline std::size_t
+#else
+inline Enable_if<All(Convertible<Dims, std::size_t>()...), std::size_t>
+#endif  // _MSC_VER
 Matrix_slice<N>::operator()(Dims... dims) const
 {
     static_assert(sizeof...(Dims) == N,

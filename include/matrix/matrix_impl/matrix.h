@@ -18,9 +18,19 @@
 #define NUMLIB_MATRIX_MATRIX_H
 
 #include <matrix/matrix_impl/matrix_base.h>
+#include <matrix/matrix_impl/support.h>
+#include <initializer_list>
 #include <vector>
 
+
 namespace numlib {
+
+//------------------------------------------------------------------------------
+
+template <typename T, std::size_t N>
+using Matrix_initializer = typename matrix_impl::Matrix_init<T, N>::type;
+
+//------------------------------------------------------------------------------
 
 template <typename T, std::size_t N>
 class Matrix : public Matrix_base<T, N> {
@@ -44,6 +54,17 @@ public:
     template <typename... Exts>
     explicit Matrix(Exts... exts);
 
+    // Initialize and assign from list:
+
+    template <typename U>
+    Matrix(std::initializer_list<U>) = delete;  // don't use {} except for elems
+
+    template <typename U>
+    Matrix& operator=(std::initializer_list<U>) = delete;
+
+    Matrix(Matrix_initializer<T, N>);
+    Matrix& operator=(Matrix_initializer<T, N>);
+
     // Total number of elements.
     size_type size() const { return elems.size(); }
 
@@ -60,6 +81,16 @@ template <typename... Exts>
 Matrix<T, N>::Matrix(Exts... exts)
     : Matrix_base<T, N>{exts...}, elems(this->desc.size)
 {
+}
+
+template <typename T, std::size_t N>
+Matrix<T, N>::Matrix(Matrix_initializer<T, N> init)
+{
+    desc.extents = matrix_impl::derive_extents(init);
+    matrix_impl::compute_strides(desc);
+    elems.reserve(desc.size);
+    matrix_impl::insert_flat(init, elems);
+    assert(elems.size() == desc.size);
 }
 
 }  // namespace numlib

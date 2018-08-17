@@ -32,8 +32,8 @@ public:
     using value_type = T;
     using size_type  = std::size_t;
 
-    // Constructors:
-    Matrix_base() = default;
+    Matrix_base()  = default;
+    ~Matrix_base() = default;
 
     template <typename... Exts>
     explicit Matrix_base(Exts... exts) : desc{exts...}
@@ -49,9 +49,6 @@ public:
     // Copy construction and assignment:
     Matrix_base(const Matrix_base&) = default;
     Matrix_base& operator=(const Matrix_base&) = default;
-
-    // Destructor:
-    ~Matrix_base() = default;
 
     // Number of dimensions:
     static constexpr size_type order() { return rank; }

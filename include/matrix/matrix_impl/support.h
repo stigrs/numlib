@@ -19,7 +19,9 @@
 
 #include <matrix/matrix_impl/traits.h>
 #include <algorithm>
+#include <array>
 #include <functional>
+#include <initializer_list>
 #include <numeric>
 
 //------------------------------------------------------------------------------
@@ -41,10 +43,99 @@ constexpr bool Requesting_element()
 
 //------------------------------------------------------------------------------
 
+// Matrix list initialization:
+
+// Describes the structure of a nested std::initializer_list with
+// Matrix_init<T, N - 1> as its member type.
+template <typename T, std::size_t N>
+struct Matrix_init {
+    using type = std::initializer_list < typename Matrix_init<T, N - 1>::type;
+};
+
+// The N == 1 is special; that is were we go to the (most deeply nested)
+// std::initializer_list<T>.
+template <typename T>
+struct Matrix_init<T, 1> {
+    using type = std::initializer_list<T>;
+};
+
+// To avoid surprises, N == 0 is defined to be an error.
+template <typename T>
+struct Matrix_init<T, 0>;
+
+// Determine the shape of the Matrix:
+//   + Checks that the tree is really N deep
+//   + Checks that each row has the same number of elements
+//   + Sets the extent of each row
+//
+template <std::size_t N, typename List>
+std::array<std::size_t, N> derive_extents(const List& list)
+{
+    std::array<std::size_t N> a;
+    auto f = a.begin();
+    add_extents<N>(f.list);  // add sizes (extents) to a
+    return a;
+}
+
+// Recursion through nested std::initializer_list.
+template <std::size_t N, typename I, typename List>
+Enable_if<(N > 1), void> add_extents(I& first, const List& list)
+{
+    assert(check_non_jagged<N>(list));
+    *first++ = list.size();  // store this size (extent)
+    add_extents<N - 1>(first, *list.begin());
+}
+
+template <std::size_t N, typename I, typename List>
+Enable_if<(N == 1), void> add_extents(I& first, const List& list)
+{
+    *first++ = list.size();
+}
+
+// Check that all rows have the same number of elements.
+template <std::size_t N, typename List>
+bool check_non_jagged(const List& list)
+{
+    auto i = list.begin();
+    for (auto j = i + 1; j != list.end(); ++j) {
+        if (derive_extents<N - 1>(*i) != derive_extents<N - 1>(*j)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Copy elements of the tree of std::initializer_list to a Matrix<T, N>.
+template <typename T, typename Vec>
+void insert_flat(std::initializer_list<T> list, Vec& vec)
+{
+    add_list(list.begin(), list.end(), vec);
+}
+
+template <typename T, typename Vec>
+void add_list(const std::initializer_list<T>* first,
+              const std::initializer_list<T>* last,
+              Vec& vec)
+{
+    for (; first != last; ++first) {
+        add_list(first->begin(), first->end(), vec);
+    }
+}
+
+// When we reach a list with non-initializer_list elements, we insert
+// those elements into our vector.
+template <typename T, typename Vec>
+void add_list(const T* first, const T* last, Vec& vec)
+{
+    vec.insert(vec.end(), first, last);
+}
+
+//------------------------------------------------------------------------------
+
 // Compute strides needed for subscript calculation and the number of elements
 // given the extents.
 //
-// Storage order: Row-major
+// Note: Row-major storage order.
 //
 template <std::size_t N>
 void compute_strides(Matrix_slice<N>& ms)
@@ -76,5 +167,4 @@ bool check_bounds(const Matrix_slice<N>& slice, Dims... dims)
 
 }  // namespace matrix_impl
 
-//
 #endif  // NUMLIB_MATRIX_SUPPORT_H
