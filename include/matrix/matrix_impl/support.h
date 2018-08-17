@@ -111,11 +111,12 @@ bool check_non_jagged(const List& list)
 }
 
 
-// Copy elements of the tree of std::initializer_list to a Matrix<T, N>.
+// When we reach a list with non-initializer_list elements, we insert
+// those elements into our vector.
 template <typename T, typename Vec>
-void insert_flat(std::initializer_list<T> list, Vec& vec)
+void add_list(const T* first, const T* last, Vec& vec)
 {
-    add_list(list.begin(), list.end(), vec);
+    vec.insert(vec.end(), first, last);
 }
 
 template <typename T, typename Vec>
@@ -128,12 +129,11 @@ void add_list(const std::initializer_list<T>* first,
     }
 }
 
-// When we reach a list with non-initializer_list elements, we insert
-// those elements into our vector.
+// Copy elements of the tree of std::initializer_list to a Matrix<T, N>.
 template <typename T, typename Vec>
-void add_list(const T* first, const T* last, Vec& vec)
+void insert_flat(std::initializer_list<T> list, Vec& vec)
 {
-    vec.insert(vec.end(), first, last);
+    add_list(list.begin(), list.end(), vec);
 }
 
 //------------------------------------------------------------------------------

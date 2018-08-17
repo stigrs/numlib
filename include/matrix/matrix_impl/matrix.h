@@ -86,7 +86,7 @@ Matrix<T, N>::Matrix(Exts... exts)
 template <typename T, std::size_t N>
 Matrix<T, N>::Matrix(Matrix_initializer<T, N> init)
 {
-    this->desc.extents = matrix_impl::derive_extents(init);
+    this->desc.extents = matrix_impl::derive_extents<N>(init);
     matrix_impl::compute_strides(this->desc);
     elems.reserve(this->desc.size);
     matrix_impl::insert_flat(init, elems);

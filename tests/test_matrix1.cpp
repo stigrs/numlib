@@ -23,17 +23,12 @@ TEST_CASE("test_matrix1")
 {
     using namespace numlib;
 
-    Matrix<int, 1> m1(4);
+    Matrix<int, 1> m1{1, 2, 3, 4};
 
     SECTION("size") { CHECK(m1.size() == 4); }
 
     SECTION("subscripting")
     {
-        m1(0) = 1;
-        m1(1) = 2;
-        m1(2) = 3;
-        m1(3) = 4;
-
         CHECK(m1(0) == 1);
         CHECK(m1(1) == 2);
         CHECK(m1(2) == 3);
