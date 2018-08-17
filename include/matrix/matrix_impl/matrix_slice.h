@@ -17,9 +17,11 @@
 #ifndef NUMLIB_MATRIX_MATRIX_SLICE_H
 #define NUMLIB_MATRIX_MATRIX_SLICE_H
 
+#include <matrix/matrix_impl/support.h>
 #include <matrix/matrix_impl/traits.h>
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <initializer_list>
 
 
@@ -45,8 +47,11 @@ struct Matrix_slice {
     Matrix_slice(Dims... dims);
 
     // Calculate index from a set of subscripts:
+    // clang-format off
     template <typename... Dims>
-    std::size_t operator()(Dims... dims) const;
+    Enable_if<All(Convertible<Dims, std::size_t>()...), std::size_t> 
+    operator()(Dims... dims) const;
+    // clang-format on
 
     std::size_t size;                    // total number of elements
     std::size_t start;                   // starting offset
@@ -59,7 +64,7 @@ Matrix_slice<N>::Matrix_slice(std::size_t offset,
                               std::initializer_list<std::size_t> exts)
     : start(offset)
 {
-    std::assert(exts.size() == N);
+    assert(exts.size() == N);
     std::copy(exts.begin(), exts.end(), extents.begin());
     matrix_impl::compute_strides(*this);
 }
@@ -70,7 +75,7 @@ Matrix_slice<N>::Matrix_slice(std::size_t offset,
                               std::initializer_list<std::size_t> strs)
     : start(offset)
 {
-    std::assert(exts.size() == N);
+    assert(exts.size() == N);
     std::copy(exts.begin(), exts.end(), extents.begin());
     std::copy(strs.begin(), strs.end(), strides.begin());
     size = matrix_impl::compute_size(extents);
@@ -89,7 +94,8 @@ Matrix_slice<N>::Matrix_slice(Dims... dims) : start{0}
 
 template <std::size_t N>
 template <typename... Dims>
-inline std::size_t Matrix_slice<N>::operator()(Dims... dims) const
+Enable_if<All(Convertible<Dims, std::size_t>()...), std::size_t>
+Matrix_slice<N>::operator()(Dims... dims) const
 {
     static_assert(sizeof...(Dims) == N,
                   "Matrix_slice<N>::operator(): dimension mismatch");

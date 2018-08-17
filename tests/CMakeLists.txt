@@ -74,6 +74,7 @@ endfunction()
 set(PROGRAMS 
     test_matrix1
     test_matrix2
+    test_matrix3
 )
 
 foreach(program ${PROGRAMS})

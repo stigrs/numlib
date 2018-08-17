@@ -17,11 +17,19 @@
 #ifndef NUMLIB_MATRIX_SUPPORT_H
 #define NUMLIB_MATRIX_SUPPORT_H
 
-#include <matrix/matrix_impl/matrix_slice.h>
 #include <matrix/matrix_impl/traits.h>
 #include <algorithm>
 #include <functional>
 #include <numeric>
+
+//------------------------------------------------------------------------------
+
+// Forward declarations:
+
+template <std::size_t N>
+struct Matrix_slice;
+
+//------------------------------------------------------------------------------
 
 namespace matrix_impl {
 
@@ -41,7 +49,7 @@ constexpr bool Requesting_element()
 template <std::size_t N>
 void compute_strides(Matrix_slice<N>& ms)
 {
-    ms.strides[N-1] = 1; // last stride is 1
+    ms.strides[N - 1] = 1;                      // last stride is 1
     for (std::size_t i = N - 1; i != 0; --i) {  // compute stride for each dim
         ms.strides[i - 1] = ms.strides[i] * ms.extents[i];
     }

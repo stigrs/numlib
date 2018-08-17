@@ -25,6 +25,7 @@ namespace numlib {
 template <typename T, std::size_t N>
 class Matrix : public Matrix_base<T, N> {
 public:
+    using size_type      = typename Matrix_base<T, N>::size_type;
     using iterator       = typename std::vector<T>::iterator;
     using const_iterator = typename std::vector<T>::const_iterator;
 
@@ -49,26 +50,6 @@ public:
     // "Flat" element access:
     T* data() { return elems.data(); }
     const T* data() const { return elems.data(); }
-
-	// Subscripting:
-
-	// clang-format off
-#if 0
-	template<typename... Args>
-        Enable_if < matrix_impl::Requesting_element<Args...>(), T&> 
-		operator() (Args... args) 
-		{
-			return Matrix_base<T, N>::template operator()<Args...>(args...);
-		}
-
-	template<typename... Args>
-        Enable_if < matrix_impl::Requesting_element<Args...>(), const T&> 
-		operator() (Args... args) const
-		{
-			return Matrix_base<T, N>::template operator()<Args...>(args...);
-		}
-#endif
-	// clang-format on
 
 private:
     std::vector<T> elems;
