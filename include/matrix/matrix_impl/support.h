@@ -20,6 +20,7 @@
 #include <matrix/matrix_impl/traits.h>
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <functional>
 #include <initializer_list>
 #include <numeric>
@@ -76,7 +77,7 @@ Enable_if<(N == 1), void> add_extents(I& first, const List& list)
 
 // Recursion through nested std::initializer_list.
 template <std::size_t N, typename I, typename List>
-Enable_if<(N > 1), void> add_extents(I& first, const List& list)
+Enable_if<(N > 1), void> derive_extents(I& first, const List& list)
 {
     assert(check_non_jagged<N>(list));
     *first++ = list.size();  // store this size (extent)
@@ -124,8 +125,9 @@ void add_list(const std::initializer_list<T>* first,
               const std::initializer_list<T>* last,
               Vec& vec)
 {
-    for (; first != last; ++first) {
+    while (first != last) {
         add_list(first->begin(), first->end(), vec);
+        ++first;
     }
 }
 

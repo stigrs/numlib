@@ -20,6 +20,7 @@
 #include <matrix/matrix_impl/matrix_base.h>
 #include <matrix/matrix_impl/support.h>
 #include <initializer_list>
+#include <iostream>
 #include <vector>
 
 
@@ -72,6 +73,21 @@ public:
     T* data() { return elems.data(); }
     const T* data() const { return elems.data(); }
 
+    // clang-format off
+    template<typename... Args>
+    Enable_if<matrix_impl::Requesting_element<Args...>(), T&>
+    operator()(Args... args)
+    {
+        return Matrix_base<T, N>::template operator()<Args...>(args...);
+    }
+
+    template<typename... Args>
+    Enable_if<matrix_impl::Requesting_element<Args...>(), const T&>
+    operator()(Args... args) const
+    {
+        return Matrix_base<T, N>::template operator()<Args...>(args...);
+    }
+    // clang-format on
 private:
     std::vector<T> elems;
 };

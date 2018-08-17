@@ -24,9 +24,11 @@ TEST_CASE("test_matrix1")
     using namespace numlib;
 
     Matrix<int, 1> m1{1, 2, 3, 4};
+    std::cout << "hello = " << m1(0) << std::endl;
 
     SECTION("size") { CHECK(m1.size() == 4); }
 
+#if 0
     SECTION("subscripting")
     {
         CHECK(m1(0) == 1);
@@ -34,4 +36,5 @@ TEST_CASE("test_matrix1")
         CHECK(m1(2) == 3);
         CHECK(m1(3) == 4);
     }
+#endif
 }
