@@ -73,21 +73,6 @@ public:
     T* data() { return elems.data(); }
     const T* data() const { return elems.data(); }
 
-    // clang-format off
-    template<typename... Args>
-    Enable_if<matrix_impl::Requesting_element<Args...>(), T&>
-    operator()(Args... args)
-    {
-        return Matrix_base<T, N>::template operator()<Args...>(args...);
-    }
-
-    template<typename... Args>
-    Enable_if<matrix_impl::Requesting_element<Args...>(), const T&>
-    operator()(Args... args) const
-    {
-        return Matrix_base<T, N>::template operator()<Args...>(args...);
-    }
-    // clang-format on
 private:
     std::vector<T> elems;
 };
@@ -101,6 +86,7 @@ Matrix<T, N>::Matrix(Exts... exts)
 
 template <typename T, std::size_t N>
 Matrix<T, N>::Matrix(Matrix_initializer<T, N> init)
+
 {
     this->desc.extents = matrix_impl::derive_extents<N>(init);
     matrix_impl::compute_strides(this->desc);

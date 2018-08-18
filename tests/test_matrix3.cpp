@@ -23,52 +23,26 @@ TEST_CASE("test_matrix3")
 {
     using namespace numlib;
 
-    Matrix<int, 3> m3(2, 3, 4);
+    Matrix<int, 3> m3{{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
 
-    SECTION("size") { CHECK(m3.size() == 24); }
+    SECTION("size") { CHECK(m3.size() == 12); }
 
     SECTION("extents")
     {
-        CHECK(m3.extent(0) == 2);
-        CHECK(m3.extent(1) == 3);
-        CHECK(m3.extent(2) == 4);
+        CHECK(m3.extent(0) == 3);
+        CHECK(m3.extent(1) == 2);
+        CHECK(m3.extent(2) == 2);
     }
 
     SECTION("subscripting")
     {
-        m3(0, 0, 0) = 1;
-        m3(0, 0, 1) = 2;
-        m3(0, 0, 2) = 3;
-        m3(0, 0, 3) = 4;
-        m3(0, 1, 0) = 5;
-        m3(0, 1, 1) = 6;
-        m3(0, 1, 2) = 7;
-        m3(0, 1, 3) = 8;
-        m3(0, 2, 0) = 9;
-        m3(0, 2, 1) = 10;
-        m3(0, 2, 2) = 11;
-        m3(0, 2, 3) = 12;
-        m3(1, 0, 0) = 13;
-        m3(1, 0, 1) = 14;
-        m3(1, 0, 2) = 15;
-        m3(1, 0, 3) = 16;
-        m3(1, 1, 0) = 17;
-        m3(1, 1, 1) = 18;
-        m3(1, 1, 2) = 19;
-        m3(1, 1, 3) = 20;
-        m3(1, 2, 0) = 21;
-        m3(1, 2, 1) = 22;
-        m3(1, 2, 2) = 23;
-        m3(1, 2, 3) = 24;
-
-        int it = 1;
-        for (std::size_t i = 0; i < m3.extent(0); ++i) {
-            for (std::size_t j = 0; j < m3.extent(1); ++j) {
-                for (std::size_t k = 0; k < m3.extent(2); ++k) {
-                    CHECK(m3(i, j, k) == it);
-                    ++it;
-                }
-            }
-        }
+        CHECK(m3(0, 0, 0) == 1);
+        CHECK(m3(0, 0, 1) == 2);
+        CHECK(m3(0, 1, 0) == 3);
+        CHECK(m3(0, 1, 1) == 4);
+        CHECK(m3(1, 0, 0) == 5);
+        CHECK(m3(1, 0, 1) == 6);
+        CHECK(m3(1, 1, 0) == 7);
+        CHECK(m3(1, 1, 1) == 8);
     }
 }

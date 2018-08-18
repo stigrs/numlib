@@ -77,7 +77,7 @@ Enable_if<(N == 1), void> add_extents(I& first, const List& list)
 
 // Recursion through nested std::initializer_list.
 template <std::size_t N, typename I, typename List>
-Enable_if<(N > 1), void> derive_extents(I& first, const List& list)
+Enable_if<(N > 1), void> add_extents(I& first, const List& list)
 {
     assert(check_non_jagged<N>(list));
     *first++ = list.size();  // store this size (extent)

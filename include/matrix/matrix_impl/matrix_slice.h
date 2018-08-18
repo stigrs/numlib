@@ -42,9 +42,6 @@ struct Matrix_slice {
                  std::initializer_list<std::size_t> exts,
                  std::initializer_list<std::size_t> strs);
 
-    // Extents:
-    Matrix_slice(const std::array<std::size_t, N>& exts);
-
     // N extents:
     template <typename... Dims>
     Matrix_slice(Dims... dims);
@@ -89,14 +86,6 @@ Matrix_slice<N>::Matrix_slice(std::size_t offset,
 }
 
 template <std::size_t N>
-Matrix_slice<N>::Matrix_slice(const std::array<std::size_t, N>& exts)
-    : start{0}, extents{exts}
-{
-    assert(exts.size() == N);
-    matrix_impl::compute_strides(*this);
-}
-
-template <std::size_t N>
 template <typename... Dims>
 Matrix_slice<N>::Matrix_slice(Dims... dims) : start{0}
 {
@@ -119,9 +108,7 @@ Matrix_slice<N>::operator()(Dims... dims) const
     static_assert(sizeof...(Dims) == N,
                   "Matrix_slice<N>::operator(): dimension mismatch");
     std::size_t args[N]{std::size_t(dims)...};
-    return start
-           + std::inner_product(
-                 args, args + N, strides.begin(), std::size_t{0});
+    return std::inner_product(args, args + N, strides.begin(), std::size_t{0});
 }
 
 #endif  // NUMLIB_MATRIX_MATRIX_SLICE_H
