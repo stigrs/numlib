@@ -17,7 +17,7 @@
 #ifndef NUMLIB_MATRIX_SUPPORT_H
 #define NUMLIB_MATRIX_SUPPORT_H
 
-#include <matrix/matrix_impl/traits.h>
+#include <numlib/traits/traits.h>
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -49,7 +49,7 @@ constexpr bool Requesting_element()
 // Forward declaration:
 
 template <std::size_t N, typename List>
-bool check_non_jagged(const List& list);
+inline bool check_non_jagged(const List& list);
 
 // Describes the structure of a nested std::initializer_list with
 // Matrix_init<T, N - 1> as its member type.
@@ -70,14 +70,14 @@ template <typename T>
 struct Matrix_init<T, 0>;
 
 template <std::size_t N, typename I, typename List>
-Enable_if<(N == 1), void> add_extents(I& first, const List& list)
+inline Enable_if<(N == 1), void> add_extents(I& first, const List& list)
 {
     *first++ = list.size();
 }
 
 // Recursion through nested std::initializer_list.
 template <std::size_t N, typename I, typename List>
-Enable_if<(N > 1), void> add_extents(I& first, const List& list)
+inline Enable_if<(N > 1), void> add_extents(I& first, const List& list)
 {
     assert(check_non_jagged<N>(list));
     *first++ = list.size();  // store this size (extent)
@@ -90,7 +90,7 @@ Enable_if<(N > 1), void> add_extents(I& first, const List& list)
 //   + Sets the extent of each row
 //
 template <std::size_t N, typename List>
-std::array<std::size_t, N> derive_extents(const List& list)
+inline std::array<std::size_t, N> derive_extents(const List& list)
 {
     std::array<std::size_t, N> a;
     auto f = a.begin();
@@ -100,7 +100,7 @@ std::array<std::size_t, N> derive_extents(const List& list)
 
 // Check that all rows have the same number of elements.
 template <std::size_t N, typename List>
-bool check_non_jagged(const List& list)
+inline bool check_non_jagged(const List& list)
 {
     auto i = list.begin();
     for (auto j = i + 1; j != list.end(); ++j) {
@@ -115,15 +115,15 @@ bool check_non_jagged(const List& list)
 // When we reach a list with non-initializer_list elements, we insert
 // those elements into our vector.
 template <typename T, typename Vec>
-void add_list(const T* first, const T* last, Vec& vec)
+inline void add_list(const T* first, const T* last, Vec& vec)
 {
     vec.insert(vec.end(), first, last);
 }
 
 template <typename T, typename Vec>
-void add_list(const std::initializer_list<T>* first,
-              const std::initializer_list<T>* last,
-              Vec& vec)
+inline void add_list(const std::initializer_list<T>* first,
+                     const std::initializer_list<T>* last,
+                     Vec& vec)
 {
     while (first != last) {
         add_list(first->begin(), first->end(), vec);
@@ -133,7 +133,7 @@ void add_list(const std::initializer_list<T>* first,
 
 // Copy elements of the tree of std::initializer_list to a Matrix<T, N>.
 template <typename T, typename Vec>
-void insert_flat(std::initializer_list<T> list, Vec& vec)
+inline void insert_flat(std::initializer_list<T> list, Vec& vec)
 {
     add_list(list.begin(), list.end(), vec);
 }
@@ -146,7 +146,7 @@ void insert_flat(std::initializer_list<T> list, Vec& vec)
 // Note: Row-major storage order.
 //
 template <std::size_t N>
-void compute_strides(Matrix_slice<N>& ms)
+inline void compute_strides(Matrix_slice<N>& ms)
 {
     ms.strides[N - 1] = 1;                      // last stride is 1
     for (std::size_t i = N - 1; i != 0; --i) {  // compute stride for each dim
@@ -157,7 +157,7 @@ void compute_strides(Matrix_slice<N>& ms)
 
 // Compute total number of elements given the extents.
 template <std::size_t N>
-std::size_t compute_size(const std::array<std::size_t, N>& exts)
+inline std::size_t compute_size(const std::array<std::size_t, N>& exts)
 {
     return std::accumulate(
         exts.begin(), exts.end(), 1, std::multiplies<std::size_t>{});
@@ -166,13 +166,13 @@ std::size_t compute_size(const std::array<std::size_t, N>& exts)
 // Return true if each element in range is within the bounds of the
 // corresponding extent.
 template <std::size_t N, typename... Dims>
-bool check_bounds(const Matrix_slice<N>& slice, Dims... dims)
+inline bool check_bounds(const Matrix_slice<N>& slice, Dims... dims)
 {
     std::size_t indexes[N]{std::size_t(dims)...};
     return std::equal(
         indexes, indexes + N, slice.extents.begin(), std::less<std::size_t>{});
 }
 
-}  // namespace matrix_impl
+}  // namespace Matrix_impl
 
 #endif  // NUMLIB_MATRIX_SUPPORT_H

@@ -17,6 +17,6 @@
 #ifndef NUMLIB_MATRIX_H
 #define NUMLIB_MATRIX_H
 
-#include <matrix/matrix_impl/matrix.h>
+#include <numlib/matrix_impl/matrix.h>
 
-#endif // NUMLIB_MATRIX_H
+#endif  // NUMLIB_MATRIX_H

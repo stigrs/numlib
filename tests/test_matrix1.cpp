@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <matrix/matrix.h>
+#include <numlib/matrix.h>
 #include <catch/catch.hpp>
 #include <iostream>
 
@@ -23,7 +23,7 @@ TEST_CASE("test_matrix1")
 {
     using namespace Numlib;
 
-    Matrix<int, 1> m1{1, 2, 3, 4};
+    Matrix<int, 1> m1 = {1, 2, 3, 4};
 
     SECTION("size") { CHECK(m1.size() == 4); }
 

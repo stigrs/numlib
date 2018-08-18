@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <matrix/matrix.h>
+#include <numlib/matrix.h>
 #include <catch/catch.hpp>
 #include <iostream>
 

@@ -17,9 +17,9 @@
 #ifndef NUMLIB_MATRIX_MATRIX_BASE_H
 #define NUMLIB_MATRIX_MATRIX_BASE_H
 
-#include <matrix/matrix_impl/matrix_slice.h>
-#include <matrix/matrix_impl/support.h>
-#include <matrix/matrix_impl/traits.h>
+#include <numlib/matrix_impl/matrix_slice.h>
+#include <numlib/matrix_impl/support.h>
+#include <numlib/traits/traits.h>
 #include <cassert>
 
 namespace Numlib {
@@ -32,7 +32,7 @@ public:
     using value_type = T;
     using size_type  = std::size_t;
 
-    Matrix_base()  = default;
+    Matrix_base() = default;
 
     template <typename... Exts>
     explicit Matrix_base(Exts... exts) : desc{exts...}
@@ -54,15 +54,15 @@ public:
     // Number of dimensions:
     static constexpr size_type order() { return rank; }
 
+    // Total number of elements:
+    size_type size() const { return desc.size; }
+
     // Number of elements in the N'th dimension:
     size_type extent(size_type n) const
     {
         assert(n >= 0 && n < rank);
         return desc.extents[n];
     }
-
-    // Total number of elements:
-    size_type size() const { return desc.size; }
 
     // Number of rows.
     size_type rows() const
@@ -78,13 +78,6 @@ public:
         return desc.extents[1];
     }
 
-    // Number of depths.
-    size_type depths() const
-    {
-        assert(N >= 3);
-        return desc.extents[2];
-    }
-
     // The slice defining subscripting:
     const Matrix_slice<N>& descriptor() const { return desc; }
 
@@ -92,6 +85,6 @@ protected:
     Matrix_slice<N> desc;
 };
 
-}  // namespace numlib
+}  // namespace Numlib
 
 #endif  // NUMLIB_MATRIX_MATRIX_BASE_H

@@ -17,8 +17,8 @@
 #ifndef NUMLIB_MATRIX_MATRIX_SLICE_H
 #define NUMLIB_MATRIX_MATRIX_SLICE_H
 
-#include <matrix/matrix_impl/support.h>
-#include <matrix/matrix_impl/traits.h>
+#include <numlib/matrix_impl/support.h>
+#include <numlib/traits/traits.h>
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -111,6 +111,17 @@ Matrix_slice<N>::operator()(Dims... dims) const
     return start
            + std::inner_product(
                  args, args + N, strides.begin(), std::size_t{0});
+}
+
+//------------------------------------------------------------------------------
+
+// Non-member functions:
+
+// Return true if the two Matrix_slices have same extents.
+template <std::size_t N>
+bool same_extents(const Matrix_slice<N>& a, const Matrix_slice<N>& b)
+{
+    return a.extents == b.extents;
 }
 
 #endif  // NUMLIB_MATRIX_MATRIX_SLICE_H

@@ -14,10 +14,16 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef NUMLIB_MATRIX_TRAITS_H
-#define NUMLIB_MATRIX_TRAITS_H
+#ifndef NUMLIB_TRAITS_H
+#define NUMLIB_TRAITS_H
 
 #include <type_traits>
+
+//------------------------------------------------------------------------------
+
+// An alias to U if T has type const U, otherwise T.
+template <typename T>
+using Remove_const = typename std::remove_const<T>::type;
 
 //------------------------------------------------------------------------------
 
@@ -36,6 +42,8 @@ constexpr bool Convertible()
 
 //------------------------------------------------------------------------------
 
+// Type predicates:
+
 // Return true if every argument is true of if no arguments are given.
 
 constexpr bool All() { return true; }
@@ -45,5 +53,14 @@ constexpr bool All(bool b, Args... args)
 {
     return b && All(args...);
 }
+#if 0
+// Return true if some (at least one)
+constexpr bool Some() { return false; }
 
-#endif  // NUMLIB_MATRIX_TRAITS_H
+template <typename... Args>
+constexpr bool Some(bool b, Args... args)
+{
+    return b || Some(args...);
+}
+#endif
+#endif  // NUMLIB_TRAITS_H
