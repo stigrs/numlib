@@ -70,7 +70,7 @@ Matrix_slice<N>::Matrix_slice(std::size_t offset,
 {
     assert(exts.size() == N);
     std::copy(exts.begin(), exts.end(), extents.begin());
-    matrix_impl::compute_strides(*this);
+    Matrix_impl::compute_strides(*this);
 }
 
 template <std::size_t N>
@@ -82,7 +82,7 @@ Matrix_slice<N>::Matrix_slice(std::size_t offset,
     assert(exts.size() == N);
     std::copy(exts.begin(), exts.end(), extents.begin());
     std::copy(strs.begin(), strs.end(), strides.begin());
-    size = matrix_impl::compute_size(extents);
+    size = Matrix_impl::compute_size(extents);
 }
 
 template <std::size_t N>
@@ -93,7 +93,7 @@ Matrix_slice<N>::Matrix_slice(Dims... dims) : start{0}
                   "Matrix_slice<N>::Matrix_slice(Dims...): dimension mismatch");
     std::size_t args[N]{std::size_t(dims)...};
     std::copy(std::begin(args), std::end(args), extents.begin());
-    matrix_impl::compute_strides(*this);
+    Matrix_impl::compute_strides(*this);
 }
 
 template <std::size_t N>
@@ -108,7 +108,9 @@ Matrix_slice<N>::operator()(Dims... dims) const
     static_assert(sizeof...(Dims) == N,
                   "Matrix_slice<N>::operator(): dimension mismatch");
     std::size_t args[N]{std::size_t(dims)...};
-    return std::inner_product(args, args + N, strides.begin(), std::size_t{0});
+    return start
+           + std::inner_product(
+                 args, args + N, strides.begin(), std::size_t{0});
 }
 
 #endif  // NUMLIB_MATRIX_MATRIX_SLICE_H

@@ -22,7 +22,7 @@
 #include <matrix/matrix_impl/traits.h>
 #include <cassert>
 
-namespace numlib {
+namespace Numlib {
 
 template <typename T, std::size_t N>
 class Matrix_base {
@@ -33,7 +33,6 @@ public:
     using size_type  = std::size_t;
 
     Matrix_base()  = default;
-    ~Matrix_base() = default;
 
     template <typename... Exts>
     explicit Matrix_base(Exts... exts) : desc{exts...}
@@ -50,6 +49,8 @@ public:
     Matrix_base(const Matrix_base&) = default;
     Matrix_base& operator=(const Matrix_base&) = default;
 
+    ~Matrix_base() = default;
+
     // Number of dimensions:
     static constexpr size_type order() { return rank; }
 
@@ -61,7 +62,7 @@ public:
     }
 
     // Total number of elements:
-    virtual size_type size() const = 0;
+    size_type size() const { return desc.size; }
 
     // Number of rows.
     size_type rows() const
@@ -86,30 +87,6 @@ public:
 
     // The slice defining subscripting:
     const Matrix_slice<N>& descriptor() const { return desc; }
-
-    // "Flat" element access:
-    virtual T* data()             = 0;
-    virtual const T* data() const = 0;
-
-    // Subscripting:
-
-    // clang-format off
-    template <typename... Args>
-	Enable_if<matrix_impl::Requesting_element<Args...>(), T&> 
-	operator()(Args... args)
-	{
-		assert(matrix_impl::check_bounds(this->desc, args...));
-		return *(data() + desc(args...));
-	}
-
-    template <typename... Args>
-	Enable_if<matrix_impl::Requesting_element<Args...>(), const T&> 
-	operator()(Args... args) const 
-	{
-		assert(matrix_impl::check_bounds(this->desc, args...));
-		return *(data() + desc(args...));
-	}
-    // clang-format on
 
 protected:
     Matrix_slice<N> desc;

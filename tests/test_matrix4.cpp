@@ -21,7 +21,7 @@
 
 TEST_CASE("test_matrix4")
 {
-    using namespace numlib;
+    using namespace Numlib;
 
     Matrix<int, 4> m4(2, 3, 4, 5);
 

@@ -24,12 +24,12 @@
 #include <vector>
 
 
-namespace numlib {
+namespace Numlib {
 
 //------------------------------------------------------------------------------
 
 template <typename T, std::size_t N>
-using Matrix_initializer = typename matrix_impl::Matrix_init<T, N>::type;
+using Matrix_initializer = typename Matrix_impl::Matrix_init<T, N>::type;
 
 //------------------------------------------------------------------------------
 
@@ -40,8 +40,7 @@ public:
     using iterator       = typename std::vector<T>::iterator;
     using const_iterator = typename std::vector<T>::const_iterator;
 
-    Matrix()  = default;
-    ~Matrix() = default;
+    Matrix() = default;
 
     // Move construction and assignment:
     Matrix(Matrix&&) = default;
@@ -66,12 +65,31 @@ public:
     Matrix(Matrix_initializer<T, N>);
     Matrix& operator=(Matrix_initializer<T, N>);
 
-    // Total number of elements.
-    size_type size() const { return elems.size(); }
+    ~Matrix() = default;
 
     // "Flat" element access:
     T* data() { return elems.data(); }
     const T* data() const { return elems.data(); }
+
+    // Subscripting:
+
+    // clang-format off
+    template <typename... Args>
+	Enable_if<Matrix_impl::Requesting_element<Args...>(), T&> 
+	operator()(Args... args)
+	{
+		assert(Matrix_impl::check_bounds(this->desc, args...));
+		return *(data() + desc(args...));
+	}
+
+    template <typename... Args>
+	Enable_if<Matrix_impl::Requesting_element<Args...>(), const T&> 
+	operator()(Args... args) const 
+	{
+		assert(Matrix_impl::check_bounds(this->desc, args...));
+		return *(data() + desc(args...));
+	}
+    // clang-format on
 
 private:
     std::vector<T> elems;
@@ -85,13 +103,13 @@ Matrix<T, N>::Matrix(Exts... exts)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N>::Matrix(Matrix_initializer<T, N> init)
-
+Matrix<T, N>::Matrix(Matrix_initializer<T, N> init) 
 {
-    this->desc.extents = matrix_impl::derive_extents<N>(init);
-    matrix_impl::compute_strides(this->desc);
+    this->desc.start   = 0;
+    this->desc.extents = Matrix_impl::derive_extents<N>(init);
+    Matrix_impl::compute_strides(this->desc);
     elems.reserve(this->desc.size);
-    matrix_impl::insert_flat(init, elems);
+    Matrix_impl::insert_flat(init, elems);
     assert(elems.size() == this->desc.size);
 }
 

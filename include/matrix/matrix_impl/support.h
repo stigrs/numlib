@@ -34,7 +34,7 @@ struct Matrix_slice;
 
 //------------------------------------------------------------------------------
 
-namespace matrix_impl {
+namespace Matrix_impl {
 
 template <typename... Args>
 constexpr bool Requesting_element()
