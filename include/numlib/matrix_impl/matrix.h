@@ -69,23 +69,21 @@ public:
 
     // Subscripting:
 
-    // clang-format off
     template <typename... Args>
-	Enable_if<Matrix_impl::Requesting_element<Args...>(), T&> 
-	operator()(Args... args)
-	{
-		assert(Matrix_impl::check_bounds(this->desc, args...));
-		return *(data() + this->desc(args...));
-	}
+    Enable_if<Matrix_impl::Requesting_element<Args...>(), T&>
+    operator()(Args... args)
+    {
+        assert(Matrix_impl::check_bounds(this->desc, args...));
+        return *(data() + this->desc(args...));
+    }
 
     template <typename... Args>
-	Enable_if<Matrix_impl::Requesting_element<Args...>(), const T&> 
-	operator()(Args... args) const 
-	{
-		assert(Matrix_impl::check_bounds(this->desc, args...));
-		return *(data() + this->desc(args...));
-	}
-    // clang-format on
+    Enable_if<Matrix_impl::Requesting_element<Args...>(), const T&>
+    operator()(Args... args) const
+    {
+        assert(Matrix_impl::check_bounds(this->desc, args...));
+        return *(data() + this->desc(args...));
+    }
 
     // Iterators:
 

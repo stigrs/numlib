@@ -24,110 +24,76 @@ public:
     Matrix_ref() = default;
 
     // Move construction and assignment:
-    Matrix_ref(Matrix_ref&&) = default;
-    Matrix_ref& operator=(Matrix_ref&&) = default;
+    Matrix_ref(Matrix_ref&&);
+    Matrix_ref& operator=(Matrix_ref&&);
 
     // Copy construction and assignment:
-    Matrix_ref(const Matrix_ref&) = default;
-    Matrix_ref& operator=(const Matrix_ref&) = default;
+    Matrix_ref(const Matrix_ref&);
+    Matrix_ref& operator=(const Matrix_ref&);
 
-    // Specify the extents:
-    template <typename... Exts>
-    explicit Matrix(Exts... exts);
+    // Slice initialization:
+    //
+    // Initialize the Matrix_ref over the Matrix_slice, starting at the
+    // element pointed to by p.
+    Matrix_ref(const Matrix_slice<N>& ms, T* p);
 
-    // Construct and assign from Matrix_ref:
+    // Matrix initialization:
+    //
+    // Initialize the Matrix_ref so that it refers to another Matrix m, or
+    // assign the elements of that Matrix into this sub-matrix.
+    Matrix_ref(Matrix<value_type, N>& m);
+    Matrix_ref(const Matrix<value_type, N>& m);
+    Matrix_ref(Matrix<value_type, N>&&) = delete; // avoid memory leaks
+
+    Matrix_ref& operator=(const Matrix<value_type, N>& m);
+
+    // Sub-matrix conversion:
+    //
+    // Allow implict conversion from a non-const Matrix_ref to a const
+    // Matrix_ref.
     template <typename U>
-    Matrix(const Matrix_ref<U, N>&);
-    Matrix& operator=(const Matrix_ref<U, N>&);
-
-    // Initialize and assign from list:
+    Matrix_ref(const Matrix_ref<U, N>& m);
 
     template <typename U>
-    Matrix(std::initializer_list<U>) = delete; // don't use {} except for elems
-
-    template <typename U>
-    Matrix& operator=(std::initializer_list<U>) = delete;
-
-    Matrix(Matrix_initializer<T, N>);
-    Matrix& operator=(Matrix_initializer<T, N>);
+    Matrix_ref& operator=(const Matrix_ref<U, N>& m);
 
     ~Matrix() = default;
 
     // "Flat" element access:
-    T* data() { return elems.data(); }
-    const T* data() const { return elems.data(); }
-
-    // Properties:
-
-    bool empty() const { return elems.empty(); }
+    T* data() { return ptr; }
+    const T* data() const { return ptr; }
 
     // Subscripting:
 
-    // clang-format off
     template <typename... Args>
-	Enable_if<Matrix_impl::Requesting_element<Args...>(), T&> 
-	operator()(Args... args)
-	{
-		assert(Matrix_impl::check_bounds(this->desc, args...));
-		return *(data() + this->desc(args...));
-	}
+    Enable_if<Matrix_impl::Requesting_element<Args...>(), T&>
+    operator()(Args... args)
+    {
+        assert(Matrix_impl::check_bounds(this->desc, args...));
+        return *(data() + this->desc(args...));
+    }
 
     template <typename... Args>
-	Enable_if<Matrix_impl::Requesting_element<Args...>(), const T&> 
-	operator()(Args... args) const 
-	{
-		assert(Matrix_impl::check_bounds(this->desc, args...));
-		return *(data() + this->desc(args...));
-	}
-    // clang-format on
-
-    // Iterators:
-
-    iterator begin() { return elems.begin(); }
-    iterator end() { return elems.end(); }
-
-    const_iterator begin() const { return elems.begin(); }
-    const_iterator end() const { return elems.end(); }
+    Enable_if<Matrix_impl::Requesting_element<Args...>(), const T&>
+    operator()(Args... args) const
+    {
+        assert(Matrix_impl::check_bounds(this->desc, args...));
+        return *(data() + this->desc(args...));
+    }
 
     // Mutators:
 
-    void swap(Matrix& m);
+    void swap(Matrix_ref& m);
 
 private:
-    std::vector<T> elems;
+    T* ptr; // points to the first element of the matrix
 };
 
 template <typename T, std::size_t N>
-template <typename... Exts>
-inline Matrix<T, N>::Matrix(Exts... exts)
-    : Matrix_base<T, N>{exts...}, elems(this->desc.size)
-{
-}
-
-template <typename T, std::size_t N>
-inline Matrix<T, N>::Matrix(Matrix_initializer<T, N> init)
-{
-    this->desc.start = 0;
-    this->desc.extents = Matrix_impl::derive_extents<N>(init);
-    Matrix_impl::compute_strides(this->desc);
-    elems.reserve(this->desc.size);
-    Matrix_impl::insert_flat(init, elems);
-    assert(elems.size() == this->desc.size);
-}
-
-template <typename T, std::size_t N>
-inline Matrix<T, N>& Matrix<T, N>::operator=(Matrix_initializer<T, N> init)
-{
-    Matrix tmp(init);
-    swap(tmp);
-    return *this;
-}
-
-template <typename T, std::size_t N>
-inline void Matrix<T, N>::swap(Matrix& m)
+inline void Matrix_ref<T, N>::swap(Matrix_ref& m)
 {
     std::swap(this->desc, m.desc);
-    elems.swap(m.elems);
+    std::swap(ptr, m.ptr);
 }
 
 } // namespace Numlib

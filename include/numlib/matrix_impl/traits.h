@@ -11,29 +11,6 @@
 
 namespace Numlib {
 
-// Deduce if the expression m.order is valid.
-template <typename T>
-struct get_order_result {
-private:
-    template <typename M>
-    static auto check(const M& m) -> decltype(m.order);
-    static substitution_failure check(...);
-
-public:
-    using type = decltype(check(std::declval<T>()));
-};
-
-template <typename T>
-struct has_order : substitution_succeeded<typename get_order_result<T>::type> {
-};
-
-// Returns true if type is Matrix_type.
-template <typename T>
-constexpr bool Matrix_type()
-{
-    return has_order<T>::value;
-}
-
 namespace Matrix_impl {
 
     // Describes the structure of a nested std::initializer_list with
@@ -55,7 +32,31 @@ namespace Matrix_impl {
     template <typename T>
     struct Matrix_init<T, 0>;
 
+    // Deduce if the expression m.order is valid.
+    template <typename T>
+    struct get_order_result {
+    private:
+        template <typename M>
+        static auto check(const M& m) -> decltype(m.order);
+        static substitution_failure check(...);
+
+    public:
+        using type = decltype(check(std::declval<T>()));
+    };
+
+    template <typename T>
+    struct has_order
+        : substitution_succeeded<typename get_order_result<T>::type> {
+    };
+
 } // namespace Matrix_impl
+
+// Returns true if type is Matrix_type.
+template <typename T>
+constexpr bool Matrix_type()
+{
+    return Matrix_impl::has_order<T>::value;
+}
 
 } // namespace Numlib
 
