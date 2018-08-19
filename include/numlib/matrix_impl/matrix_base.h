@@ -34,8 +34,9 @@ public:
 
     Matrix_base() = default;
 
+    // Need a static_cast to avoid narrowing error:
     template <typename... Exts>
-    explicit Matrix_base(Exts... exts) : desc{exts...}
+    explicit Matrix_base(Exts... exts) : desc{static_cast<std::size_t>(exts)...}
     {
     }
 
@@ -52,7 +53,7 @@ public:
     ~Matrix_base() = default;
 
     // Number of dimensions:
-    static constexpr size_type order() { return rank; }
+    static constexpr size_type order() { return N; }
 
     // Total number of elements:
     size_type size() const { return desc.size; }

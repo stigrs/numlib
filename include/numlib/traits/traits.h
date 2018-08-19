@@ -17,7 +17,13 @@
 #ifndef NUMLIB_TRAITS_H
 #define NUMLIB_TRAITS_H
 
+#include <numlib/matrix_impl/matrix_fwd.h>
 #include <type_traits>
+
+//------------------------------------------------------------------------------
+
+template <typename U>
+using Value_type = typename U::value_type;
 
 //------------------------------------------------------------------------------
 
@@ -53,14 +59,42 @@ constexpr bool All(bool b, Args... args)
 {
     return b && All(args...);
 }
-#if 0
-// Return true if some (at least one)
-constexpr bool Some() { return false; }
 
-template <typename... Args>
-constexpr bool Some(bool b, Args... args)
+struct substitution_failure {  // represent a failure to declare something
+};
+
+template <typename T>
+struct substitution_succeeded : std::true_type {
+};
+
+template <>
+struct substitution_succeeded<substitution_failure> : std::false_type {
+};
+
+// Return true if type is Matrix_type:
+
+template <typename M>
+struct get_matrix_type_result {
+    template <typename T, std::size_t N, typename = Enable_if<(N >= 1)>>
+    static bool check(const Numlib::Matrix<T, N>& m);
+
+    template <typename T, std::size_t N, typename = Enable_if<(N >= 1)>>
+    static bool check(const Numlib::Matrix_ref<T, N>& m);
+
+    static substitution_failure check(...);
+
+    using type = decltype(check(std::declval<M>()));
+};
+
+template <typename T>
+struct has_matrix_type
+    : substitution_succeeded<typename get_matrix_type_result<T>::type> {
+};
+
+template <typename M>
+constexpr bool Matrix_type()
 {
-    return b || Some(args...);
+    return has_matrix_type<M>::value;
 }
-#endif
+
 #endif  // NUMLIB_TRAITS_H

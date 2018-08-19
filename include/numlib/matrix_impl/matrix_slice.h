@@ -115,6 +115,56 @@ Matrix_slice<N>::operator()(Dims... dims) const
 
 //------------------------------------------------------------------------------
 
+// Specializations to allow optimizations:
+
+// Matrix_slice to describe one-dimensional matrix (vector).
+template <>
+struct Matrix_slice<1> {
+    // Empty matrix:
+    Matrix_slice() = default;
+
+    // Copy semantics:
+    Matrix_slice(const Matrix_slice&) = default;
+    Matrix_slice& operator=(const Matrix_slice&) = default;
+
+    // Starting offset and extents:
+    Matrix_slice(std::size_t offset, std::size_t exts)
+    {
+        start      = offset;
+        extents[0] = exts;
+        strides[0] = 1;
+        size       = exts;
+    }
+
+    // Starting offset, extents, and strides:
+    Matrix_slice(std::size_t offset, std::size_t exts, std::size_t strs)
+    {
+        start      = offset;
+        extents[0] = exts;
+        strides[0] = strs;
+        size       = exts * strs;
+    }
+
+    // N extents:
+    Matrix_slice(std::size_t exts)
+    {
+        start      = 0;
+        extents[0] = exts;
+        strides[0] = 1;
+        size       = exts;
+    }
+
+    // Calculate index from a set of subscripts:
+    std::size_t operator()(std::size_t i) const { return i; }
+
+    std::size_t size;                    // total number of elements
+    std::size_t start;                   // starting offset
+    std::array<std::size_t, 1> extents;  // number of elements in each dimension
+    std::array<std::size_t, 1> strides;  // offsets between elements in each dim
+};
+
+//------------------------------------------------------------------------------
+
 // Non-member functions:
 
 // Return true if the two Matrix_slices have same extents.

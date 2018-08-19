@@ -14,10 +14,21 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef NUMLIB_MATRIX_H
-#define NUMLIB_MATRIX_H
+#ifndef NUMLIB_MATRIX_MATRIX_FWD_H
+#define NUMLIB_MATRIX_MATRIX_FWD_H
 
-#include <numlib/matrix_impl/matrix.h>
-#include <numlib/matrix_impl/matrix_opr.h>
+#include <cstddef>
 
-#endif  // NUMLIB_MATRIX_H
+// Forward declarations:
+
+namespace Numlib {
+
+template <typename T, std::size_t N>
+class Matrix;
+
+template <typename T, std::size_t N>
+class Matrix_ref;
+
+}  // namespace Numlib
+
+#endif  // NUMLIB_MATRIX_MATRIX_FWD_H
