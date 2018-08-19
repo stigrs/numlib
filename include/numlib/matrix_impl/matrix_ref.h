@@ -1,25 +1,15 @@
-////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2008-2010 Kent State University
+// Copyright (c) 2011-2012 Texas A&M University
+// Copyright (c) Stig Rune Sellevag
 //
-// Copyright (c) 2018 Stig Rune Sellevag. All rights reserved.
-//
-// This code is licensed under the MIT License (MIT).
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-////////////////////////////////////////////////////////////////////////////////
+// This file is distributed under the MIT License. See the accompanying file
+// LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
+// and conditions.
 
 #ifndef NUMLIB_MATRIX_MATRIX_REF_H
 #define NUMLIB_MATRIX_MATRIX_REF_H
 
 #include <numlib/matrix_impl/matrix_base.h>
-#include <numlib/traits/traits.h>
-
 
 namespace Numlib {
 
@@ -28,7 +18,7 @@ namespace Numlib {
 template <typename T, std::size_t N>
 class Matrix_ref : public Matrix_base<T, N> {
 public:
-    using size_type  = typename Matrix_base<T, N>::size_type;
+    using size_type = typename Matrix_base<T, N>::size_type;
     using value_type = Remove_const<T>;
 
     Matrix_ref() = default;
@@ -53,7 +43,7 @@ public:
     // Initialize and assign from list:
 
     template <typename U>
-    Matrix(std::initializer_list<U>) = delete;  // don't use {} except for elems
+    Matrix(std::initializer_list<U>) = delete; // don't use {} except for elems
 
     template <typename U>
     Matrix& operator=(std::initializer_list<U>) = delete;
@@ -117,7 +107,7 @@ inline Matrix<T, N>::Matrix(Exts... exts)
 template <typename T, std::size_t N>
 inline Matrix<T, N>::Matrix(Matrix_initializer<T, N> init)
 {
-    this->desc.start   = 0;
+    this->desc.start = 0;
     this->desc.extents = Matrix_impl::derive_extents<N>(init);
     Matrix_impl::compute_strides(this->desc);
     elems.reserve(this->desc.size);
@@ -140,6 +130,6 @@ inline void Matrix<T, N>::swap(Matrix& m)
     elems.swap(m.elems);
 }
 
-}  // namespace Numlib
+} // namespace Numlib
 
-#endif  // NUMLIB_MATRIX_MATRIX_REF_H
+#endif // NUMLIB_MATRIX_MATRIX_REF_H

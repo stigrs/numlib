@@ -1,24 +1,16 @@
-////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2008-2010 Kent State University
+// Copyright (c) 2011-2012 Texas A&M University
+// Copyright (c) Stig Rune Sellevag
 //
-// Copyright (c) 2018 Stig Rune Sellevag. All rights reserved.
-//
-// This code is licensed under the MIT License (MIT).
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-////////////////////////////////////////////////////////////////////////////////
+// This file is distributed under the MIT License. See the accompanying file
+// LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
+// and conditions.
 
 #ifndef NUMLIB_TRAITS_H
 #define NUMLIB_TRAITS_H
 
-#include <numlib/matrix_impl/matrix_fwd.h>
 #include <type_traits>
+#include <initializer_list>
 
 //------------------------------------------------------------------------------
 
@@ -60,7 +52,7 @@ constexpr bool All(bool b, Args... args)
     return b && All(args...);
 }
 
-struct substitution_failure {  // represent a failure to declare something
+struct substitution_failure { // represent a failure to declare something
 };
 
 template <typename T>
@@ -71,30 +63,4 @@ template <>
 struct substitution_succeeded<substitution_failure> : std::false_type {
 };
 
-// Return true if type is Matrix_type:
-
-template <typename M>
-struct get_matrix_type_result {
-    template <typename T, std::size_t N, typename = Enable_if<(N >= 1)>>
-    static bool check(const Numlib::Matrix<T, N>& m);
-
-    template <typename T, std::size_t N, typename = Enable_if<(N >= 1)>>
-    static bool check(const Numlib::Matrix_ref<T, N>& m);
-
-    static substitution_failure check(...);
-
-    using type = decltype(check(std::declval<M>()));
-};
-
-template <typename T>
-struct has_matrix_type
-    : substitution_succeeded<typename get_matrix_type_result<T>::type> {
-};
-
-template <typename M>
-constexpr bool Matrix_type()
-{
-    return has_matrix_type<M>::value;
-}
-
-#endif  // NUMLIB_TRAITS_H
+#endif // NUMLIB_TRAITS_H

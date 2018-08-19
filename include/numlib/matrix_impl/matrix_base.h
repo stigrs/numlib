@@ -1,25 +1,14 @@
-////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2008-2010 Kent State University
+// Copyright (c) 2011-2012 Texas A&M University
+// Copyright (c) Stig Rune Sellevag
 //
-// Copyright (c) 2018 Stig Rune Sellevag. All rights reserved.
-//
-// This code is licensed under the MIT License (MIT).
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-////////////////////////////////////////////////////////////////////////////////
+// This file is distributed under the MIT License. See the accompanying file
+// LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
+// and conditions.
 
 #ifndef NUMLIB_MATRIX_MATRIX_BASE_H
 #define NUMLIB_MATRIX_MATRIX_BASE_H
 
-#include <numlib/matrix_impl/matrix_slice.h>
-#include <numlib/matrix_impl/support.h>
-#include <numlib/traits/traits.h>
 #include <cassert>
 
 namespace Numlib {
@@ -27,10 +16,11 @@ namespace Numlib {
 template <typename T, std::size_t N>
 class Matrix_base {
 public:
-    static constexpr std::size_t rank = N;
+    // Number of dimensions:
+    static constexpr std::size_t order = N;
 
     using value_type = T;
-    using size_type  = std::size_t;
+    using size_type = std::size_t;
 
     Matrix_base() = default;
 
@@ -52,16 +42,13 @@ public:
 
     ~Matrix_base() = default;
 
-    // Number of dimensions:
-    static constexpr size_type order() { return N; }
-
     // Total number of elements:
     size_type size() const { return desc.size; }
 
     // Number of elements in the N'th dimension:
     size_type extent(size_type n) const
     {
-        assert(n >= 0 && n < rank);
+        assert(n >= 0 && n < order);
         return desc.extents[n];
     }
 
@@ -86,6 +73,6 @@ protected:
     Matrix_slice<N> desc;
 };
 
-}  // namespace Numlib
+} // namespace Numlib
 
-#endif  // NUMLIB_MATRIX_MATRIX_BASE_H
+#endif // NUMLIB_MATRIX_MATRIX_BASE_H

@@ -1,44 +1,27 @@
-////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2008-2010 Kent State University
+// Copyright (c) 2011-2012 Texas A&M University
+// Copyright (c) Stig Rune Sellevag
 //
-// Copyright (c) 2018 Stig Rune Sellevag. All rights reserved.
-//
-// This code is licensed under the MIT License (MIT).
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-////////////////////////////////////////////////////////////////////////////////
+// This file is distributed under the MIT License. See the accompanying file
+// LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
+// and conditions.
 
 #ifndef NUMLIB_MATRIX_MATRIX_H
 #define NUMLIB_MATRIX_MATRIX_H
 
 #include <numlib/matrix_impl/matrix_base.h>
-#include <numlib/matrix_impl/support.h>
 #include <initializer_list>
 #include <utility>
 #include <vector>
 
-
 namespace Numlib {
-
-//------------------------------------------------------------------------------
-
-template <typename T, std::size_t N>
-using Matrix_initializer = typename Matrix_impl::Matrix_init<T, N>::type;
-
-//------------------------------------------------------------------------------
 
 template <typename T, std::size_t N>
 class Matrix : public Matrix_base<T, N> {
 public:
-    using size_type      = typename Matrix_base<T, N>::size_type;
-    using value_type     = typename Matrix_base<T, N>::value_type;
-    using iterator       = typename std::vector<T>::iterator;
+    using size_type = typename Matrix_base<T, N>::size_type;
+    using value_type = typename Matrix_base<T, N>::value_type;
+    using iterator = typename std::vector<T>::iterator;
     using const_iterator = typename std::vector<T>::const_iterator;
 
     Matrix() = default;
@@ -66,7 +49,7 @@ public:
     // Initialize and assign from list:
 
     template <typename U>
-    Matrix(std::initializer_list<U>) = delete;  // don't use {} except for elems
+    Matrix(std::initializer_list<U>) = delete; // don't use {} except for elems
 
     template <typename U>
     Matrix& operator=(std::initializer_list<U>) = delete;
@@ -121,31 +104,26 @@ public:
     Matrix& apply(F f);
 
     // Apply f(x, mx) for corresponding elements *this and m:
-    // clang-format off
     template <typename M, typename F>
-    Enable_if<Matrix_type<M>(), Matrix&> 
-    apply(const M& m, F f);
-    // clang-format on
+    Enable_if<Matrix_type<M>(), Matrix&> apply(const M& m, F f);
 
     // Arithmetic operations:
 
-    Matrix& operator=(const T& value);  // assignment with scalar
+    Matrix& operator=(const T& value); // assignment with scalar
 
-    Matrix& operator+=(const T& value);  // scalar addition
-    Matrix& operator-=(const T& value);  // scalar subtraction
-    Matrix& operator*=(const T& value);  // scalar multiplication
-    Matrix& operator/=(const T& value);  // scalar division
-    Matrix& operator%=(const T& value);  // scalar modulo
-
-    // clang-format off
-    template <typename M>
-    Enable_if<Matrix_type<M>(), Matrix&> 
-    operator+=(const M& m);  // matrix addition
+    Matrix& operator+=(const T& value); // scalar addition
+    Matrix& operator-=(const T& value); // scalar subtraction
+    Matrix& operator*=(const T& value); // scalar multiplication
+    Matrix& operator/=(const T& value); // scalar division
+    Matrix& operator%=(const T& value); // scalar modulo
 
     template <typename M>
-    Enable_if<Matrix_type<M>(), Matrix&> 
-    operator-=(const M& m);  // matrix subtraction
-    // clang-format on
+    Enable_if<Matrix_type<M>(), Matrix&>
+    operator+=(const M& m); // matrix addition
+
+    template <typename M>
+    Enable_if<Matrix_type<M>(), Matrix&>
+    operator-=(const M& m); // matrix subtraction
 
 private:
     std::vector<T> elems;
@@ -161,7 +139,7 @@ inline Matrix<T, N>::Matrix(Exts... exts)
 template <typename T, std::size_t N>
 inline Matrix<T, N>::Matrix(Matrix_initializer<T, N> init)
 {
-    this->desc.start   = 0;
+    this->desc.start = 0;
     this->desc.extents = Matrix_impl::derive_extents<N>(init);
     Matrix_impl::compute_strides(this->desc);
     elems.reserve(this->desc.size);
@@ -194,12 +172,9 @@ Matrix<T, N>& Matrix<T, N>::apply(F f)
     return *this;
 }
 
-// clang-format off
 template <typename T, std::size_t N>
 template <typename M, typename F>
-Enable_if<Matrix_type<M>(), Matrix<T, N>&>
-Matrix<T, N>::apply(const M& m, F f)
-// clang-format on
+Enable_if<Matrix_type<M>(), Matrix<T, N>&> Matrix<T, N>::apply(const M& m, F f)
 {
     assert(same_extents(this->desc, m.descriptor()));
     auto i = begin();
@@ -248,40 +223,36 @@ inline Matrix<T, N>& Matrix<T, N>::operator%=(const T& value)
     return apply([&](T& a) { a %= value; });
 }
 
-// clang-format off
 template <typename T, std::size_t N>
 template <typename M>
-inline Enable_if<Matrix_type<M>(), Matrix<T, N>&> 
-Matrix<T, N>::operator+=(const M& m)
-// clang-format on
+inline Enable_if<Matrix_type<M>(), Matrix<T, N>&> Matrix<T, N>::
+operator+=(const M& m)
 {
-#ifdef __clang__  // ugly hack to work around bug in Clang on Mac OS X
-    assert(m.rank == N);
+#ifdef __clang__ // ugly hack to work around bug in Clang on Mac OS X
+    assert(m.order == N);
 #else
-    static_assert(m.rank == N, "+=: mismatched Matrix dimensions");
+    static_assert(m.order == N, "+=: mismatched Matrix dimensions");
 #endif
     assert(same_extents(this->desc, m.descriptor()));
 
     return apply(m, [](T& a, const Value_type<M>& b) { a += b; });
 }
 
-// clang-format off
 template <typename T, std::size_t N>
 template <typename M>
-inline Enable_if<Matrix_type<M>(), Matrix<T, N>&> 
-Matrix<T, N>::operator-=(const M& m)
-// clang-format on
+inline Enable_if<Matrix_type<M>(), Matrix<T, N>&> Matrix<T, N>::
+operator-=(const M& m)
 {
-#ifdef __clang__  // ugly hack to work around bug in Clang on Mac OS X
-    assert(m.rank == N);
+#ifdef __clang__ // ugly hack to work around bug in Clang on Mac OS X
+    assert(m.order == N);
 #else
-    static_assert(m.rank == N, "-=: mismatched Matrix dimensions");
+    static_assert(m.order == N, "-=: mismatched Matrix dimensions");
 #endif
     assert(same_extents(this->desc, m.descriptor()));
 
     return apply(m, [](T& a, const Value_type<M>& b) { a -= b; });
 }
 
-}  // namespace Numlib
+} // namespace Numlib
 
-#endif  // NUMLIB_MATRIX_MATRIX_H
+#endif // NUMLIB_MATRIX_MATRIX_H

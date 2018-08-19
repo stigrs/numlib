@@ -14,8 +14,16 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef NUMLIB_MATRIX_MATRIX_OPR_H
-#define NUMLIB_MATRIX_MATRIX_OPR_H
+// Copyright (c) 2008-2010 Kent State University
+// Copyright (c) 2011-2012 Texas A&M University
+// Copyright (c) Stig Rune Sellevag
+//
+// This file is distributed under the MIT License. See the accompanying file
+// LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
+// and conditions.
+
+#ifndef NUMLIB_MATRIX_OPERATIONS_H
+#define NUMLIB_MATRIX_OPERATIONS_H
 
 namespace Numlib {
 
@@ -61,6 +69,6 @@ Matrix<T, N> operator*(const T& scalar, const Matrix<T, N>& a)
     return res;
 }
 
-}  // namespace Numlib
+} // namespace Numlib
 
-#endif  // NUMLIB_MATRIX_MATRIX_OPR_H
+#endif // NUMLIB_MATRIX_OPERATIONS_H
