@@ -6,6 +6,7 @@
 
 #include <numlib/matrix.h>
 #include <catch/catch.hpp>
+#include <iostream>
 
 TEST_CASE("test_matrix2")
 {
@@ -78,5 +79,29 @@ TEST_CASE("test_matrix2")
         for (std::size_t i = 0; i < c3.size(); ++i) {
             CHECK(c3(i) == m2_c3(i));
         }
+    }
+
+    SECTION("slice")
+    {
+        Matrix<int, 2> m3 = {{01, 02, 03}, {11, 12, 13}, {21, 22, 23}};
+
+        auto m30 = m3(Slice{0, 2}, Slice{0, 2});
+        auto m31 = m3(Slice{1, 2}, 1);
+        auto m32 = m3(Slice{1, 2}, 0);
+
+        for (auto x : m30) {
+            std::cout << x << std::endl;
+        }
+        CHECK(m30.rank() == 2);
+        CHECK(m30(0, 0) == 01);
+        CHECK(m30(1, 0) == 11);
+
+        CHECK(m31.rank() == 2);
+        CHECK(m31(0, 0) == 12);
+        CHECK(m31(1, 0) == 22);
+
+        CHECK(m32.rank() == 2);
+        CHECK(m32(0, 0) == 11);
+        CHECK(m32(1, 0) == 21);
     }
 }

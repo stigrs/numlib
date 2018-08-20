@@ -29,4 +29,14 @@ TEST_CASE("test_matrix1")
         int r = m1.row(1);
         CHECK(r == 2);
     }
+
+    SECTION("slice")
+    {
+        auto s = m1(Slice{0, 3});
+
+        CHECK(s.rank() == 1);
+        CHECK(s(0) == 1);
+        CHECK(s(1) == 2);
+        CHECK(s(2) == 3);
+    }
 }

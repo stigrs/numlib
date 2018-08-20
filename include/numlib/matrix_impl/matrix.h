@@ -16,6 +16,15 @@
 
 namespace Numlib {
 
+// N-dimensional dense matrix class.
+//
+// The matrix class provides support for indexing, slicing and basic
+// arithmetic operations.
+//
+// Template parameters:
+//   T - The element type stored by the matrix
+//   N - The matrix rank
+//
 template <typename T, std::size_t N>
 class Matrix : public Matrix_base<T, N> {
 public:
@@ -83,6 +92,24 @@ public:
     {
         assert(Matrix_impl::check_bounds(this->desc, args...));
         return *(data() + this->desc(args...));
+    }
+
+    template <typename... Args>
+    Enable_if<Matrix_impl::Requesting_slice<Args...>(), Matrix_ref<T, N>>
+    operator()(const Args&... args)
+    {
+        Matrix_slice<N> d;
+        d.start = Matrix_impl::do_slice(this->desc, d, args...);
+        return {d, data()};
+    }
+
+    template <typename... Args>
+    Enable_if<Matrix_impl::Requesting_slice<Args...>(), Matrix_ref<const T, N>>
+    operator()(const Args&... args) const
+    {
+        Matrix_slice<N> d;
+        d.start = Matrix_impl::do_slice(this->desc, d, args...);
+        return {d, data()};
     }
 
     // Row subscripting.
@@ -189,7 +216,7 @@ template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix<T, N>::row(std::size_t n)
 {
     assert(n < this->rows());
-    auto r = Matrix_impl::get_row<0>(this->desc, n);
+    auto r = Matrix_impl::slice_dim<0>(this->desc, n);
     return {r, data()};
 }
 
@@ -197,7 +224,7 @@ template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix<T, N>::row(std::size_t n) const
 {
     assert(n < this->rows());
-    auto r = Matrix_impl::get_row<0>(this->desc, n);
+    auto r = Matrix_impl::slice_dim<0>(this->desc, n);
     return {r, data()};
 }
 
@@ -205,7 +232,7 @@ template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix<T, N>::column(std::size_t n)
 {
     assert(n < this->cols());
-    auto c = Matrix_impl::get_row<1>(this->desc, n);
+    auto c = Matrix_impl::slice_dim<1>(this->desc, n);
     return {c, data()};
 }
 
@@ -213,7 +240,7 @@ template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix<T, N>::column(std::size_t n) const
 {
     assert(n < this->cols());
-    auto c = Matrix_impl::get_row<1>(this->desc, n);
+    auto c = Matrix_impl::slice_dim<1>(this->desc, n);
     return {c, data()};
 }
 

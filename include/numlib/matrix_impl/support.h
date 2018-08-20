@@ -14,7 +14,6 @@
 #include <cassert>
 #include <functional>
 #include <numeric>
-#include <iostream>
 
 namespace Numlib {
 
@@ -156,7 +155,7 @@ namespace Matrix_impl {
 
     // Return Matrix_slice describing n'th row.
     template <std::size_t D, std::size_t N>
-    Matrix_slice<N - 1> get_row(const Matrix_slice<N>& ms, std::size_t n)
+    Matrix_slice<N - 1> slice_dim(const Matrix_slice<N>& ms, std::size_t n)
     {
         static_assert(N >= 1 && D <= N, "get_row: bad dimension");
 
@@ -173,6 +172,46 @@ namespace Matrix_impl {
         return r;
     }
 
+    // Return starting offset given a slice:
+
+    template <std::size_t D, std::size_t N>
+    std::size_t do_slice_dim(const Matrix_slice<N>& os, Matrix_slice<N>& ns,
+                             std::size_t s)
+    {
+        std::size_t i = N - D;
+        ns.strides[i] = os.strides[i];
+        ns.extents[i] = 1;
+        return s * ns.strides[i];
+    }
+
+    template <std::size_t D, std::size_t N>
+    std::size_t do_slice_dim(const Matrix_slice<N>& os, Matrix_slice<N>& ns,
+                             Slice s)
+    {
+        std::size_t i = N - D;
+        ns.strides[i] = s.stride * os.strides[i];
+        ns.extents[i] =
+            (s.length == std::size_t(-1))
+                ? (os.extents[i] - s.start + s.stride - 1) / s.stride
+                : s.length;
+        return s.start * os.strides[i];
+    }
+
+    template <std::size_t N>
+    std::size_t do_slice(const Matrix_slice<N>& /* os */,
+                         Matrix_slice<N>& /* ns */)
+    {
+        return 0;
+    }
+
+    template <std::size_t N, typename T, typename... Args>
+    std::size_t do_slice(const Matrix_slice<N>& os, Matrix_slice<N>& ns,
+                         const T& s, const Args&... args)
+    {
+        std::size_t m = do_slice_dim<sizeof...(Args) + 1>(os, ns, s);
+        std::size_t n = do_slice(os, ns, args...);
+        return m + n;
+    }
 } // namespace Matrix_impl
 
 } // namespace Numlib
