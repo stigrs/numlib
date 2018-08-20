@@ -8,7 +8,6 @@
 #include <catch/catch.hpp>
 #include <iostream>
 
-
 TEST_CASE("test_matrix1")
 {
     using namespace Numlib;
@@ -23,5 +22,11 @@ TEST_CASE("test_matrix1")
         CHECK(m1(1) == 2);
         CHECK(m1(2) == 3);
         CHECK(m1(3) == 4);
+    }
+
+    SECTION("row")
+    {
+        int r = m1.row(1);
+        CHECK(r == 2);
     }
 }

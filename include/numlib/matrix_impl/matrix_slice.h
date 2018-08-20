@@ -57,9 +57,9 @@ struct Matrix_slice {
 };
 
 template <std::size_t N>
-Matrix_slice<N>::Matrix_slice(std::size_t offset,
+Matrix_slice<N>::Matrix_slice(std::size_t s,
                               std::initializer_list<std::size_t> exts)
-    : start(offset)
+    : start(s)
 {
     assert(exts.size() == N);
     std::copy(exts.begin(), exts.end(), extents.begin());
@@ -67,10 +67,10 @@ Matrix_slice<N>::Matrix_slice(std::size_t offset,
 }
 
 template <std::size_t N>
-Matrix_slice<N>::Matrix_slice(std::size_t offset,
+Matrix_slice<N>::Matrix_slice(std::size_t s,
                               std::initializer_list<std::size_t> exts,
                               std::initializer_list<std::size_t> strs)
-    : start(offset)
+    : start(s)
 {
     assert(exts.size() == N);
     std::copy(exts.begin(), exts.end(), extents.begin());
@@ -109,8 +109,9 @@ template <std::size_t N>
 template <typename R>
 inline std::size_t Matrix_slice<N>::offset(R&& range) const
 {
-	constexpr std::size_t zero = 0;
-    return start + std::inner_product(strides.begin(), strides.end(), std::begin(range), zero);
+    constexpr std::size_t zero = 0;
+    return start + std::inner_product(strides.begin(), strides.end(),
+                                      std::begin(range), zero);
 }
 
 //------------------------------------------------------------------------------
@@ -128,18 +129,18 @@ struct Matrix_slice<1> {
     Matrix_slice& operator=(const Matrix_slice&) = default;
 
     // Starting offset and extents:
-    Matrix_slice(std::size_t offset, std::size_t exts)
+    Matrix_slice(std::size_t s, std::size_t exts)
     {
-        start = offset;
+        start = s;
         extents[0] = exts;
         strides[0] = 1;
         size = exts;
     }
 
     // Starting offset, extents, and strides:
-    Matrix_slice(std::size_t offset, std::size_t exts, std::size_t strs)
+    Matrix_slice(std::size_t s, std::size_t exts, std::size_t strs)
     {
-        start = offset;
+        start = s;
         extents[0] = exts;
         strides[0] = strs;
         size = exts * strs;
@@ -155,7 +156,17 @@ struct Matrix_slice<1> {
     }
 
     // Calculate index from a set of subscripts:
-    std::size_t operator()(std::size_t i) const { return i; }
+    std::size_t operator()(std::size_t i) const
+    {
+        return start + i * strides[0];
+    }
+
+    // Calculate offset given a range.
+    template <typename R>
+    std::size_t offset(R&& range) const
+    {
+        return start + range[0];
+    }
 
     std::size_t size;                   // total number of elements
     std::size_t start;                  // starting offset
@@ -166,6 +177,21 @@ struct Matrix_slice<1> {
 //------------------------------------------------------------------------------
 
 // Non-member functions:
+
+// Two Matrix_slices compare equal when they describe the same sequence of
+// offsets.
+template <std::size_t N>
+inline bool operator==(const Matrix_slice<N>& a, const Matrix_slice<N>& b)
+{
+    return a.start == b.start && a.extents == b.extents &&
+           a.strides == b.strides;
+}
+
+template <std::size_t N>
+inline bool operator!=(const Matrix_slice<N>& a, const Matrix_slice<N>& b)
+{
+    return !(a == b);
+}
 
 // Return true if the two Matrix_slices have same extents.
 template <std::size_t N>
