@@ -109,8 +109,9 @@ template <std::size_t N>
 template <typename R>
 inline std::size_t Matrix_slice<N>::offset(R&& range) const
 {
-	constexpr std::size_t zero = 0;
-    return start + std::inner_product(strides.begin(), strides.end(), std::begin(range), zero);
+    constexpr std::size_t zero = 0;
+    return start + std::inner_product(strides.begin(), strides.end(),
+                                      std::begin(range), zero);
 }
 
 //------------------------------------------------------------------------------

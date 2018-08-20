@@ -63,24 +63,24 @@ add_compile_options(
 )
 
 # Boost library is required.
-if(WIN32)
-    set(Boost_USE_STATIC_LIBS ON)
-endif()
-find_package(Boost 1.65.0 REQUIRED)
+#if(WIN32)
+#    set(Boost_USE_STATIC_LIBS ON)
+#endif()
+#find_package(Boost 1.65.0 REQUIRED)
 
 # GSL library is required.
-find_path(GSL_INCLUDE_DIR gsl HINTS $ENV{HOME}/include /usr/include /usr/local/include)
+#find_path(GSL_INCLUDE_DIR gsl HINTS $ENV{HOME}/include /usr/include /usr/local/include)
 
 # Intel MKL is required.
-find_path(MKL_INCLUDE_DIR mkl.h HINTS $ENV{MKL_INCLUDE_DIR} $ENV{MKLROOT}/include /opt/intel/mkl/include)
-if (WIN32)
-    find_path(MKL_LIB_DIR mkl_core.lib HINTS $ENV{MKL_LIB_DIR})
-else()
-    find_path(MKL_LIB_DIR libmkl_core.a HINTS $ENV{MKL_LIB_DIR} $ENV{MKLROOT}/lib/intel64 /opt/intel/mkl/lib /opt/intel/mkl/lib/intel64)
-    if(APPLE)
-        find_path(TBB_LIB_DIR libtbb.dylib HINTS /opt/intel/tbb/lib)
-    endif()
-endif()
+#find_path(MKL_INCLUDE_DIR mkl.h HINTS $ENV{MKL_INCLUDE_DIR} $ENV{MKLROOT}/include /opt/intel/mkl/include)
+#if (WIN32)
+#    find_path(MKL_LIB_DIR mkl_core.lib HINTS $ENV{MKL_LIB_DIR})
+#else()
+#    find_path(MKL_LIB_DIR libmkl_core.a HINTS $ENV{MKL_LIB_DIR} $ENV{MKLROOT}/lib/intel64 /opt/intel/mkl/lib /opt/intel/mkl/lib/intel64)
+#    if(APPLE)
+#        find_path(TBB_LIB_DIR libtbb.dylib HINTS /opt/intel/tbb/lib)
+#    endif()
+#endif()
 
 add_library(numlib_h INTERFACE)
 
