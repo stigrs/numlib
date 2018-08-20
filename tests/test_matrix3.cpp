@@ -41,9 +41,10 @@ TEST_CASE("test_matrix3")
     {
         auto r = m3.row(1);
         auto rr = r.row(1);
-        int rc = rr.row(1);
+        auto rc = rr.row(1);
         CHECK(r.rank() == 2);
         CHECK(rr.rank() == 1);
-        CHECK(rc == 8);
+        CHECK(rc.rank() == 0);
+        CHECK(rc() == 8);
     }
 }
