@@ -17,6 +17,8 @@ namespace Numlib {
 
 // Forward declarations:
 
+struct Slice;
+
 template <std::size_t N>
 struct Matrix_slice;
 
@@ -31,6 +33,7 @@ using Matrix_initializer = typename Matrix_impl::Matrix_init<T, N>::type;
 
 // Support classes and algorithms:
 #include <numlib/matrix_impl/support.h>
+#include <numlib/matrix_impl/slice.h>
 #include <numlib/matrix_impl/matrix_slice.h>
 #include <numlib/matrix_impl/iterator.h>
 
