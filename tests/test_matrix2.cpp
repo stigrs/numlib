@@ -6,7 +6,6 @@
 
 #include <numlib/matrix.h>
 #include <catch/catch.hpp>
-#include <iostream>
 
 TEST_CASE("test_matrix2")
 {
@@ -14,6 +13,7 @@ TEST_CASE("test_matrix2")
 
     Matrix<int, 2> m2 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
 
+    SECTION("rank") { CHECK(m2.rank() == 2); }
     SECTION("size") { CHECK(m2.size() == 12); }
 
     SECTION("extents")

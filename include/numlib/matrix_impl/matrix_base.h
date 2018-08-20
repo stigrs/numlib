@@ -42,6 +42,9 @@ public:
 
     ~Matrix_base() = default;
 
+    // Matrix rank.
+    size_type rank() const { return N; }
+
     // Total number of elements:
     size_type size() const { return desc.size; }
 

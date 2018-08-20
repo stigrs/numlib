@@ -72,6 +72,7 @@ function(add_numlib_test name)
 endfunction()
 
 set(PROGRAMS 
+    test_matrix0
     test_matrix1
     test_matrix2
     test_matrix3

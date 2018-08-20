@@ -328,7 +328,7 @@ class Matrix<T, 0> : public Matrix_base<T, 0> {
 public:
     Matrix() = default;
 
-    Matrix(const T& x) : elem(x) {}
+    Matrix(const T& x) : Matrix_base<T, 0>(), elem(x) {}
 
     Matrix& operator=(const T& value)
     {
