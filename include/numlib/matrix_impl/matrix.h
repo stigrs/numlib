@@ -38,14 +38,14 @@ public:
     template <typename... Exts>
     explicit Matrix(Exts... exts);
 
-// Construct and assign from Matrix_ref:
-#if 0
+    // Construct and assign from Matrix_ref:
+
     template <typename U>
     Matrix(const Matrix_ref<U, N>&);
 
-    template <typename U>
-    Matrix& operator=(const Matrix_ref<U, N>&);
-#endif
+    // template <typename U>
+    // Matrix& operator=(const Matrix_ref<U, N>&);
+
     // Initialize and assign from list:
 
     template <typename U>
@@ -132,6 +132,14 @@ template <typename... Exts>
 inline Matrix<T, N>::Matrix(Exts... exts)
     : Matrix_base<T, N>{exts...}, elems(this->desc.size)
 {
+}
+
+template <typename T, std::size_t N>
+template <typename U>
+inline Matrix<T, N>::Matrix(const Matrix_ref<U, N>& m)
+    : this->desc{m.desc}, elems(m.size())
+{
+    //: this->desc{m.desc}, elems{m.begin(), m.end()}
 }
 
 template <typename T, std::size_t N>
@@ -223,8 +231,10 @@ inline Matrix<T, N>& Matrix<T, N>::operator%=(const T& value)
 
 template <typename T, std::size_t N>
 template <typename M>
-inline Enable_if<Matrix_type<M>(), Matrix<T, N>&> Matrix<T, N>::
-operator+=(const M& m)
+inline Enable_if<Matrix_type<M>(), Matrix<T, N>&>
+// clang-format off
+Matrix<T, N>::operator+=(const M& m)
+// clang-format on
 {
 #ifdef __clang__ // ugly hack to work around bug in Clang on Mac OS X
     assert(m.order == N);
@@ -238,8 +248,10 @@ operator+=(const M& m)
 
 template <typename T, std::size_t N>
 template <typename M>
-inline Enable_if<Matrix_type<M>(), Matrix<T, N>&> Matrix<T, N>::
-operator-=(const M& m)
+inline Enable_if<Matrix_type<M>(), Matrix<T, N>&>
+// clang-format off
+Matrix<T, N>::operator-=(const M& m)
+// clang-format on
 {
 #ifdef __clang__ // ugly hack to work around bug in Clang on Mac OS X
     assert(m.order == N);

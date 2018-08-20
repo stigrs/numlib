@@ -32,8 +32,10 @@ using Matrix_initializer = typename Matrix_impl::Matrix_init<T, N>::type;
 // Support classes and algorithms:
 #include <numlib/matrix_impl/support.h>
 #include <numlib/matrix_impl/matrix_slice.h>
+#include <numlib/matrix_impl/iterator.h>
 
 // Matrix classes:
+#include <numlib/matrix_impl/matrix_ref.h>
 #include <numlib/matrix_impl/matrix.h>
 
 // Arithmetic operations:

@@ -57,7 +57,7 @@ public:
     template <typename U>
     Matrix_ref& operator=(const Matrix_ref<U, N>& m);
 
-    ~Matrix() = default;
+    ~Matrix_ref() = default;
 
     // "Flat" element access:
     T* data() { return ptr; }
@@ -88,6 +88,12 @@ public:
 private:
     T* ptr; // points to the first element of the matrix
 };
+
+template <typename T, std::size_t N>
+Matrix_ref<T, N>::Matrix_ref(Matrix_ref&& m) : this->desc(m.desc),
+    ptr(m.ptr)
+{
+}
 
 template <typename T, std::size_t N>
 inline void Matrix_ref<T, N>::swap(Matrix_ref& m)

@@ -13,6 +13,7 @@
 #include <array>
 #include <cassert>
 #include <initializer_list>
+#include <iterator>
 
 namespace Numlib {
 
@@ -44,6 +45,10 @@ struct Matrix_slice {
     Enable_if<All(Convertible<Dims, std::size_t>()...), std::size_t>
     operator()(Dims... dims) const;
 #endif // _MSC_VER
+
+    // Calculate offset given a range.
+    template <typename R>
+    std::size_t offset(R&& range) const;
 
     std::size_t size;                   // total number of elements
     std::size_t start;                  // starting offset
@@ -98,6 +103,14 @@ Matrix_slice<N>::operator()(Dims... dims) const
     std::size_t args[N]{std::size_t(dims)...};
     return start +
            std::inner_product(args, args + N, strides.begin(), std::size_t{0});
+}
+
+template <std::size_t N>
+template <typename R>
+inline std::size_t Matrix_slice<N>::offset(R&& range) const
+{
+	constexpr std::size_t zero = 0;
+    return start + std::inner_product(strides.begin(), strides.end(), std::begin(range), zero);
 }
 
 //------------------------------------------------------------------------------
