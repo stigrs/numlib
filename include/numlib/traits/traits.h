@@ -52,6 +52,22 @@ constexpr bool All(bool b, Args... args)
     return b && All(args...);
 }
 
+// Return true if some (at least one) argument is true.
+
+constexpr bool Some() { return false; }
+
+template <typename... Args>
+constexpr bool Some(bool b, Args... args)
+{
+    return b || Some(args...);
+}
+
+// Return true when types T and U are the same type.
+template <typename T, typename U>
+constexpr bool Same()
+{
+    return std::is_same<T, U>::value;
+}
 struct substitution_failure { // represent a failure to declare something
 };
 

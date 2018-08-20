@@ -33,6 +33,15 @@ namespace Matrix_impl {
         return All(Convertible<Args, std::size_t>()...);
     }
 
+    template <typename... Args>
+    constexpr bool Requesting_slice()
+    {
+        // clang-format off
+        return All((Convertible<Args, std::size_t>() || Same<Args, Slice>())...) 
+					&& Some(Same<Args, Slice>()...);
+        // clang-format on
+    }
+
     //--------------------------------------------------------------------------
 
     // Matrix list initialization:
