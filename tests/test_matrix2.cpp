@@ -6,8 +6,6 @@
 
 #include <numlib/matrix.h>
 #include <catch/catch.hpp>
-#include <iostream>
-
 
 TEST_CASE("test_matrix2")
 {
@@ -15,6 +13,7 @@ TEST_CASE("test_matrix2")
 
     Matrix<int, 2> m2 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
 
+    SECTION("rank") { CHECK(m2.rank() == 2); }
     SECTION("size") { CHECK(m2.size() == 12); }
 
     SECTION("extents")
@@ -31,6 +30,53 @@ TEST_CASE("test_matrix2")
                 CHECK(m2(i, j) == it);
                 ++it;
             }
+        }
+    }
+
+    SECTION("row")
+    {
+        Matrix<int, 1> m2_r0 = {1, 2, 3, 4};
+        Matrix<int, 1> m2_r1 = {5, 6, 7, 8};
+        Matrix<int, 1> m2_r2 = {9, 10, 11, 12};
+
+        auto r0 = m2.row(0);
+        auto r1 = m2.row(1);
+        auto r2 = m2.row(2);
+
+        for (std::size_t i = 0; i < r0.size(); ++i) {
+            CHECK(r0(i) == m2_r0(i));
+        }
+        for (std::size_t i = 0; i < r1.size(); ++i) {
+            CHECK(r1(i) == m2_r1(i));
+        }
+        for (std::size_t i = 0; i < r2.size(); ++i) {
+            CHECK(r2(i) == m2_r2(i));
+        }
+    }
+
+    SECTION("column")
+    {
+        Matrix<int, 1> m2_c0 = {1, 5, 9};
+        Matrix<int, 1> m2_c1 = {2, 6, 10};
+        Matrix<int, 1> m2_c2 = {3, 7, 11};
+        Matrix<int, 1> m2_c3 = {4, 8, 12};
+
+        auto c0 = m2.column(0);
+        auto c1 = m2.column(1);
+        auto c2 = m2.column(2);
+        auto c3 = m2.column(3);
+
+        for (std::size_t i = 0; i < c0.size(); ++i) {
+            CHECK(c0(i) == m2_c0(i));
+        }
+        for (std::size_t i = 0; i < c1.size(); ++i) {
+            CHECK(c1(i) == m2_c1(i));
+        }
+        for (std::size_t i = 0; i < c2.size(); ++i) {
+            CHECK(c2(i) == m2_c2(i));
+        }
+        for (std::size_t i = 0; i < c3.size(); ++i) {
+            CHECK(c3(i) == m2_c3(i));
         }
     }
 }

@@ -6,8 +6,6 @@
 
 #include <numlib/matrix.h>
 #include <catch/catch.hpp>
-#include <iostream>
-
 
 TEST_CASE("test_matrix1")
 {
@@ -15,6 +13,7 @@ TEST_CASE("test_matrix1")
 
     Matrix<int, 1> m1 = {1, 2, 3, 4};
 
+    SECTION("rank") { CHECK(m1.rank() == 1); }
     SECTION("size") { CHECK(m1.size() == 4); }
 
     SECTION("subscripting")
@@ -23,5 +22,11 @@ TEST_CASE("test_matrix1")
         CHECK(m1(1) == 2);
         CHECK(m1(2) == 3);
         CHECK(m1(3) == 4);
+    }
+
+    SECTION("row")
+    {
+        int r = m1.row(1);
+        CHECK(r == 2);
     }
 }

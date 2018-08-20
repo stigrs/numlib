@@ -14,6 +14,7 @@
 #include <cassert>
 #include <functional>
 #include <numeric>
+#include <iostream>
 
 namespace Numlib {
 
@@ -118,12 +119,12 @@ namespace Matrix_impl {
     template <std::size_t N>
     inline void compute_strides(Matrix_slice<N>& ms)
     {
-        ms.strides[N - 1] = 1; // last stride is 1
-        for (std::size_t i = N - 1; i != 0;
-             --i) { // compute stride for each dim
-            ms.strides[i - 1] = ms.strides[i] * ms.extents[i];
+        std::size_t st = 1; // last stride is 1
+        for (int i = N - 1; i >= 0; --i) {
+            ms.strides[i] = st;
+            st *= ms.extents[i];
         }
-        ms.size = ms.extents[0] * ms.strides[0];
+        ms.size = st;
     }
 
     // Compute total number of elements given the extents.
@@ -142,6 +143,25 @@ namespace Matrix_impl {
         std::size_t indexes[N]{std::size_t(dims)...};
         return std::equal(indexes, indexes + N, slice.extents.begin(),
                           std::less<std::size_t>{});
+    }
+
+    // Return Matrix_slice describing n'th row.
+    template <std::size_t D, std::size_t N>
+    Matrix_slice<N - 1> get_row(const Matrix_slice<N>& ms, std::size_t n)
+    {
+        static_assert(N >= 1 && D <= N, "get_row: bad dimension");
+
+        Matrix_slice<N - 1> r;
+        r.size = ms.size / ms.extents[D];
+        r.start = ms.start + n * ms.strides[D];
+
+        // Copy extents and strides.
+        auto i = std::copy_n(ms.extents.begin(), D, r.extents.begin());
+        auto j = std::copy_n(ms.strides.begin(), D, r.strides.begin());
+        std::copy_n(ms.extents.begin() + D + 1, N - D - 1, i);
+        std::copy_n(ms.strides.begin() + D + 1, N - D - 1, j);
+
+        return r;
     }
 
 } // namespace Matrix_impl

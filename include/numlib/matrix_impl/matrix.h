@@ -43,8 +43,8 @@ public:
     template <typename U>
     Matrix(const Matrix_ref<U, N>&);
 
-    // template <typename U>
-    // Matrix& operator=(const Matrix_ref<U, N>&);
+    template <typename U>
+    Matrix& operator=(const Matrix_ref<U, N>&);
 
     // Initialize and assign from list:
 
@@ -84,6 +84,18 @@ public:
         assert(Matrix_impl::check_bounds(this->desc, args...));
         return *(data() + this->desc(args...));
     }
+
+    // Row subscripting.
+    Matrix_ref<T, N - 1> operator[](std::size_t n);
+    Matrix_ref<const T, N - 1> operator[](std::size_t n) const;
+
+    // Return a reference to the n'th row of the matrix.
+    Matrix_ref<T, N - 1> row(std::size_t n);
+    Matrix_ref<const T, N - 1> row(std::size_t n) const;
+
+    // Return a reference to the n'th column of the matrix.
+    Matrix_ref<T, N - 1> column(std::size_t n);
+    Matrix_ref<const T, N - 1> column(std::size_t n) const;
 
     // Iterators:
 
@@ -137,9 +149,21 @@ inline Matrix<T, N>::Matrix(Exts... exts)
 template <typename T, std::size_t N>
 template <typename U>
 inline Matrix<T, N>::Matrix(const Matrix_ref<U, N>& m)
-    : this->desc{m.desc}, elems(m.size())
+    : Matrix_base<T, N>(m.desc), elems{m.begin(), m.end()}
 {
-    //: this->desc{m.desc}, elems{m.begin(), m.end()}
+    static_assert(Convertible<U, T>(),
+                  "Matrix constructor: incompatible element types");
+}
+
+template <typename T, std::size_t N>
+template <typename U>
+inline Matrix<T, N>& Matrix<T, N>::operator=(const Matrix_ref<U, N>& m)
+{
+    static_assert(Convertible<U, T>(),
+                  "Matrix assignment: incompatible element types");
+    this->desc = m.desc;
+    elems.assign(m.begin(), m.end());
+    return *this;
 }
 
 template <typename T, std::size_t N>
@@ -159,6 +183,38 @@ inline Matrix<T, N>& Matrix<T, N>::operator=(Matrix_initializer<T, N> init)
     Matrix tmp(init);
     swap(tmp);
     return *this;
+}
+
+template <typename T, std::size_t N>
+inline Matrix_ref<T, N - 1> Matrix<T, N>::row(std::size_t n)
+{
+    assert(n < this->rows());
+    auto r = Matrix_impl::get_row<0>(this->desc, n);
+    return {r, data()};
+}
+
+template <typename T, std::size_t N>
+inline Matrix_ref<const T, N - 1> Matrix<T, N>::row(std::size_t n) const
+{
+    assert(n < this->rows());
+    auto r = Matrix_impl::get_row<0>(this->desc, n);
+    return {r, data()};
+}
+
+template <typename T, std::size_t N>
+inline Matrix_ref<T, N - 1> Matrix<T, N>::column(std::size_t n)
+{
+    assert(n < this->cols());
+    auto c = Matrix_impl::get_row<1>(this->desc, n);
+    return {c, data()};
+}
+
+template <typename T, std::size_t N>
+inline Matrix_ref<const T, N - 1> Matrix<T, N>::column(std::size_t n) const
+{
+    assert(n < this->cols());
+    auto c = Matrix_impl::get_row<1>(this->desc, n);
+    return {c, data()};
 }
 
 template <typename T, std::size_t N>
@@ -262,6 +318,33 @@ Matrix<T, N>::operator-=(const M& m)
 
     return apply(m, [](T& a, const Value_type<M>& b) { a -= b; });
 }
+
+//------------------------------------------------------------------------------
+
+// Specialization:
+
+template <typename T>
+class Matrix<T, 0> : public Matrix_base<T, 0> {
+public:
+    Matrix() = default;
+
+    Matrix(const T& x) : Matrix_base<T, 0>(), elem(x) {}
+
+    Matrix& operator=(const T& value)
+    {
+        elem = value;
+        return *this;
+    }
+
+    T& operator()() { return elem; }
+    const T& operator()() const { return elem; }
+
+    operator T&() { return elem; }
+    operator const T&() { return elem; }
+
+private:
+    T elem;
+};
 
 } // namespace Numlib
 
