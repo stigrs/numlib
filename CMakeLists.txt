@@ -92,7 +92,7 @@ target_include_directories(numlib_h INTERFACE
 )
 
 install(
-    DIRECTORY include/matrix
+    DIRECTORY include/numlib
     DESTINATION include
     FILES_MATCHING PATTERN "*.h"
 )
@@ -101,16 +101,16 @@ install(
 
 if(BUILD_TESTS)
     # Armadillo library is required.
-    if(WIN32)
-        find_path(ARMADILLO_INCLUDE_DIRS armadillo HINTS $ENV{HOME}/include)
-        add_definitions(-DARMA_USE_BLAS)
-        add_definitions(-DARMA_USE_LAPACK)
-        add_definitions(-DARMA_NO_DEBUG)
-    else()
-        find_package(Armadillo 7.950.1 REQUIRED)
-        add_definitions(-DARMA_NO_DEBUG)
-    endif()
+#    if(WIN32)
+#        find_path(ARMADILLO_INCLUDE_DIRS armadillo HINTS $ENV{HOME}/include)
+#        add_definitions(-DARMA_USE_BLAS)
+#        add_definitions(-DARMA_USE_LAPACK)
+#        add_definitions(-DARMA_NO_DEBUG)
+#    else()
+#        find_package(Armadillo 7.950.1 REQUIRED)
+#        add_definitions(-DARMA_NO_DEBUG)
+#    endif()
     enable_testing()
     add_subdirectory(tests)
-    add_subdirectory(bench)
+#   add_subdirectory(bench)
 endif()
