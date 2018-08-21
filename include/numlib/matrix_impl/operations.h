@@ -14,7 +14,43 @@
 namespace num {
 
 //------------------------------------------------------------------------------
+//
+// The following operations are defined for all Matrix types:
 
+template <typename M>
+inline Enable_if<Matrix_type<M>(), std::size_t> rows(const M& m)
+{
+    static_assert(0 < M::order, "");
+    return m.extent(0);
+}
+
+template <typename M>
+inline Enable_if<Matrix_type<M>(), std::size_t> cols(const M& m)
+{
+    static_assert(0 < M::order, "");
+    return m.extent(1);
+}
+
+template <typename M, typename... Args>
+inline Enable_if<Matrix_type<M>(), M> zeros(Args... args)
+{
+    assert(M::order == sizeof...(args));
+    M res(args...);
+    res = M::value_type{0};
+    return res;
+}
+
+template <typename M, typename... Args>
+inline Enable_if<Matrix_type<M>(), M> ones(Args... args)
+{
+    assert(M::order == sizeof...(args));
+    M res(args...);
+    res = M::value_type{1};
+    return res;
+}
+
+//------------------------------------------------------------------------------
+//
 // Equality comparable:
 
 // Two matrices compare equal when they have the same elements. Comparison of

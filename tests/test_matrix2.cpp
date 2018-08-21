@@ -6,12 +6,13 @@
 
 #include <numlib/matrix.h>
 #include <catch/catch.hpp>
+#include <iostream>
 
 TEST_CASE("test_matrix2")
 {
     using namespace num;
 
-    Matrix<int, 2> m2 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
+    imat m2 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
 
     SECTION("rank") { CHECK(m2.rank() == 2); }
     SECTION("size") { CHECK(m2.size() == 12); }
@@ -20,6 +21,8 @@ TEST_CASE("test_matrix2")
     {
         CHECK(m2.extent(0) == 3);
         CHECK(m2.extent(1) == 4);
+        CHECK(rows(m2) == 3);
+        CHECK(cols(m2) == 4);
     }
 
     SECTION("subscripting")
@@ -111,5 +114,32 @@ TEST_CASE("test_matrix2")
         m40 = 0;
 
         CHECK(m4 == m4_ans);
+    }
+
+    SECTION("construct_from_array")
+    {
+        int ptr[4] = {10, 20, 30, 40};
+
+        Matrix<int, 2> m5 = Matrix_ref<int, 2>(Matrix_slice<2>{2, 2}, &ptr[0]);
+
+        CHECK(m5(0, 0) == 10);
+        CHECK(m5(0, 1) == 20);
+        CHECK(m5(1, 0) == 30);
+        CHECK(m5(1, 1) == 40);
+    }
+
+    SECTION("slice_diag")
+    {
+        imat m6_ans = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+
+        auto m6 = zeros<imat>(3, 3);
+        auto d = m6.diag();
+
+        d = 1;
+
+        for (auto x : d) {
+            std::cout << x << std::endl;
+        }
+        // CHECK(d == m6_ans);
     }
 }

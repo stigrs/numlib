@@ -44,4 +44,7 @@ using Matrix_initializer = typename Matrix_impl::Matrix_init<T, N>::type;
 // Arithmetic operations:
 #include <numlib/matrix_impl/operations.h>
 
+// Type aliases:
+#include <numlib/matrix_impl/type_alias.h>
+
 #endif // NUMLIB_MATRIX_H

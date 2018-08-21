@@ -17,6 +17,15 @@
 
 namespace num {
 
+// Matrix slice.
+//
+// A matrix slice specifies the N-dimensional matrix properties of a
+// contigous region of memory. The slice is described by three parameters:
+//
+// - Starting offset
+// - Sequence of extents
+// - Sequence of strides
+//
 template <std::size_t N>
 struct Matrix_slice {
     // Empty matrix:
@@ -165,7 +174,9 @@ struct Matrix_slice<1> {
     template <typename R>
     std::size_t offset(R&& range) const
     {
-        return start + range[0];
+        constexpr std::size_t zero = 0;
+        return start + std::inner_product(strides.begin(), strides.end(),
+                                          std::begin(range), zero);
     }
 
     std::size_t size;                   // total number of elements
@@ -231,6 +242,66 @@ struct Matrix_slice<2> {
     std::size_t start;                  // starting offset
     std::array<std::size_t, 2> extents; // number of elements in each dimension
     std::array<std::size_t, 2> strides; // offsets between elements in each dim
+};
+
+// Matrix_slice to describe three-dimensional matrix (cube).
+template <>
+struct Matrix_slice<3> {
+    // Empty matrix:
+    Matrix_slice() = default;
+
+    // Copy semantics:
+    Matrix_slice(const Matrix_slice&) = default;
+    Matrix_slice& operator=(const Matrix_slice&) = default;
+
+    // Starting offset and extents:
+    Matrix_slice(std::size_t s, std::initializer_list<std::size_t> exts)
+        : start(s)
+    {
+        assert(exts.size() == 3);
+        std::copy(exts.begin(), exts.end(), extents.begin());
+        matrix_impl::compute_strides(*this);
+    }
+
+    // Starting offset, extents, and strides:
+    Matrix_slice(std::size_t s, std::initializer_list<std::size_t> exts,
+                 std::initializer_list<std::size_t> strs)
+        : start(s)
+    {
+        assert(exts.size() == 3);
+        std::copy(exts.begin(), exts.end(), extents.begin());
+        std::copy(strs.begin(), strs.end(), strides.begin());
+        size = matrix_impl::compute_size(extents);
+    }
+
+    // N extents:
+    Matrix_slice(std::size_t n1, std::size_t n2, std::size_t n3) : start{0}
+    {
+        extents[0] = n1;
+        extents[1] = n2;
+        extents[2] = n3;
+        matrix_impl::compute_strides(*this);
+    }
+
+    // Calculate index from a set of subscripts:
+    std::size_t operator()(std::size_t i, std::size_t j, std::size_t k) const
+    {
+        return start + i * strides[0] + j * strides[1] + k * strides[2];
+    }
+
+    // Calculate offset given a range.
+    template <typename R>
+    std::size_t offset(R&& range) const
+    {
+        constexpr std::size_t zero = 0;
+        return start + std::inner_product(strides.begin(), strides.end(),
+                                          std::begin(range), zero);
+    }
+
+    std::size_t size;                   // total number of elements
+    std::size_t start;                  // starting offset
+    std::array<std::size_t, 3> extents; // number of elements in each dimension
+    std::array<std::size_t, 3> strides; // offsets between elements in each dim
 };
 
 //------------------------------------------------------------------------------

@@ -16,7 +16,7 @@
 
 namespace num {
 
-// N-dimensional dense matrix class.
+// N-dimensional dense matrix class using row-major storage order.
 //
 // The matrix class provides support for indexing, slicing and basic
 // arithmetic operations.
@@ -36,14 +36,16 @@ public:
     Matrix() = default;
 
     // Move construction and assignment:
+
     Matrix(Matrix&&) = default;
     Matrix& operator=(Matrix&&) = default;
 
     // Copy construction and assignment:
+
     Matrix(const Matrix&) = default;
     Matrix& operator=(const Matrix&) = default;
 
-    // Specify the extents:
+    // Specify the extents.
     template <typename... Exts>
     explicit Matrix(Exts... exts);
 
@@ -126,6 +128,10 @@ public:
     Matrix_ref<T, N - 1> column(std::size_t n);
     Matrix_ref<const T, N - 1> column(std::size_t n) const;
 
+    // Return a reference to the diagonal of a square two-dimensional matrix.
+    Matrix_ref<T, N - 1> diag();
+    Matrix_ref<const T, N - 1> diag() const;
+
     // Iterators:
 
     iterator begin() { return elems.begin(); }
@@ -137,12 +143,17 @@ public:
     // Mutators:
 
     void swap(Matrix& m);
+    void swap_rows(std::size_t m, std::size_t n);
 
-    // Apply f(x) for every element x:
+    // Resize matrix (elements not preserved).
+    template <typename... Exts>
+    void resize(Exts... exts);
+
+    // Apply f(x) for every element x.
     template <typename F>
     Matrix& apply(F f);
 
-    // Apply f(x, mx) for corresponding elements *this and m:
+    // Apply f(x, mx) for corresponding elements *this and m.
     template <typename M, typename F>
     Enable_if<Matrix_type<M>(), Matrix&> apply(const M& m, F f);
 
@@ -178,7 +189,7 @@ inline Matrix<T, N>::Matrix(Exts... exts)
 template <typename T, std::size_t N>
 template <typename U>
 inline Matrix<T, N>::Matrix(const Matrix_ref<U, N>& m)
-    : Matrix_base<T, N>(m.desc), elems{m.begin(), m.end()}
+    : Matrix_base<T, N>(m.descriptor()), elems{m.begin(), m.end()}
 {
     static_assert(Convertible<U, T>(),
                   "Matrix constructor: incompatible element types");
@@ -190,7 +201,7 @@ inline Matrix<T, N>& Matrix<T, N>::operator=(const Matrix_ref<U, N>& m)
 {
     static_assert(Convertible<U, T>(),
                   "Matrix assignment: incompatible element types");
-    this->desc = m.desc;
+    this->desc = m.descriptor();
     elems.assign(m.begin(), m.end());
     return *this;
 }
@@ -239,6 +250,36 @@ inline Matrix_ref<T, N - 1> Matrix<T, N>::column(std::size_t n)
 }
 
 template <typename T, std::size_t N>
+inline Matrix_ref<T, N - 1> Matrix<T, N>::diag()
+{
+    static_assert(N == 2, "diag: only defined for matrix of rank 2");
+    assert(this->rows() == this->cols());
+
+    Matrix_slice<N - 1> d;
+    d.start = 0;
+    d.extents[0] = this->rows();
+    d.strides[0] = this->rows() + 1;
+    d.size = matrix_impl::compute_size(d.extents);
+
+    return {d, data()};
+}
+
+template <typename T, std::size_t N>
+inline Matrix_ref<const T, N - 1> Matrix<T, N>::diag() const
+{
+    static_assert(N == 2, "diag: only defined for matrix of rank 2");
+    assert(this->rows() == this->cols());
+
+    Matrix_slice<N - 1> d;
+    d.start = 0;
+    d.extents[0] = this->rows();
+    d.strides[0] = this->rows() + 1;
+    d.size = matrix_impl::compute_size(d.extents);
+
+    return {d, data()};
+}
+
+template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix<T, N>::column(std::size_t n) const
 {
     assert(n < this->cols());
@@ -251,6 +292,24 @@ inline void Matrix<T, N>::swap(Matrix& m)
 {
     std::swap(this->desc, m.desc);
     elems.swap(m.elems);
+}
+
+template <typename T, std::size_t N>
+inline void Matrix<T, N>::swap_rows(std::size_t m, std::size_t n)
+{
+    auto a = (*this)[m];
+    auto b = (*this)[n];
+    std::swap_ranges(a.begin(), a.end(), b.begin());
+}
+
+template <typename T, std::size_t N>
+template <typename... Exts>
+inline void Matrix<T, N>::resize(Exts... exts)
+{
+    assert(sizeof...(Exts) == rank());
+    Matrix_slice<N> d{static_cast<std::size_t>(exts)...}; // avoid C2398 error
+    this->desc = d;
+    elems.resize(size());
 }
 
 template <typename T, std::size_t N>
@@ -350,8 +409,10 @@ Matrix<T, N>::operator-=(const M& m)
 
 //------------------------------------------------------------------------------
 
-// Specialization:
-
+// Zero-dimensional matrix:
+//
+// The type Matrix<T, 0> is not really a matrix. It stores a single scalar
+// of type T and can only be converted to a reference to that type.
 template <typename T>
 class Matrix<T, 0> : public Matrix_base<T, 0> {
 public:

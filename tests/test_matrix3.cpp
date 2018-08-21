@@ -12,8 +12,7 @@ TEST_CASE("test_matrix3")
 {
     using namespace num;
 
-    Matrix<int, 3> m3 = {
-        {{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
+    icube m3 = {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
 
     SECTION("rank") { CHECK(m3.rank() == 3); }
     SECTION("size") { CHECK(m3.size() == 12); }
@@ -46,5 +45,15 @@ TEST_CASE("test_matrix3")
         CHECK(rr.rank() == 1);
         CHECK(rc.rank() == 0);
         CHECK(rc() == 8);
+    }
+
+    SECTION("resize")
+    {
+        m3.resize(2, 4, 5);
+        CHECK(m3.rank() == 3);
+        CHECK(m3.size() == 40);
+        CHECK(m3.extent(0) == 2);
+        CHECK(m3.extent(1) == 4);
+        CHECK(m3.extent(2) == 5);
     }
 }

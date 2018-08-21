@@ -22,6 +22,7 @@ namespace num {
 // A slice describes a sequence of elements in some dimension (or row) of a
 // matrix. It is a triple comprised of a starting index, a number of elements,
 // and the stride between subsequent elements.
+//
 struct slice {
     slice() : start(-1), length(-1), stride(1) {}
 

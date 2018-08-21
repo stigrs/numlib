@@ -14,8 +14,15 @@
 
 namespace num {
 
-//------------------------------------------------------------------------------
-
+// Matrix reference.
+//
+// A Matrix_ref is a reference to memory in a matrix specified by a slice. A
+// Matrix_ref does not own its elements.
+//
+// Template parameters:
+//   T - The underlying value type of the matrix, possibly const
+//   N - The rank of the matrix
+//
 template <typename T, std::size_t N>
 class Matrix_ref : public Matrix_base<T, N> {
 public:
@@ -133,6 +140,7 @@ public:
     // Mutators:
 
     void swap(Matrix_ref& m);
+    void swap_rows(std::size_t m, std::size_t n);
 
     // Apply f(x) for every element x:
     template <typename F>
@@ -258,6 +266,14 @@ inline void Matrix_ref<T, N>::swap(Matrix_ref& m)
 }
 
 template <typename T, std::size_t N>
+inline void Matrix_ref<T, N>::swap_rows(std::size_t m, std::size_t n)
+{
+    auto a = (*this)[m];
+    auto b = (*this)[n];
+    std::swap_ranges(a.begin(), a.end(), b.begin());
+}
+
+template <typename T, std::size_t N>
 template <typename F>
 Matrix_ref<T, N>& Matrix_ref<T, N>::apply(F f)
 {
@@ -355,8 +371,10 @@ Matrix_ref<T, N>::operator-=(const M& m)
 
 //------------------------------------------------------------------------------
 
-// Specialization:
-
+// Zero-dimensional submatrix:
+//
+// The type Matrix_ref<T, 0> is not really a matrix. It contains a pointer
+// to an element in a Matrix_ref.
 template <typename T>
 class Matrix_ref<T, 0> : public Matrix_base<T, 0> {
 public:

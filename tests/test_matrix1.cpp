@@ -11,7 +11,7 @@ TEST_CASE("test_matrix1")
 {
     using namespace num;
 
-    Matrix<int, 1> m1 = {1, 2, 3, 4};
+    ivec m1 = {1, 2, 3, 4};
 
     SECTION("rank") { CHECK(m1.rank() == 1); }
     SECTION("size") { CHECK(m1.size() == 4); }

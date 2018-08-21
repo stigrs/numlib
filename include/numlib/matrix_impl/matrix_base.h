@@ -10,9 +10,11 @@
 #define NUMLIB_MATRIX_MATRIX_BASE_H
 
 #include <cassert>
+#include <iostream>
 
 namespace num {
 
+// Provides support for features common to both matrices and matrix reference.
 template <typename T, std::size_t N>
 class Matrix_base {
 public:
@@ -30,7 +32,18 @@ public:
     {
     }
 
-    explicit Matrix_base(const Matrix_slice<N>& s) : desc{s} {}
+    explicit Matrix_base(const Matrix_slice<N>& s) : desc{s}
+    {
+        std::cout << "size = " << desc.size << std::endl;
+        std::cout << "extents = " << std::endl;
+        for (auto x : desc.extents) {
+            std::cout << x << std::endl;
+        }
+        std::cout << "strides = " << std::endl;
+        for (auto x : desc.strides) {
+            std::cout << x << std::endl;
+        }
+    }
 
     // Move construction and assignment:
     Matrix_base(Matrix_base&&) = default;
