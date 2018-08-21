@@ -13,7 +13,7 @@
 #include <numlib/traits/traits.h>
 #include <numlib/matrix_impl/traits.h>
 
-namespace Numlib {
+namespace num {
 
 // Forward declarations:
 
@@ -29,7 +29,7 @@ class Matrix;
 template <typename T, std::size_t N>
 using Matrix_initializer = typename Matrix_impl::Matrix_init<T, N>::type;
 
-} // namespace Numlib
+} // namespace num
 
 // Support classes and algorithms:
 #include <numlib/matrix_impl/slice.h>

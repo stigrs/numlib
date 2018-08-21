@@ -9,7 +9,7 @@
 
 TEST_CASE("test_matrix1")
 {
-    using namespace Numlib;
+    using namespace num;
 
     Matrix<int, 1> m1 = {1, 2, 3, 4};
 
@@ -35,6 +35,7 @@ TEST_CASE("test_matrix1")
         auto s = m1(Slice{0, 3});
 
         CHECK(s.rank() == 1);
+        CHECK(s.size() == 3);
         CHECK(s(0) == 1);
         CHECK(s(1) == 2);
         CHECK(s(2) == 3);

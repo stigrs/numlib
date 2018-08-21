@@ -15,7 +15,7 @@
 #include <initializer_list>
 #include <iterator>
 
-namespace Numlib {
+namespace num {
 
 template <std::size_t N>
 struct Matrix_slice {
@@ -200,6 +200,6 @@ bool same_extents(const Matrix_slice<N>& a, const Matrix_slice<N>& b)
     return a.extents == b.extents;
 }
 
-} // namespace Numlib
+} // namespace num
 
 #endif // NUMLIB_MATRIX_MATRIX_SLICE_H

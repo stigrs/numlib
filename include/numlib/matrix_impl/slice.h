@@ -9,10 +9,15 @@
 #ifndef NUMLIB_MATRIX_SLICE_H
 #define NUMLIB_MATRIX_SLICE_H
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4245) // signed/unsigned error caused by size_t(-1)
+#endif
+
 #include <cstddef>
 #include <iostream>
 
-namespace Numlib {
+namespace num {
 
 // A slice describes a sequence of elements in some dimension (or row) of a
 // matrix. It is a triple comprised of a starting index, a number of elements,
@@ -45,6 +50,10 @@ std::ostream& operator<<(std::ostream& to, const Slice& s)
     return to;
 }
 
-} // namespace Numlib
+} // namespace num
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #endif // NUMLIB_MATRIX_SLICE_H

@@ -14,7 +14,7 @@
 #include <utility>
 #include <vector>
 
-namespace Numlib {
+namespace num {
 
 // N-dimensional dense matrix class.
 //
@@ -100,6 +100,7 @@ public:
     {
         Matrix_slice<N> d;
         d.start = Matrix_impl::do_slice(this->desc, d, args...);
+        d.size = Matrix_impl::compute_size(d.extents);
         return {d, data()};
     }
 
@@ -109,6 +110,7 @@ public:
     {
         Matrix_slice<N> d;
         d.start = Matrix_impl::do_slice(this->desc, d, args...);
+        d.size = Matrix_impl::compute_size(d.extents);
         return {d, data()};
     }
 
@@ -373,6 +375,6 @@ private:
     T elem;
 };
 
-} // namespace Numlib
+} // namespace num
 
 #endif // NUMLIB_MATRIX_MATRIX_H

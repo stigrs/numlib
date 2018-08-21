@@ -9,7 +9,7 @@
 #ifndef NUMLIB_MATRIX_OPERATIONS_H
 #define NUMLIB_MATRIX_OPERATIONS_H
 
-namespace Numlib {
+namespace num {
 
 //------------------------------------------------------------------------------
 
@@ -53,6 +53,6 @@ Matrix<T, N> operator*(const T& scalar, const Matrix<T, N>& a)
     return res;
 }
 
-} // namespace Numlib
+} // namespace num
 
 #endif // NUMLIB_MATRIX_OPERATIONS_H

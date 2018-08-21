@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <array>
 
-namespace Numlib {
+namespace num {
 
 // A slice iterator ranges over the elements of a Matrix_ref specified by
 // a Matrix_slice.
@@ -140,6 +140,6 @@ inline bool operator!=(const Slice_iterator<T, N>& a,
     return !(a == b);
 }
 
-} // namespace Numlib
+} // namespace num
 
 #endif // NUMLIB_MATRIX_ITERATOR_H

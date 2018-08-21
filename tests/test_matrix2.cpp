@@ -6,11 +6,10 @@
 
 #include <numlib/matrix.h>
 #include <catch/catch.hpp>
-#include <iostream>
 
 TEST_CASE("test_matrix2")
 {
-    using namespace Numlib;
+    using namespace num;
 
     Matrix<int, 2> m2 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
 
@@ -89,10 +88,8 @@ TEST_CASE("test_matrix2")
         auto m31 = m3(Slice{1, 2}, 1);
         auto m32 = m3(Slice{1, 2}, 0);
 
-        for (auto x : m30) {
-            std::cout << x << std::endl;
-        }
         CHECK(m30.rank() == 2);
+        CHECK(m30.size() == 4);
         CHECK(m30(0, 0) == 01);
         CHECK(m30(1, 0) == 11);
 

@@ -11,7 +11,7 @@
 
 #include <cassert>
 
-namespace Numlib {
+namespace num {
 
 template <typename T, std::size_t N>
 class Matrix_base {
@@ -76,6 +76,6 @@ protected:
     Matrix_slice<N> desc;
 };
 
-} // namespace Numlib
+} // namespace num
 
 #endif // NUMLIB_MATRIX_MATRIX_BASE_H

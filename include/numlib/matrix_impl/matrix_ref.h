@@ -12,7 +12,7 @@
 #include <numlib/matrix_impl/matrix_base.h>
 #include <utility>
 
-namespace Numlib {
+namespace num {
 
 //------------------------------------------------------------------------------
 
@@ -359,6 +359,6 @@ private:
     T* ptr;
 };
 
-} // namespace Numlib
+} // namespace num
 
 #endif // NUMLIB_MATRIX_MATRIX_REF_H

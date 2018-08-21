@@ -15,7 +15,7 @@
 #include <functional>
 #include <numeric>
 
-namespace Numlib {
+namespace num {
 
 // Forward declarations:
 
@@ -214,6 +214,6 @@ namespace Matrix_impl {
     }
 } // namespace Matrix_impl
 
-} // namespace Numlib
+} // namespace num
 
 #endif // NUMLIB_MATRIX_SUPPORT_H
