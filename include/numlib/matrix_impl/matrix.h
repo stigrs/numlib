@@ -250,13 +250,21 @@ inline Matrix_ref<T, N - 1> Matrix<T, N>::column(std::size_t n)
 }
 
 template <typename T, std::size_t N>
+inline Matrix_ref<const T, N - 1> Matrix<T, N>::column(std::size_t n) const
+{
+    assert(n < this->cols());
+    auto c = matrix_impl::slice_dim<1>(this->desc, n);
+    return {c, data()};
+}
+
+template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix<T, N>::diag()
 {
-    static_assert(N == 2, "diag: only defined for matrix of rank 2");
+    static_assert(N == 2, "diag: only defined for Matrix of rank 2");
     assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;
-    d.start = 0;
+    d.start = this->desc.start;
     d.extents[0] = this->rows();
     d.strides[0] = this->rows() + 1;
     d.size = matrix_impl::compute_size(d.extents);
@@ -267,24 +275,16 @@ inline Matrix_ref<T, N - 1> Matrix<T, N>::diag()
 template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix<T, N>::diag() const
 {
-    static_assert(N == 2, "diag: only defined for matrix of rank 2");
+    static_assert(N == 2, "diag: only defined for Matrix of rank 2");
     assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;
-    d.start = 0;
+    d.start = this->desc.start;
     d.extents[0] = this->rows();
     d.strides[0] = this->rows() + 1;
     d.size = matrix_impl::compute_size(d.extents);
 
     return {d, data()};
-}
-
-template <typename T, std::size_t N>
-inline Matrix_ref<const T, N - 1> Matrix<T, N>::column(std::size_t n) const
-{
-    assert(n < this->cols());
-    auto c = matrix_impl::slice_dim<1>(this->desc, n);
-    return {c, data()};
 }
 
 template <typename T, std::size_t N>

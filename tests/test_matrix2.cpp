@@ -128,18 +128,35 @@ TEST_CASE("test_matrix2")
         CHECK(m5(1, 1) == 40);
     }
 
-    SECTION("slice_diag")
+    SECTION("diag")
     {
-        imat m6_ans = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+        ivec m6_ans = {1, 1, 1};
 
         auto m6 = zeros<imat>(3, 3);
         auto d = m6.diag();
 
         d = 1;
 
-        for (auto x : d) {
+        CHECK(d == m6_ans);
+    }
+
+    SECTION("slice_diag")
+    {
+        // clang-format off
+        imat m7 = {{ 1,  2,  3,  4},
+                   { 5,  6,  7,  8},
+                   { 9, 10, 11, 12},
+                   {13, 14, 15, 16}};
+        // clang-format on
+
+        auto s7 = m7(slice{0, 2}, slice{0, 2});
+        for (auto x : s7) {
             std::cout << x << std::endl;
         }
-        // CHECK(d == m6_ans);
+        auto d7 = s7.diag();
+
+        for (auto x : d7) {
+            std::cout << x << std::endl;
+        }
     }
 }

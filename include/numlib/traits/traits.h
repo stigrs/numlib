@@ -68,6 +68,11 @@ constexpr bool Same()
 {
     return std::is_same<T, U>::value;
 }
+
+//------------------------------------------------------------------------------
+
+// SFINAE support:
+
 struct substitution_failure { // represent a failure to declare something
 };
 
