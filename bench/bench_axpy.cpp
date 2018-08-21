@@ -20,12 +20,9 @@
 #include <iostream>
 #include <valarray>
 
-
 typedef std::chrono::duration<double, std::milli> Timer;
 
-void print(int n,
-           const Timer& t_arma,
-           const Timer& t_numlib,
+void print(int n, const Timer& t_arma, const Timer& t_numlib,
            const Timer& t_val)
 {
     std::cout << "Vector addition:\n"
@@ -41,27 +38,27 @@ void benchmark(int n)
     arma::vec ab(n);
     aa.fill(1.0);
     ab.fill(1.0);
-    auto t1      = std::chrono::high_resolution_clock::now();
-    ab           = 2.0 * aa + ab;
-    auto t2      = std::chrono::high_resolution_clock::now();
+    auto t1 = std::chrono::high_resolution_clock::now();
+    ab = 2.0 * aa + ab;
+    auto t2 = std::chrono::high_resolution_clock::now();
     Timer t_arma = t2 - t1;
 
-    Numlib::Matrix<double, 1> va(n);
-    Numlib::Matrix<double, 1> vb(n);
+    num::Matrix<double, 1> va(n);
+    num::Matrix<double, 1> vb(n);
 
     va = 1.0;
     vb = 1.0;
 
-    t1             = std::chrono::high_resolution_clock::now();
-    vb             = 2.0 * va + vb;
-    t2             = std::chrono::high_resolution_clock::now();
+    t1 = std::chrono::high_resolution_clock::now();
+    vb = 2.0 * va + vb;
+    t2 = std::chrono::high_resolution_clock::now();
     Timer t_numlib = t2 - t1;
 
     std::valarray<double> wa(1.0, n);
     std::valarray<double> wb(1.0, n);
-    t1          = std::chrono::high_resolution_clock::now();
-    wb          = 2.0 * wa + wb;
-    t2          = std::chrono::high_resolution_clock::now();
+    t1 = std::chrono::high_resolution_clock::now();
+    wb = 2.0 * wa + wb;
+    t2 = std::chrono::high_resolution_clock::now();
     Timer t_val = t2 - t1;
 
     print(n, t_arma, t_numlib, t_val);

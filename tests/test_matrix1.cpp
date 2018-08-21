@@ -32,12 +32,66 @@ TEST_CASE("test_matrix1")
 
     SECTION("slice")
     {
-        auto s = m1(Slice{0, 3});
+        Matrix<int, 1> m2(m1);
+        auto s = m2(slice{0, 3});
+
+        s = 0;
 
         CHECK(s.rank() == 1);
         CHECK(s.size() == 3);
+        CHECK(s(0) == 0);
+        CHECK(s(1) == 0);
+        CHECK(s(2) == 0);
+        CHECK(m2(0) == 0);
+        CHECK(m2(1) == 0);
+        CHECK(m2(2) == 0);
+        CHECK(m2(3) == 4);
+        CHECK(m1(0) == 1);
+        CHECK(m1(1) == 2);
+        CHECK(m1(2) == 3);
+        CHECK(m1(3) == 4);
+
+        auto ss = s(slice{1, 2});
+        ss = 1;
+
+        CHECK(s(0) == 0);
+        CHECK(s(1) == 1);
+        CHECK(s(2) == 1);
+        CHECK(m2(0) == 0);
+        CHECK(m2(1) == 1);
+        CHECK(m2(2) == 1);
+        CHECK(m2(3) == 4);
+        CHECK(m1(0) == 1);
+        CHECK(m1(1) == 2);
+        CHECK(m1(2) == 3);
+        CHECK(m1(3) == 4);
+    }
+
+    SECTION("head")
+    {
+        auto h = m1(slice{0, 3});
+
+        CHECK(h.size() == 3);
+        CHECK(h(0) == 1);
+        CHECK(h(1) == 2);
+        CHECK(h(2) == 3);
+    }
+
+    SECTION("tail")
+    {
+        auto t = m1(slice{2});
+
+        CHECK(t.size() == 2);
+        CHECK(t(0) == 3);
+        CHECK(t(1) == 4);
+    }
+
+    SECTION("slice_stride_2")
+    {
+        auto s = m1(slice{0, 2, 2});
+
+        CHECK(s.size() == 2);
         CHECK(s(0) == 1);
-        CHECK(s(1) == 2);
-        CHECK(s(2) == 3);
+        CHECK(s(1) == 3);
     }
 }

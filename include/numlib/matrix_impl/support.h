@@ -36,8 +36,8 @@ namespace matrix_impl {
     constexpr bool Requesting_slice()
     {
         // clang-format off
-        return All((Convertible<Args, std::size_t>() || Same<Args, Slice>())...) 
-					&& Some(Same<Args, Slice>()...);
+        return All((Convertible<Args, std::size_t>() || Same<Args, slice>())...) 
+					&& Some(Same<Args, slice>()...);
         // clang-format on
     }
 
@@ -186,7 +186,7 @@ namespace matrix_impl {
 
     template <std::size_t D, std::size_t N>
     std::size_t do_slice_dim(const Matrix_slice<N>& os, Matrix_slice<N>& ns,
-                             Slice s)
+                             slice s)
     {
         std::size_t i = N - D;
         ns.strides[i] = s.stride * os.strides[i];
@@ -212,6 +212,7 @@ namespace matrix_impl {
         std::size_t n = do_slice(os, ns, args...);
         return m + n;
     }
+
 } // namespace matrix_impl
 
 } // namespace num

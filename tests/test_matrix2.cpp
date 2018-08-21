@@ -84,14 +84,16 @@ TEST_CASE("test_matrix2")
     {
         Matrix<int, 2> m3 = {{01, 02, 03}, {11, 12, 13}, {21, 22, 23}};
 
-        auto m30 = m3(Slice{0, 2}, Slice{0, 2});
-        auto m31 = m3(Slice{1, 2}, 1);
-        auto m32 = m3(Slice{1, 2}, 0);
+        auto m30 = m3(slice{0, 2}, slice{0, 2});
+        auto m31 = m3(slice{1, 2}, 1);
+        auto m32 = m3(slice{1, 2}, 0);
 
         CHECK(m30.rank() == 2);
         CHECK(m30.size() == 4);
         CHECK(m30(0, 0) == 01);
         CHECK(m30(1, 0) == 11);
+        CHECK(m30(0, 1) == 02);
+        CHECK(m30(1, 1) == 12);
 
         CHECK(m31.rank() == 2);
         CHECK(m31(0, 0) == 12);
@@ -100,5 +102,14 @@ TEST_CASE("test_matrix2")
         CHECK(m32.rank() == 2);
         CHECK(m32(0, 0) == 11);
         CHECK(m32(1, 0) == 21);
+
+        Matrix<int, 2> m4_ans = {{00, 00, 03}, {00, 00, 13}, {21, 22, 23}};
+
+        Matrix<int, 2> m4(m3);
+        auto m40 = m4(slice{0, 2}, slice{0, 2});
+
+        m40 = 0;
+
+        CHECK(m4 == m4_ans);
     }
 }

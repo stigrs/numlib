@@ -17,7 +17,7 @@ namespace num {
 
 // Forward declarations:
 
-struct Slice;
+struct slice;
 
 template <std::size_t N>
 struct Matrix_slice;

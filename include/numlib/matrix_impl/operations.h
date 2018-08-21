@@ -9,7 +9,31 @@
 #ifndef NUMLIB_MATRIX_OPERATIONS_H
 #define NUMLIB_MATRIX_OPERATIONS_H
 
+#include <algorithm>
+
 namespace num {
+
+//------------------------------------------------------------------------------
+
+// Equality comparable:
+
+// Two matrices compare equal when they have the same elements. Comparison of
+// matrices decribed by different slices is undefined behavior.
+
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(), bool>
+operator==(const M1& a, const M2& b)
+{
+    assert(same_extents(a, b));
+    return std::equal(a.begin(), a.end(), b.begin());
+}
+
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(), bool>
+operator!=(const M1& a, const M2& b)
+{
+    return !(a == b);
+}
 
 //------------------------------------------------------------------------------
 

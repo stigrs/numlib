@@ -22,29 +22,24 @@ namespace num {
 // A slice describes a sequence of elements in some dimension (or row) of a
 // matrix. It is a triple comprised of a starting index, a number of elements,
 // and the stride between subsequent elements.
-//
-// The special member Slice::all represents the selection of all elements
-// in a particular dimension.
-struct Slice {
-    Slice() : start(-1), length(-1), stride(1) {}
+struct slice {
+    slice() : start(-1), length(-1), stride(1) {}
 
-    explicit Slice(std::size_t s) : start(s), length(-1), stride(1) {}
+    explicit slice(std::size_t s) : start(s), length(-1), stride(1) {}
 
-    Slice(std::size_t s, std::size_t l, std::size_t n = 1)
+    slice(std::size_t s, std::size_t l, std::size_t n = 1)
         : start(s), length(l), stride(n)
     {
     }
 
     std::size_t operator()(std::size_t i) const { return start + i * stride; }
 
-    static Slice all;
-
     std::size_t start;
     std::size_t length;
     std::size_t stride;
 };
 
-std::ostream& operator<<(std::ostream& to, const Slice& s)
+std::ostream& operator<<(std::ostream& to, const slice& s)
 {
     to << '(' << s.start << ", " << s.length << ", " << s.stride << ')';
     return to;

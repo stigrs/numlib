@@ -27,10 +27,10 @@ struct Matrix_slice {
     Matrix_slice& operator=(const Matrix_slice&) = default;
 
     // Starting offset and extents:
-    Matrix_slice(std::size_t offset, std::initializer_list<std::size_t> exts);
+    Matrix_slice(std::size_t s, std::initializer_list<std::size_t> exts);
 
     // Starting offset, extents, and strides:
-    Matrix_slice(std::size_t offset, std::initializer_list<std::size_t> exts,
+    Matrix_slice(std::size_t s, std::initializer_list<std::size_t> exts,
                  std::initializer_list<std::size_t> strs);
 
     // N extents:
@@ -174,6 +174,65 @@ struct Matrix_slice<1> {
     std::array<std::size_t, 1> strides; // offsets between elements in each dim
 };
 
+// Matrix_slice to describe two-dimensional matrix (matrix).
+template <>
+struct Matrix_slice<2> {
+    // Empty matrix:
+    Matrix_slice() = default;
+
+    // Copy semantics:
+    Matrix_slice(const Matrix_slice&) = default;
+    Matrix_slice& operator=(const Matrix_slice&) = default;
+
+    // Starting offset and extents:
+    Matrix_slice(std::size_t s, std::initializer_list<std::size_t> exts)
+        : start(s)
+    {
+        assert(exts.size() == 2);
+        std::copy(exts.begin(), exts.end(), extents.begin());
+        matrix_impl::compute_strides(*this);
+    }
+
+    // Starting offset, extents, and strides:
+    Matrix_slice(std::size_t s, std::initializer_list<std::size_t> exts,
+                 std::initializer_list<std::size_t> strs)
+        : start(s)
+    {
+        assert(exts.size() == 2);
+        std::copy(exts.begin(), exts.end(), extents.begin());
+        std::copy(strs.begin(), strs.end(), strides.begin());
+        size = matrix_impl::compute_size(extents);
+    }
+
+    // N extents:
+    Matrix_slice(std::size_t nr, std::size_t nc) : start{0}
+    {
+        extents[0] = nr;
+        extents[1] = nc;
+        matrix_impl::compute_strides(*this);
+    }
+
+    // Calculate index from a set of subscripts:
+    std::size_t operator()(std::size_t i, std::size_t j) const
+    {
+        return start + i * strides[0] + j * strides[1];
+    }
+
+    // Calculate offset given a range.
+    template <typename R>
+    std::size_t offset(R&& range) const
+    {
+        constexpr std::size_t zero = 0;
+        return start + std::inner_product(strides.begin(), strides.end(),
+                                          std::begin(range), zero);
+    }
+
+    std::size_t size;                   // total number of elements
+    std::size_t start;                  // starting offset
+    std::array<std::size_t, 2> extents; // number of elements in each dimension
+    std::array<std::size_t, 2> strides; // offsets between elements in each dim
+};
+
 //------------------------------------------------------------------------------
 
 // Non-member functions:
@@ -193,11 +252,28 @@ inline bool operator!=(const Matrix_slice<N>& a, const Matrix_slice<N>& b)
     return !(a == b);
 }
 
-// Return true if the two Matrix_slices have same extents.
+//------------------------------------------------------------------------------
+
+// Same extents:
+
+// Return true when two slices describe matrices with the same rank and
+// extents. The starting offset and strides do not factor into the
+// comparison.
+//
+// An overload is provided for Matrix_type. It compares the descriptors
+// of its matrix arguments.
+
 template <std::size_t N>
 bool same_extents(const Matrix_slice<N>& a, const Matrix_slice<N>& b)
 {
     return a.extents == b.extents;
+}
+
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(), bool>
+same_extents(const M1& a, const M2& b)
+{
+    return same_extents(a.descriptor(), b.descriptor());
 }
 
 } // namespace num

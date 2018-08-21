@@ -86,6 +86,26 @@ public:
         return *(data() + this->desc(args...));
     }
 
+    template <typename... Args>
+    Enable_if<matrix_impl::Requesting_slice<Args...>(), Matrix_ref<T, N>>
+    operator()(Args... args)
+    {
+        Matrix_slice<N> d;
+        d.start = matrix_impl::do_slice(this->desc, d, args...);
+        d.size = matrix_impl::compute_size(d.extents);
+        return {d, data()};
+    }
+
+    template <typename... Args>
+    Enable_if<matrix_impl::Requesting_slice<Args...>(), Matrix_ref<const T, N>>
+    operator()(Args... args) const
+    {
+        Matrix_slice<N> d;
+        d.start = matrix_impl::do_slice(this->desc, d, args...);
+        d.size = matrix_impl::compute_size(d.extents);
+        return {d, data()};
+    }
+
     // Row subscripting.
     Matrix_ref<T, N - 1> operator[](std::size_t n) { return row(n); }
 
