@@ -71,18 +71,18 @@ public:
     // Subscripting:
 
     template <typename... Args>
-    Enable_if<Matrix_impl::Requesting_element<Args...>(), T&>
+    Enable_if<matrix_impl::Requesting_element<Args...>(), T&>
     operator()(Args... args)
     {
-        assert(Matrix_impl::check_bounds(this->desc, args...));
+        assert(matrix_impl::check_bounds(this->desc, args...));
         return *(data() + this->desc(args...));
     }
 
     template <typename... Args>
-    Enable_if<Matrix_impl::Requesting_element<Args...>(), const T&>
+    Enable_if<matrix_impl::Requesting_element<Args...>(), const T&>
     operator()(Args... args) const
     {
-        assert(Matrix_impl::check_bounds(this->desc, args...));
+        assert(matrix_impl::check_bounds(this->desc, args...));
         return *(data() + this->desc(args...));
     }
 
@@ -202,7 +202,7 @@ template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix_ref<T, N>::row(std::size_t n)
 {
     assert(n < this->rows());
-    auto r = Matrix_impl::slice_dim<0>(this->desc, n);
+    auto r = matrix_impl::slice_dim<0>(this->desc, n);
     return {r, ptr};
 }
 
@@ -210,7 +210,7 @@ template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix_ref<T, N>::row(std::size_t n) const
 {
     assert(n < this->rows());
-    auto r = Matrix_impl::slice_dim<0>(this->desc, n);
+    auto r = matrix_impl::slice_dim<0>(this->desc, n);
     return {r, ptr};
 }
 
@@ -218,7 +218,7 @@ template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix_ref<T, N>::column(std::size_t n)
 {
     assert(n < this->cols());
-    auto c = Matrix_impl::slice_dim<1>(this->desc, n);
+    auto c = matrix_impl::slice_dim<1>(this->desc, n);
     return {c, ptr};
 }
 
@@ -226,7 +226,7 @@ template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix_ref<T, N>::column(std::size_t n) const
 {
     assert(n < this->cols());
-    auto c = Matrix_impl::slice_dim<1>(this->desc, n);
+    auto c = matrix_impl::slice_dim<1>(this->desc, n);
     return {c, ptr};
 }
 

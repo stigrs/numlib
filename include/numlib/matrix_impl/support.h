@@ -24,7 +24,7 @@ struct Matrix_slice;
 
 //------------------------------------------------------------------------------
 
-namespace Matrix_impl {
+namespace matrix_impl {
 
     template <typename... Args>
     constexpr bool Requesting_element()
@@ -212,7 +212,7 @@ namespace Matrix_impl {
         std::size_t n = do_slice(os, ns, args...);
         return m + n;
     }
-} // namespace Matrix_impl
+} // namespace matrix_impl
 
 } // namespace num
 

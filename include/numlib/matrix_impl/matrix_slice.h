@@ -63,7 +63,7 @@ Matrix_slice<N>::Matrix_slice(std::size_t s,
 {
     assert(exts.size() == N);
     std::copy(exts.begin(), exts.end(), extents.begin());
-    Matrix_impl::compute_strides(*this);
+    matrix_impl::compute_strides(*this);
 }
 
 template <std::size_t N>
@@ -75,7 +75,7 @@ Matrix_slice<N>::Matrix_slice(std::size_t s,
     assert(exts.size() == N);
     std::copy(exts.begin(), exts.end(), extents.begin());
     std::copy(strs.begin(), strs.end(), strides.begin());
-    size = Matrix_impl::compute_size(extents);
+    size = matrix_impl::compute_size(extents);
 }
 
 template <std::size_t N>
@@ -86,7 +86,7 @@ Matrix_slice<N>::Matrix_slice(Dims... dims) : start{0}
                   "Matrix_slice<N>::Matrix_slice(Dims...): dimension mismatch");
     std::size_t args[N]{std::size_t(dims)...};
     std::copy(std::begin(args), std::end(args), extents.begin());
-    Matrix_impl::compute_strides(*this);
+    matrix_impl::compute_strides(*this);
 }
 
 template <std::size_t N>

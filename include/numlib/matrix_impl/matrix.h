@@ -79,38 +79,38 @@ public:
     // Subscripting:
 
     template <typename... Args>
-    Enable_if<Matrix_impl::Requesting_element<Args...>(), T&>
+    Enable_if<matrix_impl::Requesting_element<Args...>(), T&>
     operator()(Args... args)
     {
-        assert(Matrix_impl::check_bounds(this->desc, args...));
+        assert(matrix_impl::check_bounds(this->desc, args...));
         return *(data() + this->desc(args...));
     }
 
     template <typename... Args>
-    Enable_if<Matrix_impl::Requesting_element<Args...>(), const T&>
+    Enable_if<matrix_impl::Requesting_element<Args...>(), const T&>
     operator()(Args... args) const
     {
-        assert(Matrix_impl::check_bounds(this->desc, args...));
+        assert(matrix_impl::check_bounds(this->desc, args...));
         return *(data() + this->desc(args...));
     }
 
     template <typename... Args>
-    Enable_if<Matrix_impl::Requesting_slice<Args...>(), Matrix_ref<T, N>>
+    Enable_if<matrix_impl::Requesting_slice<Args...>(), Matrix_ref<T, N>>
     operator()(const Args&... args)
     {
         Matrix_slice<N> d;
-        d.start = Matrix_impl::do_slice(this->desc, d, args...);
-        d.size = Matrix_impl::compute_size(d.extents);
+        d.start = matrix_impl::do_slice(this->desc, d, args...);
+        d.size = matrix_impl::compute_size(d.extents);
         return {d, data()};
     }
 
     template <typename... Args>
-    Enable_if<Matrix_impl::Requesting_slice<Args...>(), Matrix_ref<const T, N>>
+    Enable_if<matrix_impl::Requesting_slice<Args...>(), Matrix_ref<const T, N>>
     operator()(const Args&... args) const
     {
         Matrix_slice<N> d;
-        d.start = Matrix_impl::do_slice(this->desc, d, args...);
-        d.size = Matrix_impl::compute_size(d.extents);
+        d.start = matrix_impl::do_slice(this->desc, d, args...);
+        d.size = matrix_impl::compute_size(d.extents);
         return {d, data()};
     }
 
@@ -199,10 +199,10 @@ template <typename T, std::size_t N>
 inline Matrix<T, N>::Matrix(Matrix_initializer<T, N> init)
 {
     this->desc.start = 0;
-    this->desc.extents = Matrix_impl::derive_extents<N>(init);
-    Matrix_impl::compute_strides(this->desc);
+    this->desc.extents = matrix_impl::derive_extents<N>(init);
+    matrix_impl::compute_strides(this->desc);
     elems.reserve(this->desc.size);
-    Matrix_impl::insert_flat(init, elems);
+    matrix_impl::insert_flat(init, elems);
     assert(elems.size() == this->desc.size);
 }
 
@@ -218,7 +218,7 @@ template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix<T, N>::row(std::size_t n)
 {
     assert(n < this->rows());
-    auto r = Matrix_impl::slice_dim<0>(this->desc, n);
+    auto r = matrix_impl::slice_dim<0>(this->desc, n);
     return {r, data()};
 }
 
@@ -226,7 +226,7 @@ template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix<T, N>::row(std::size_t n) const
 {
     assert(n < this->rows());
-    auto r = Matrix_impl::slice_dim<0>(this->desc, n);
+    auto r = matrix_impl::slice_dim<0>(this->desc, n);
     return {r, data()};
 }
 
@@ -234,7 +234,7 @@ template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix<T, N>::column(std::size_t n)
 {
     assert(n < this->cols());
-    auto c = Matrix_impl::slice_dim<1>(this->desc, n);
+    auto c = matrix_impl::slice_dim<1>(this->desc, n);
     return {c, data()};
 }
 
@@ -242,7 +242,7 @@ template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix<T, N>::column(std::size_t n) const
 {
     assert(n < this->cols());
-    auto c = Matrix_impl::slice_dim<1>(this->desc, n);
+    auto c = matrix_impl::slice_dim<1>(this->desc, n);
     return {c, data()};
 }
 
