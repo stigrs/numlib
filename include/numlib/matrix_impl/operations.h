@@ -35,9 +35,11 @@ inline Enable_if<Matrix_type<M>(), std::size_t> cols(const M& m)
 template <typename M, typename... Args>
 inline Enable_if<Matrix_type<M>(), M> zeros(Args... args)
 {
+    using value_type = typename M::value_type;
+
     assert(M::order == sizeof...(args));
     M res(args...);
-    res = M::value_type{0};
+    res = value_type{0};
     return res;
 }
 
