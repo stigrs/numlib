@@ -1,9 +1,9 @@
-# Based on https://github.com/ldionne/hana/blob/master/.travis.yml
+# Based on https://github.com/Microsoft/GSL
 
 language: cpp
 sudo: false
 notifications:
-  email: false
+  email: true
 
 # Use Linux unless specified otherwise
 os: linux
@@ -55,7 +55,11 @@ matrix:
           packages:
             - clang-3.6
             - g++-5
-		    - libopenblas-dev
+            - libblas-dev
+            - liblapacke
+            - liblapacke-dev
+            - libopenblas-base
+            - libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
@@ -70,7 +74,11 @@ matrix:
           packages:
             - clang-3.7
             - g++-5
-		    - libopenblas-dev
+            - libblas-dev
+            - liblapacke
+            - liblapacke-dev
+            - libopenblas-base
+            - libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.7
@@ -85,7 +93,11 @@ matrix:
           packages:
             - clang-3.8
             - g++-5
-		    - libopenblas-dev
+            - libblas-dev
+            - liblapacke
+            - liblapacke-dev
+            - libopenblas-base
+            - libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
@@ -100,7 +112,11 @@ matrix:
           packages:
             - clang-3.9
             - g++-5
-		    - libopenblas-dev
+            - libblas-dev
+            - liblapacke
+            - liblapacke-dev
+            - libopenblas-base
+            - libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.9
@@ -115,7 +131,11 @@ matrix:
           packages:
             - clang-4.0
             - g++-5
-		    - libopenblas-dev
+            - libblas-dev
+            - liblapacke
+            - liblapacke-dev
+            - libopenblas-base
+            - libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-4.0
@@ -130,7 +150,11 @@ matrix:
           packages:
             - clang-5.0
             - g++-5
-		    - libopenblas-dev
+            - libblas-dev
+            - liblapacke
+            - liblapacke-dev
+            - libopenblas-base
+            - libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
@@ -149,8 +173,12 @@ matrix:
       addons: &gcc5
         apt:
           packages: 
-		  - g++-5 
-		  - libopenblas-dev
+            - g++-5
+            - libblas-dev
+            - liblapacke
+            - liblapacke-dev
+            - libopenblas-base
+            - libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -162,8 +190,12 @@ matrix:
       addons: &gcc6
         apt:
           packages: 
-		  - g++-6 
-		  - libopenblas-dev
+            - g++-6
+            - libblas-dev
+            - liblapacke
+            - liblapacke-dev
+            - libopenblas-base
+            - libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -175,8 +207,12 @@ matrix:
       addons: &gcc7
         apt:
           packages: 
-		  - g++-7 
-		  - libopenblas-dev
+            - g++-7
+            - libblas-dev
+            - liblapacke
+            - liblapacke-dev
+            - libopenblas-base
+            - libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -247,4 +283,4 @@ before_script:
 script:
   # build and run tests
   - cmake --build . -- -j${JOBS}
-  - ctest -C $BUILD-TYPE --output-on-failure -j${JOBS} 
+  - ctest -C $BUILD_TYPE --output-on-failure -j${JOBS}
