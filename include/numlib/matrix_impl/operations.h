@@ -407,11 +407,11 @@ void mm_mul(const Matrix<double, 2>& a, const Matrix<double, 2>& b,
     const blasint n = static_cast<blasint>(b.cols());
     const blasint k = static_cast<blasint>(a.cols());
 
-    const blasint lda = m;
-    const blasint ldb = k;
-    const blasint ldc = m;
+    const blasint lda = k;
+    const blasint ldb = n;
+    const blasint ldc = n;
 
-    res.resize(ldc, n);
+    res.resize(ldc, m);
 
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, alpha,
                 a.data(), lda, b.data(), ldb, beta, res.data(), ldc);

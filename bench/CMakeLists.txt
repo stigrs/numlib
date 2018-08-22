@@ -5,6 +5,7 @@ include_directories(${numlib_SOURCE_DIR}/include)
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 include_directories(${BLAS_INCLUDE_DIR})
 include_directories(${LAPACKE_INCLUDE_DIR})
+link_directories($ENV{MKL_LIB_DIR})
 
 set(
     PROGRAMS 
