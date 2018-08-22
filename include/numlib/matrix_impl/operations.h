@@ -18,6 +18,21 @@ namespace num {
 //
 // The following operations are defined for all Matrix types:
 
+// Return matrix rank.
+template <typename M>
+inline Enable_if<Matrix_type<M>(), std::size_t> rank(const M& m)
+{
+    return m.rank();
+}
+
+// Return matrix size.
+template <typename M>
+inline Enable_if<Matrix_type<M>(), std::size_t> size(const M& m)
+{
+    return m.size();
+}
+
+// Return number of rows.
 template <typename M>
 inline Enable_if<Matrix_type<M>(), std::size_t> rows(const M& m)
 {
@@ -25,6 +40,7 @@ inline Enable_if<Matrix_type<M>(), std::size_t> rows(const M& m)
     return m.extent(0);
 }
 
+// Return number of columns.
 template <typename M>
 inline Enable_if<Matrix_type<M>(), std::size_t> cols(const M& m)
 {
@@ -32,6 +48,7 @@ inline Enable_if<Matrix_type<M>(), std::size_t> cols(const M& m)
     return m.extent(1);
 }
 
+// Create matrix of zeros.
 template <typename M, typename... Args>
 inline Enable_if<Matrix_type<M>(), M> zeros(Args... args)
 {
@@ -43,6 +60,7 @@ inline Enable_if<Matrix_type<M>(), M> zeros(Args... args)
     return res;
 }
 
+// Create matrix of ones.
 template <typename M, typename... Args>
 inline Enable_if<Matrix_type<M>(), M> ones(Args... args)
 {
@@ -54,6 +72,8 @@ inline Enable_if<Matrix_type<M>(), M> ones(Args... args)
     return res;
 }
 
+// Create a random matrix from a normal distribution with zero mean and unit
+// variance.
 template <typename M, typename... Args>
 inline Enable_if<Matrix_type<M>() && Real_type<typename M::value_type>(), M>
 randn(Args... args)
@@ -71,6 +91,8 @@ randn(Args... args)
     return res;
 }
 
+// Create a random matrix from a uniform real distribution on the
+// interval [0, 1).
 template <typename M, typename... Args>
 inline Enable_if<Matrix_type<M>() && Real_type<typename M::value_type>(), M>
 randu(Args... args)
@@ -88,6 +110,8 @@ randu(Args... args)
     return res;
 }
 
+// Create a random matrix from a uniform integer distribution on the
+// interval [0, 1].
 template <typename M, typename... Args>
 inline Enable_if<Matrix_type<M>() && Integer_type<typename M::value_type>(), M>
 randi(Args... args)
@@ -134,8 +158,10 @@ operator!=(const M1& a, const M2& b)
 // Matrix addition:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix<T, N>& b)
+Matrix<T, N> operator+(const Matrix_base<T, N>& a, const Matrix_base<T, N>& b)
 {
+    assert(same_extents(a, b));
+
     Matrix<T, N> res = a;
     res += b;
     return res;
@@ -146,6 +172,8 @@ Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix<T, N>& b)
 template <typename T, std::size_t N>
 Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix<T, N>& b)
 {
+    assert(same_extents(a, b));
+
     Matrix<T, N> res = a;
     res -= b;
     return res;
