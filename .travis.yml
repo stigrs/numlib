@@ -64,7 +64,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
-			- sourceline: "deb https://launchpad.net/ubuntu/+source/armadillo amd64"
+			- sourceline: "deb http://cz.archive.ubuntu.com/ubuntu trusty main universe"
 
     - env: COMPILER=clang++-3.6 BUILD_TYPE=Release
       addons: *clang36
@@ -85,7 +85,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.7
-			- sourceline: "deb https://launchpad.net/ubuntu/+source/armadillo amd64"
+			- sourceline: "deb http://cz.archive.ubuntu.com/ubuntu trusty main universe"
 
     - env: COMPILER=clang++-3.7 BUILD_TYPE=Release
       addons: *clang37
@@ -106,7 +106,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
-			- sourceline: "deb https://launchpad.net/ubuntu/+source/armadillo amd64"
+			- sourceline: "deb http://cz.archive.ubuntu.com/ubuntu trusty main universe"
 
     - env: COMPILER=clang++-3.8 BUILD_TYPE=Release
       addons: *clang38
@@ -127,7 +127,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.9
-			- sourceline: "deb https://launchpad.net/ubuntu/+source/armadillo amd64"
+			- sourceline: "deb http://cz.archive.ubuntu.com/ubuntu trusty main universe"
 
     - env: COMPILER=clang++-3.9 BUILD_TYPE=Release
       addons: *clang39
@@ -148,7 +148,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-4.0
-			- sourceline: "deb https://launchpad.net/ubuntu/+source/armadillo amd64"
+			- sourceline: "deb http://cz.archive.ubuntu.com/ubuntu trusty main universe"
 
     - env: COMPILER=clang++-4.0 BUILD_TYPE=Release
       addons: *clang40
@@ -169,7 +169,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
-			- sourceline: "deb https://launchpad.net/ubuntu/+source/armadillo amd64"
+			- sourceline: "deb http://cz.archive.ubuntu.com/ubuntu trusty main universe"
             - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-4.0 main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
 
@@ -194,7 +194,7 @@ matrix:
 			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
-			- sourceline: "deb https://launchpad.net/ubuntu/+source/armadillo amd64"
+			- sourceline: "deb http://cz.archive.ubuntu.com/ubuntu trusty main universe"
 
     - env: COMPILER=g++-5 BUILD_TYPE=Release
       addons: *gcc5
@@ -213,7 +213,7 @@ matrix:
 			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
-			- sourceline: "deb https://launchpad.net/ubuntu/+source/armadillo amd64"
+			- sourceline: "deb http://cz.archive.ubuntu.com/ubuntu trusty main universe"
 
     - env: COMPILER=g++-6 BUILD_TYPE=Release
       addons: *gcc6
@@ -232,7 +232,7 @@ matrix:
 			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
-			- sourceline: "deb https://launchpad.net/ubuntu/+source/armadillo amd64"
+			- sourceline: "deb http://cz.archive.ubuntu.com/ubuntu trusty main universe"
 
     - env: COMPILER=g++-7 BUILD_TYPE=Release
       addons: *gcc7
