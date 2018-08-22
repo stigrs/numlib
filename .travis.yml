@@ -243,7 +243,6 @@ install:
       export PATH=${DEPS_DIR}/cmake/bin:${PATH}
     else
       brew install cmake || brew upgrade cmake
-	  brew install armadillo
     fi
   - cmake --version
 
