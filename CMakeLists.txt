@@ -64,6 +64,9 @@ add_compile_options(
 
 # BLAS and LAPACK is required.
 set(BLA_VENDOR "OpenBLAS")
+if(APPLE)
+    set(BLA_VENDOR "Apple")
+endif()
 find_package(BLAS REQUIRED)
 if(BLAS_FOUND)
     find_path(BLAS_INCLUDE_DIR cblas.h HINTS $ENV{BLASROOT}/include /usr/include /usr/local/include)
