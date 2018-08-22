@@ -9,6 +9,7 @@ include_directories(${LAPACKE_INCLUDE_DIR})
 set(
     PROGRAMS 
     bench_axpy 
+	bench_mm_mul
 )
 
 foreach(program ${PROGRAMS})

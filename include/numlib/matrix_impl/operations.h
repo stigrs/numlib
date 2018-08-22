@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <random>
+#include <cblas.h>
 
 namespace num {
 
@@ -152,13 +153,43 @@ operator!=(const M1& a, const M2& b)
 }
 
 //------------------------------------------------------------------------------
-
+//
 // Binary arithmetic operations:
 
 // Matrix addition:
 
 template <typename T, std::size_t N>
 Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix<T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res += b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const Matrix_ref<T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res += b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res += b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -179,6 +210,88 @@ Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix<T, N>& b)
     return res;
 }
 
+template <typename T, std::size_t N>
+Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix_ref<T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res -= b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res -= b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res -= b;
+    return res;
+}
+
+// Scalar addition:
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator+(const Matrix<T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res += scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res += scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator+(const T& scalar, const Matrix<T, N>& a)
+{
+    Matrix<T, N> res = a;
+    res += scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator+(const T& scalar, const Matrix_ref<T, N>& a)
+{
+    Matrix<T, N> res = a;
+    res += scalar;
+    return res;
+}
+
+// Scalar subtraction:
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator-(const Matrix<T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res -= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res -= scalar;
+    return res;
+}
+
 // Scalar multiplication:
 
 template <typename T, std::size_t N>
@@ -190,10 +303,150 @@ Matrix<T, N> operator*(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
+Matrix<T, N> operator*(const Matrix_ref<T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res *= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
 Matrix<T, N> operator*(const T& scalar, const Matrix<T, N>& a)
 {
     Matrix<T, N> res = a;
     res *= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator*(const T& scalar, const Matrix_ref<T, N>& a)
+{
+    Matrix<T, N> res = a;
+    res *= scalar;
+    return res;
+}
+
+// Scalar division:
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator/(const Matrix<T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res /= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+Matrix<T, N> operator/(const Matrix_ref<T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res /= scalar;
+    return res;
+}
+
+// Scalar modulus:
+
+template <typename T, std::size_t N>
+Enable_if<Integer_type<T>(), Matrix<T, N>> operator%(const Matrix<T, N>& a,
+                                                     const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res %= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+Enable_if<Integer_type<T>(), Matrix<T, N>> operator%(const Matrix_ref<T, N>& a,
+                                                     const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res %= scalar;
+    return res;
+}
+
+//------------------------------------------------------------------------------
+//
+// Matrix-matrix multiplication:
+
+// Multiplication of N x M by M x P matrix.
+template <typename M1, typename M2, typename M3>
+Enable_if<Matrix_type<M1>() && Matrix_type<M2>() && Matrix_type<M3>(), void>
+mm_mul(const M1& a, const M2& b, M3& res)
+{
+    static_assert(M1::order == 2, "bad rank for matrix-matrix multiplication");
+    static_assert(M2::order == 2, "bad rank for matrix-matrix multiplication");
+    static_assert(M3::order == 2, "bad rank for matrix-matrix multiplication");
+
+    using value_type = typename M1::value_type;
+
+    const std::size_t n = a.extent(0);
+    const std::size_t m = a.extent(1);
+    const std::size_t p = b.extent(1);
+    assert(m == b.extent(0));
+
+    res.resize(n, p);
+
+    for (std::size_t i = 0; i != n; ++i) {
+        for (std::size_t j = 0; j != p; ++j) {
+            res(i, j) = value_type{0};
+            for (std::size_t k = 0; k != m; ++k) {
+                res(i, j) += a(i, k) * b(k, j);
+            }
+        }
+    }
+}
+
+// Use BLAS for double matrices.
+void mm_mul(const Matrix<double, 2>& a, const Matrix<double, 2>& b,
+            Matrix<double, 2>& res)
+{
+    constexpr double alpha = 1.0;
+    constexpr double beta = 0.0;
+
+    const blasint m = static_cast<blasint>(a.rows());
+    const blasint n = static_cast<blasint>(b.cols());
+    const blasint k = static_cast<blasint>(a.cols());
+
+    const blasint lda = m;
+    const blasint ldb = k;
+    const blasint ldc = m;
+
+    res.resize(ldc, n);
+
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, alpha,
+                a.data(), lda, b.data(), ldb, beta, res.data(), ldc);
+}
+
+template <typename T>
+inline Matrix<T, 2> operator*(const Matrix<T, 2>& a, const Matrix<T, 2>& b)
+{
+    Matrix<T, 2> res;
+    mm_mul(a, b, res);
+    return res;
+}
+
+template <typename T>
+inline Matrix<T, 2> operator*(const Matrix_ref<T, 2>& a,
+                              const Matrix_ref<T, 2>& b)
+{
+    Matrix<T, 2> res;
+    mm_mul(a, b, res);
+    return res;
+}
+
+template <typename T>
+inline Matrix<T, 2> operator*(const Matrix<T, 2>& a, const Matrix_ref<T, 2>& b)
+{
+    Matrix<T, 2> res;
+    mm_mul(a, b, res);
+    return res;
+}
+
+template <typename T>
+inline Matrix<T, 2> operator*(const Matrix_ref<T, 2>& a, const Matrix<T, 2>& b)
+{
+    Matrix<T, 2> res;
+    mm_mul(a, b, res);
     return res;
 }
 
