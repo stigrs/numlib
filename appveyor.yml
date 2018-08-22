@@ -27,8 +27,8 @@ install:
   - ps: |
       nuget install OpenBLAS -o "C:\local\OpenBLAS"
       $env:PATH="C:\local\OpenBLAS\bin;$env:PATH"
-      $env:BLAS_DIR="C:\local\OpenBLAS"
-      dir C:\local\OpenBLAS
+      $env:BLAS_DIR="C:\local\OpenBLAS\OpenBLAS.0.2.14.1"
+      dir C:\local\OpenBLAS\OpenBLAS.0.2.14.1
 
 before_build:
   - ps: |
