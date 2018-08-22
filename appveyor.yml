@@ -23,16 +23,14 @@ install:
         Start-FileDownload 'https://cmake.org/files/v3.8/cmake-3.8.0-win32-x86.zip'
         7z x -y cmake-3.8.0-win32-x86.zip -oC:\
       }
-      $env:PATH="C:\cmake-3.8.0-win32-x86\bin;$env:PATH"
-  - ps: |
       nuget install OpenBLAS -o "C:\local\"
       nuget install armadillo-code -o "C:\local\"
       $env:BLAS_DIR="C:\local\OpenBLAS.0.2.14.1\lib\native"
       $env:BLAS_BIN32="C:\local\OpenBLAS.0.2.14.1\lib\native\win32\bin"
       $env:BLAS_BIN64="C:\local\OpenBLAS.0.2.14.1\lib\native\x64\bin"
-      $env:PATH=$env:BLAS_BIN32;$env:PATH
-      $env:PATH=$env:BLAS_BIN64;$env:PATH
-
+      $env:PATH="$env:BLAS_BIN32;$env:PATH"
+      $env:PATH="$env:BLAS_BIN64;$env:PATH""
+      $env:PATH="C:\cmake-3.8.0-win32-x86\bin;$env:PATH"
 
 before_build:
   - ps: |
