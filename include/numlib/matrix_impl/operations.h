@@ -46,14 +46,16 @@ inline Enable_if<Matrix_type<M>(), M> zeros(Args... args)
 template <typename M, typename... Args>
 inline Enable_if<Matrix_type<M>(), M> ones(Args... args)
 {
+    using value_type = typename M::value_type;
+
     assert(M::order == sizeof...(args));
     M res(args...);
-    res = M::value_type{1};
+    res = value_type{1};
     return res;
 }
 
 template <typename M, typename... Args>
-inline Enable_if<Matrix_type<M>() && Real_type<M::value_type>(), M>
+inline Enable_if<Matrix_type<M>() && Real_type<typename M::value_type>(), M>
 randn(Args... args)
 {
     assert(M::order == sizeof...(args));
@@ -70,7 +72,7 @@ randn(Args... args)
 }
 
 template <typename M, typename... Args>
-inline Enable_if<Matrix_type<M>() && Real_type<M::value_type>(), M>
+inline Enable_if<Matrix_type<M>() && Real_type<typename M::value_type>(), M>
 randu(Args... args)
 {
     assert(M::order == sizeof...(args));
@@ -79,15 +81,15 @@ randu(Args... args)
     std::random_device rd{};
     std::mt19937_64 gen{rd()};
 
-    std::uniform_real_distribution<> rd{};
+    std::uniform_real_distribution<> ur{};
     for (auto& x : res) {
-        x = rd(gen);
+        x = ur(gen);
     }
     return res;
 }
 
 template <typename M, typename... Args>
-inline Enable_if<Matrix_type<M>() && Integer_type<M::value_type>(), M>
+inline Enable_if<Matrix_type<M>() && Integer_type<typename M::value_type>(), M>
 randi(Args... args)
 {
     assert(M::order == sizeof...(args));
@@ -96,9 +98,9 @@ randi(Args... args)
     std::random_device rd{};
     std::mt19937_64 gen{rd()};
 
-    std::uniform_int_distribution<> rd{};
+    std::uniform_int_distribution<> ui{};
     for (auto& x : res) {
-        x = rd(gen);
+        x = ui(gen);
     }
     return res;
 }

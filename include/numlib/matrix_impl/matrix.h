@@ -306,7 +306,7 @@ template <typename T, std::size_t N>
 template <typename... Exts>
 inline void Matrix<T, N>::resize(Exts... exts)
 {
-    assert(sizeof...(Exts) == rank());
+    assert(sizeof...(Exts) == this->rank());
     Matrix_slice<N> d{static_cast<std::size_t>(exts)...}; // avoid C2398 error
     this->desc = d;
     elems.resize(this->size());
