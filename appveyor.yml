@@ -25,12 +25,10 @@ install:
       }
       $env:PATH="C:\cmake-3.8.0-win32-x86\bin;$env:PATH"
   - ps: |
-      nuget install OpenBLAS -o "C:\local\"
+      nuget install OpenBLAS armadillo-code -o "C:\local\"
       $env:BLAS_DIR="C:\local\OpenBLAS.0.2.14.1\lib\native"
       $env:PATH="$env:BLAS_DIR\win32\bin";$env:PATH
       $env:PATH="$env:BLAS_DIR\x64\bin";$env:PATH
-  - ps: |
-	  nuget install armadillo-code -o "C:\local\"
 
 
 before_build:
