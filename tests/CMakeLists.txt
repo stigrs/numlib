@@ -47,4 +47,7 @@ set(PROGRAMS
 
 foreach(program ${PROGRAMS})
     add_numlib_test(${program})
+	if(WIN32)
+		set_tests_properties(${program} PROPERTIES ENVIRONMENT "PATH=${BLAS_BIN};$ENV{PATH}")
+	endif()
 endforeach()
