@@ -55,8 +55,6 @@ matrix:
           packages:
             - clang-3.6
             - g++-5
-			- libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
@@ -71,8 +69,6 @@ matrix:
           packages:
             - clang-3.7
             - g++-5
-			- libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.7
@@ -87,8 +83,6 @@ matrix:
           packages:
             - clang-3.8
             - g++-5
-			- libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
@@ -103,8 +97,6 @@ matrix:
           packages:
             - clang-3.9
             - g++-5
-			- libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.9
@@ -119,8 +111,6 @@ matrix:
           packages:
             - clang-4.0
             - g++-5
-			- libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-4.0
@@ -135,8 +125,6 @@ matrix:
           packages:
             - clang-5.0
             - g++-5
-			- libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
@@ -156,8 +144,6 @@ matrix:
         apt:
           packages: 
 		    - g++-5
-			- libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -170,8 +156,6 @@ matrix:
         apt:
           packages: 
 		    - g++-6
-			- libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -184,8 +168,6 @@ matrix:
         apt:
           packages: 
 		    - g++-7
-			- libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
 
