@@ -6,6 +6,7 @@
 
 #include <numlib/matrix.h>
 #include <catch/catch.hpp>
+#include <iostream>
 
 TEST_CASE("test_matrix1")
 {

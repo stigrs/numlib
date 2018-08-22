@@ -10,6 +10,7 @@
 #define NUMLIB_MATRIX_OPERATIONS_H
 
 #include <algorithm>
+#include <random>
 
 namespace num {
 
@@ -49,12 +50,63 @@ inline Enable_if<Matrix_type<M>(), M> ones(Args... args)
     return res;
 }
 
+template <typename M, typename... Args>
+inline Enable_if<Matrix_type<M>() && Real_type<M::value_type>(), M>
+randn(Args... args)
+{
+    assert(M::order == sizeof...(args));
+    M res(args...);
+
+    std::random_device rd{};
+    std::mt19937_64 gen{rd()};
+    std::normal_distribution<> nd{};
+
+    for (auto& x : res) {
+        x = nd(gen);
+    }
+    return res;
+}
+
+template <typename M, typename... Args>
+inline Enable_if<Matrix_type<M>() && Real_type<M::value_type>(), M>
+randu(Args... args)
+{
+    assert(M::order == sizeof...(args));
+    M res(args...);
+
+    std::random_device rd{};
+    std::mt19937_64 gen{rd()};
+
+    std::uniform_real_distribution<> rd{};
+    for (auto& x : res) {
+        x = rd(gen);
+    }
+    return res;
+}
+
+template <typename M, typename... Args>
+inline Enable_if<Matrix_type<M>() && Integer_type<M::value_type>(), M>
+randi(Args... args)
+{
+    assert(M::order == sizeof...(args));
+    M res(args...);
+
+    std::random_device rd{};
+    std::mt19937_64 gen{rd()};
+
+    std::uniform_int_distribution<> rd{};
+    for (auto& x : res) {
+        x = rd(gen);
+    }
+    return res;
+}
+
 //------------------------------------------------------------------------------
 //
 // Equality comparable:
 
-// Two matrices compare equal when they have the same elements. Comparison of
-// matrices decribed by different slices is undefined behavior.
+// Two matrices compare equal when they have the same elements. Comparison
+// of matrices decribed by different slices is undefined behavior.
 
 template <typename M1, typename M2>
 inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(), bool>

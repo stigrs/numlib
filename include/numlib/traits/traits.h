@@ -14,8 +14,22 @@
 
 //------------------------------------------------------------------------------
 
+// Type queries:
+
 template <typename U>
 using Value_type = typename U::value_type;
+
+template <typename T>
+constexpr bool Integer_type()
+{
+    return std::is_integral<T>::value;
+}
+
+template <typename T>
+constexpr bool Real_type()
+{
+    return std::is_floating_point<T>::value;
+}
 
 //------------------------------------------------------------------------------
 

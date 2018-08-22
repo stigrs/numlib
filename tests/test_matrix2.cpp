@@ -6,7 +6,6 @@
 
 #include <numlib/matrix.h>
 #include <catch/catch.hpp>
-#include <iostream>
 
 TEST_CASE("test_matrix2")
 {
@@ -150,13 +149,5 @@ TEST_CASE("test_matrix2")
         // clang-format on
 
         auto s7 = m7(slice{0, 2}, slice{0, 2});
-        for (auto x : s7) {
-            std::cout << x << std::endl;
-        }
-        auto d7 = s7.diag();
-
-        for (auto x : d7) {
-            std::cout << x << std::endl;
-        }
     }
 }
