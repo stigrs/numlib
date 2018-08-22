@@ -26,7 +26,6 @@ foreach(program ${PROGRAMS})
 		target_link_libraries (
 			${program} 
 			${BLAS_LIBRARIES}
-			${ARMADILLO_LIBRARIES} 
 		) 
 	endif()
 endforeach()
