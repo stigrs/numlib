@@ -28,8 +28,10 @@ install:
       nuget install OpenBLAS -o "C:\local\"
       nuget install armadillo-code -o "C:\local\"
       $env:BLAS_DIR="C:\local\OpenBLAS.0.2.14.1\lib\native"
-      $env:PATH=$env:BLAS_DIR\win32\bin;$env:PATH
-      $env:PATH=$env:BLAS_DIR\x64\bin;$env:PATH
+      $env:BLAS_BIN32="C:\local\OpenBLAS.0.2.14.1\lib\native\win32\bin"
+      $env:BLAS_BIN64="C:\local\OpenBLAS.0.2.14.1\lib\native\x64\bin"
+      $env:PATH=$env:BLAS_BIN32;$env:PATH
+      $env:PATH=$env:BLAS_BIN64;$env:PATH
 
 
 before_build:
