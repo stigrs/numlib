@@ -170,7 +170,7 @@ Matrix<T, N> operator+(const Matrix_base<T, N>& a, const Matrix_base<T, N>& b)
 // Matrix subtraction:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix<T, N>& b)
+Matrix<T, N> operator-(const Matrix_base<T, N>& a, const Matrix_base<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -182,7 +182,7 @@ Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix<T, N>& b)
 // Scalar multiplication:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator*(const Matrix<T, N>& a, const T& scalar)
+Matrix<T, N> operator*(const Matrix_base<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res *= scalar;
@@ -190,7 +190,7 @@ Matrix<T, N> operator*(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator*(const T& scalar, const Matrix<T, N>& a)
+Matrix<T, N> operator*(const T& scalar, const Matrix_base<T, N>& a)
 {
     Matrix<T, N> res = a;
     res *= scalar;
