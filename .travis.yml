@@ -55,6 +55,10 @@ matrix:
           packages:
             - clang-3.6
             - g++-5
+			- libopenblas-dev
+			- liblapacke
+			- liblapacke-dev
+			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
@@ -69,6 +73,10 @@ matrix:
           packages:
             - clang-3.7
             - g++-5
+			- libopenblas-dev
+			- liblapacke
+			- liblapacke-dev
+			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.7
@@ -83,6 +91,10 @@ matrix:
           packages:
             - clang-3.8
             - g++-5
+			- libopenblas-dev
+			- liblapacke
+			- liblapacke-dev
+			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
@@ -97,6 +109,10 @@ matrix:
           packages:
             - clang-3.9
             - g++-5
+			- libopenblas-dev
+			- liblapacke
+			- liblapacke-dev
+			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.9
@@ -111,6 +127,10 @@ matrix:
           packages:
             - clang-4.0
             - g++-5
+			- libopenblas-dev
+			- liblapacke
+			- liblapacke-dev
+			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-4.0
@@ -125,6 +145,10 @@ matrix:
           packages:
             - clang-5.0
             - g++-5
+			- libopenblas-dev
+			- liblapacke
+			- liblapacke-dev
+			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
@@ -142,7 +166,12 @@ matrix:
     - env: COMPILER=g++-5 BUILD_TYPE=Debug
       addons: &gcc5
         apt:
-          packages: g++-5
+          packages: 
+		    - g++-5
+			- libopenblas-dev
+			- liblapacke
+			- liblapacke-dev
+			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -153,7 +182,12 @@ matrix:
     - env: COMPILER=g++-6 BUILD_TYPE=Debug
       addons: &gcc6
         apt:
-          packages: g++-6
+          packages: 
+		    - g++-6
+			- libopenblas-dev
+			- liblapacke
+			- liblapacke-dev
+			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -164,7 +198,12 @@ matrix:
     - env: COMPILER=g++-7 BUILD_TYPE=Debug
       addons: &gcc7
         apt:
-          packages: g++-7
+          packages: 
+		    - g++-7
+			- libopenblas-dev
+			- liblapacke
+			- liblapacke-dev
+			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -196,6 +235,7 @@ install:
       export PATH=${DEPS_DIR}/cmake/bin:${PATH}
     else
       brew install cmake || brew upgrade cmake
+	  brew install armadillo
     fi
   - cmake --version
 
