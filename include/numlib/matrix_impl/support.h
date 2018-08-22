@@ -128,7 +128,7 @@ namespace matrix_impl {
     inline void compute_strides(Matrix_slice<N>& ms)
     {
         std::size_t st = 1; // last stride is 1
-        for (int i = N - 1; i >= 0; --i) {
+        for (long i = N - 1; i >= 0; --i) {
             ms.strides[i] = st;
             st *= ms.extents[i];
         }
@@ -139,7 +139,8 @@ namespace matrix_impl {
     template <std::size_t N>
     inline std::size_t compute_size(const std::array<std::size_t, N>& exts)
     {
-        return std::accumulate(exts.begin(), exts.end(), 1,
+        constexpr std::size_t one = 1;
+        return std::accumulate(exts.begin(), exts.end(), one,
                                std::multiplies<std::size_t>{});
     }
 
