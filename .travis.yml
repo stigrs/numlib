@@ -1,4 +1,4 @@
-# Based on https://github.com/Microsoft/GSL
+# Based on https://github.com/ldionne/hana/blob/master/.travis.yml
 
 language: cpp
 sudo: false
@@ -55,12 +55,6 @@ matrix:
           packages:
             - clang-3.6
             - g++-5
-            #- libblas-dev
-            #- liblapacke
-            #- liblapacke-dev
-            #- libopenblas-base
-            #- libopenblas-dev
-			#- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
@@ -75,12 +69,6 @@ matrix:
           packages:
             - clang-3.7
             - g++-5
-            #- libblas-dev
-            #- liblapacke
-            #- liblapacke-dev
-            #- libopenblas-base
-            #- libopenblas-dev
-			#- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.7
@@ -95,12 +83,6 @@ matrix:
           packages:
             - clang-3.8
             - g++-5
-            #- libblas-dev
-            #- liblapacke
-            #- liblapacke-dev
-            #- libopenblas-base
-            #- libopenblas-dev
-			#- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
@@ -115,12 +97,6 @@ matrix:
           packages:
             - clang-3.9
             - g++-5
-            #- libblas-dev
-            #- liblapacke
-            #- liblapacke-dev
-            #- libopenblas-base
-            #- libopenblas-dev
-			#- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.9
@@ -135,12 +111,6 @@ matrix:
           packages:
             - clang-4.0
             - g++-5
-            #- libblas-dev
-            #- liblapacke
-            #- liblapacke-dev
-            #- libopenblas-base
-            #- libopenblas-dev
-			#- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-4.0
@@ -155,12 +125,6 @@ matrix:
           packages:
             - clang-5.0
             - g++-5
-            #- libblas-dev
-            #- liblapacke
-            #- liblapacke-dev
-            #- libopenblas-base
-            #- libopenblas-dev
-			#- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
@@ -178,14 +142,7 @@ matrix:
     - env: COMPILER=g++-5 BUILD_TYPE=Debug
       addons: &gcc5
         apt:
-          packages: 
-            - g++-5
-            #- libblas-dev
-            #- liblapacke
-            #- liblapacke-dev
-            #- libopenblas-base
-            #- libopenblas-dev
-			#- libarmadillo-dev
+          packages: g++-5
           sources:
             - ubuntu-toolchain-r-test
 
@@ -196,14 +153,7 @@ matrix:
     - env: COMPILER=g++-6 BUILD_TYPE=Debug
       addons: &gcc6
         apt:
-          packages: 
-            - g++-6
-            #- libblas-dev
-            #- liblapacke
-            #- liblapacke-dev
-            #- libopenblas-base
-            #- libopenblas-dev
-			#- libarmadillo-dev
+          packages: g++-6
           sources:
             - ubuntu-toolchain-r-test
 
@@ -214,14 +164,7 @@ matrix:
     - env: COMPILER=g++-7 BUILD_TYPE=Debug
       addons: &gcc7
         apt:
-          packages: 
-            - g++-7
-            #- libblas-dev
-            #- liblapacke
-            #- liblapacke-dev
-            #- libopenblas-base
-            #- libopenblas-dev
-			#- libarmadillo-dev
+          packages: g++-7
           sources:
             - ubuntu-toolchain-r-test
 
