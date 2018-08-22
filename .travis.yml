@@ -60,7 +60,6 @@ matrix:
             - liblapacke-dev
             - libopenblas-base
             - libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
@@ -80,7 +79,6 @@ matrix:
             - liblapacke-dev
             - libopenblas-base
             - libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.7
@@ -100,7 +98,6 @@ matrix:
             - liblapacke-dev
             - libopenblas-base
             - libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
@@ -120,7 +117,6 @@ matrix:
             - liblapacke-dev
             - libopenblas-base
             - libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.9
@@ -140,7 +136,6 @@ matrix:
             - liblapacke-dev
             - libopenblas-base
             - libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-4.0
@@ -160,7 +155,6 @@ matrix:
             - liblapacke-dev
             - libopenblas-base
             - libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
@@ -185,7 +179,6 @@ matrix:
             - liblapacke-dev
             - libopenblas-base
             - libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -203,7 +196,6 @@ matrix:
             - liblapacke-dev
             - libopenblas-base
             - libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -221,15 +213,11 @@ matrix:
             - liblapacke-dev
             - libopenblas-base
             - libopenblas-dev
-			- libarmadillo-dev
           sources:
             - ubuntu-toolchain-r-test
 
     - env: COMPILER=g++-7 BUILD_TYPE=Release
       addons: *gcc7
-
-before_install:
-  add-apt-repository "deb http://cz.archive.ubuntu.com/ubuntu trusty main universe"
 
 install:
   # Set the ${CXX} variable properly
@@ -255,7 +243,6 @@ install:
       export PATH=${DEPS_DIR}/cmake/bin:${PATH}
     else
       brew install cmake || brew upgrade cmake
-	  brew install armadillo
     fi
   - cmake --version
 
