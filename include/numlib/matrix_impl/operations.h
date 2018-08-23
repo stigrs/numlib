@@ -403,13 +403,13 @@ void mm_mul(const Matrix<double, 2>& a, const Matrix<double, 2>& b,
     constexpr double alpha = 1.0;
     constexpr double beta = 0.0;
 
-    const blasint m = static_cast<blasint>(a.rows());
-    const blasint n = static_cast<blasint>(b.cols());
-    const blasint k = static_cast<blasint>(a.cols());
+    const int m = static_cast<int>(a.rows());
+    const int n = static_cast<int>(b.cols());
+    const int k = static_cast<int>(a.cols());
 
-    const blasint lda = k;
-    const blasint ldb = n;
-    const blasint ldc = n;
+    const int lda = k;
+    const int ldb = n;
+    const int ldc = n;
 
     res.resize(ldc, m);
 
