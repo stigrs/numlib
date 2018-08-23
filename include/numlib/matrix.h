@@ -10,7 +10,7 @@
 #define NUMLIB_MATRIX_H
 
 #include <cstddef>
-#include <numlib/traits/traits.h>
+#include <numlib/traits.h>
 #include <numlib/matrix_impl/traits.h>
 
 namespace num {

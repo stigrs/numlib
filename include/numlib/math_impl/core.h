@@ -7,7 +7,7 @@
 #ifndef NUMLIB_MATH_CORE_H
 #define NUMLIB_MATH_CORE_H
 
-#include <numlib/traits/traits.h>
+#include <numlib/traits.h>
 #include <cmath>
 
 namespace num {
