@@ -104,4 +104,15 @@ TEST_CASE("test_matrix1")
 
         CHECK((v1 + v2) == ans);
     }
+
+    SECTION("hadamard_product")
+    {
+        ivec a = {1, 2};
+        ivec b = {3, 4};
+        ivec c = {3, 8};
+
+        ivec res;
+        hadamard_product(a, b, res);
+        CHECK(res == c);
+    }
 }
