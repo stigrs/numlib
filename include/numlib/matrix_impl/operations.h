@@ -11,6 +11,8 @@
 
 #include <algorithm>
 #include <random>
+#include <iomanip>
+#include <iostream>
 
 #ifdef __APPLE__
 #include <Accelerate/Accelerate.h>
@@ -543,6 +545,129 @@ inline Matrix<T, 1> operator*(const Matrix_ref<T, 2>& a, const Matrix<T, 1>& x)
     Matrix<T, 1> res;
     mv_mul(a, x, res);
     return res;
+}
+
+//------------------------------------------------------------------------------
+//
+// Hadamard product:
+//
+// The hadamard product can easily be generalized to N-dimensional matrices
+// since the operation is performed element-wise. The operands only need
+// to be of the same shape.
+
+template <typename M1, typename M2, typename M3>
+Enable_if<Matrix_type<M1>() && Matrix_type<M2>() && Matrix_type<M3>(), void>
+hadamard_product(const M1& a, const M2& b, M3& res)
+{
+    static_assert(M1::order == M2::order == M3::order,
+                  "bad matrix order for hadamard product");
+    assert(a.shape() == b.shape());
+    res.resize(a.shape());
+
+    using Mul = std::multiplies<Value_type<M1>>;
+    std::transform(a.begin(), a.end(), b.begin(), res.begin(), Mul{});
+}
+
+//------------------------------------------------------------------------------
+//
+// I/O operators for 1D and 2D matrices:
+
+template <typename T>
+std::ostream& operator<<(std::ostream& to, const Matrix<T, 1>& a)
+{
+    to << a.size() << '\n' << "[ ";
+    for (std::size_t i = 0; i < a.size(); ++i) {
+        to << std::setw(9) << a(i) << " ";
+        if (!((i + 1) % 7) && (i != (a.size() - 1))) {
+            to << "\n  ";
+        }
+    }
+    to << ']';
+    return to;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& to, const Matrix_ref<T, 1>& a)
+{
+    to << a.size() << '\n' << "[ ";
+    for (std::size_t i = 0; i < a.size(); ++i) {
+        to << std::setw(9) << a(i) << " ";
+        if (!((i + 1) % 7) && (i != (a.size() - 1))) {
+            to << "\n  ";
+        }
+    }
+    to << ']';
+    return to;
+}
+
+// The vector must be entered as: n [...].
+template <typename T>
+std::istream& operator>>(std::istream& from, Matrix<T, 1>& a)
+{
+    std::size_t n;
+    from >> n;
+    a.resize(n);
+
+    char ch;
+    from >> ch; // [
+    for (std::size_t i = 0; i < n; ++i) {
+        from >> a(i);
+    }
+    from >> ch; // ]
+    return from;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& to, const Matrix<T, 2>& a)
+{
+    to << a.rows() << " x " << a.cols() << "\n[";
+    for (std::size_t i = 0; i < a.rows(); ++i) {
+        for (std::size_t j = 0; j < a.cols(); ++j) {
+            to << std::setw(9) << a(i, j) << " ";
+        }
+        if (i != (a.rows() - 1)) {
+            to << "\n ";
+        }
+    }
+    to << "]\n";
+    return to;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& to, const Matrix_ref<T, 2>& a)
+{
+    to << a.rows() << " x " << a.cols() << "\n[";
+    for (std::size_t i = 0; i < a.rows(); ++i) {
+        for (std::size_t j = 0; j < a.cols(); ++j) {
+            to << std::setw(9) << a(i, j) << " ";
+        }
+        if (i != (a.rows() - 1)) {
+            to << "\n ";
+        }
+    }
+    to << "]\n";
+    return to;
+}
+
+// The matrix must be entered as: m x n [...].
+template <typename T>
+std::istream& operator>>(std::istream& from, Matrix<T, 2>& a)
+{
+    std::size_t m;
+    std::size_t n;
+    char ch;
+
+    from >> m >> ch >> n; // m x n
+    a.resize(m, n);
+
+    from >> ch; // [
+    for (std::size_t i = 0; i < m; ++i) {
+        for (std::size_t j = 0; j < n; ++j) {
+            from >> a(i, j);
+        }
+    }
+    from >> ch; // ]
+    return from;
 }
 
 } // namespace num
