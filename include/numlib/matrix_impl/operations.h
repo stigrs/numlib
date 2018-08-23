@@ -507,8 +507,8 @@ void mv_mul(const Matrix<double, 2>& a, const Matrix<double, 1>& x,
     y.resize(m);
 
     const int lda = n;
-    const int incx = 1;
-    const int incy = 1;
+    const int incx = static_cast<int>(x.descriptor().strides[0]);
+    const int incy = static_cast<int>(y.descriptor().strides[0]);
 
     cblas_dgemv(CblasRowMajor, CblasNoTrans, m, n, alpha, a.data(), lda,
                 x.data(), incx, beta, y.data(), incy);
