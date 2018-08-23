@@ -31,9 +31,8 @@ void benchmark(int n, int m)
 
     num::mat b1 = num::ones<num::mat>(n, m);
     num::vec b2 = num::ones<num::vec>(m);
-    num::vec b3;
     t1 = std::chrono::high_resolution_clock::now();
-    // auto b3 = b1 * b2;
+    auto b3 = b1 * b2;
     num::mv_mul(b1, b2, b3);
     t2 = std::chrono::high_resolution_clock::now();
     Timer t_mv_mul = t2 - t1;
