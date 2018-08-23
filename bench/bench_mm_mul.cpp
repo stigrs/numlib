@@ -52,8 +52,4 @@ int main()
     n = 1000;
     m = 500;
     benchmark(n, m);
-
-    n = 10000;
-    m = 5000;
-    benchmark(n, m);
 }
