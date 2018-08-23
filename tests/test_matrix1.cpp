@@ -95,4 +95,13 @@ TEST_CASE("test_matrix1")
         CHECK(s(0) == 1);
         CHECK(s(1) == 3);
     }
+
+    SECTION("vector_addition")
+    {
+        ivec v1 = {2, 4, 5};
+        ivec v2 = {2, 4, 6};
+        ivec ans = {4, 8, 11};
+
+        CHECK((v1 + v2) == ans);
+    }
 }

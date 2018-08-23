@@ -380,11 +380,7 @@ inline Enable_if<Matrix_type<M>(), Matrix<T, N>&>
 Matrix<T, N>::operator+=(const M& m)
 // clang-format on
 {
-#ifdef __clang__ // ugly hack to work around bug in Clang on Mac OS X
-    assert(m.order == N);
-#else
-    static_assert(m.order == N, "+=: mismatched Matrix dimensions");
-#endif
+    static_assert(M::order == N, "+=: mismatched Matrix dimensions");
     assert(same_extents(this->desc, m.descriptor()));
 
     return apply(m, [](T& a, const Value_type<M>& b) { a += b; });
@@ -397,11 +393,7 @@ inline Enable_if<Matrix_type<M>(), Matrix<T, N>&>
 Matrix<T, N>::operator-=(const M& m)
 // clang-format on
 {
-#ifdef __clang__ // ugly hack to work around bug in Clang on Mac OS X
-    assert(m.order == N);
-#else
-    static_assert(m.order == N, "-=: mismatched Matrix dimensions");
-#endif
+    static_assert(M::order == N, "-=: mismatched Matrix dimensions");
     assert(same_extents(this->desc, m.descriptor()));
 
     return apply(m, [](T& a, const Value_type<M>& b) { a -= b; });

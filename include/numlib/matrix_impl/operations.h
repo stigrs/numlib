@@ -54,6 +54,15 @@ inline Enable_if<Matrix_type<M>(), std::size_t> cols(const M& m)
     return m.extent(1);
 }
 
+// Return extent.
+template <typename M>
+inline Enable_if<Matrix_type<M>(), std::size_t> extent(const M& m,
+                                                       std::size_t dim)
+{
+    assert(dim < m.rank());
+    return m.extent(dim);
+}
+
 // Create matrix of zeros.
 template <typename M, typename... Args>
 inline Enable_if<Matrix_type<M>(), M> zeros(Args... args)
@@ -452,6 +461,87 @@ inline Matrix<T, 2> operator*(const Matrix_ref<T, 2>& a, const Matrix<T, 2>& b)
 {
     Matrix<T, 2> res;
     mm_mul(a, b, res);
+    return res;
+}
+
+//------------------------------------------------------------------------------
+//
+// Matrix-vector multiplication:
+
+template <typename M1, typename M2, typename M3>
+Enable_if<Matrix_type<M1>() && Matrix_type<M2>() && Matrix_type<M3>(), void>
+mv_mul(const M1& a, const M2& x, M3& y)
+{
+    static_assert(M1::order == 2, "bad rank for matrix-vector multiplication");
+    static_assert(M2::order == 1, "bad rank for matrix-vector multiplication");
+    static_assert(M3::order == 1, "bad rank for matrix-vector multiplication");
+
+    assert(x.size() == a.cols());
+
+    using value_type = typename M1::value_type;
+
+    y.resize(a.rows());
+
+    for (std::size_t i = 0; i != a.rows(); ++i) {
+        y(i) = value_type{0};
+        for (std::size_t j = 0; j != a.cols(); ++j) {
+            y(i) += a(i, j) * x(j);
+        }
+    }
+}
+
+// Use BLAS for double matrices and vectors.
+void mv_mul(const Matrix<double, 2>& a, const Matrix<double, 1>& x,
+            Matrix<double, 1>& y)
+{
+    constexpr double alpha = 1.0;
+    constexpr double beta = 0.0;
+
+    assert(x.size() == a.cols());
+
+    const int m = static_cast<int>(a.rows());
+    const int n = static_cast<int>(a.cols());
+
+    y.resize(m);
+
+    const int lda = n;
+    const int incx = 1;
+    const int incy = 1;
+
+    cblas_dgemv(CblasRowMajor, CblasNoTrans, m, n, alpha, a.data(), lda,
+                x.data(), incx, beta, y.data(), incy);
+}
+
+template <typename T>
+inline Matrix<T, 1> operator*(const Matrix<T, 2>& a, const Matrix<T, 1>& x)
+{
+    Matrix<T, 1> res;
+    mv_mul(a, x, res);
+    return res;
+}
+
+template <typename T>
+inline Matrix<T, 1> operator*(const Matrix_ref<T, 2>& a,
+                              const Matrix_ref<T, 1>& x)
+{
+    Matrix<T, 1> res;
+    mv_mul(a, x, res);
+    return res;
+}
+
+template <typename T>
+inline Matrix<T, 1> operator*(const Matrix<T, 2>& a, const Matrix_ref<T, 1>& x)
+{
+    Matrix<T, 1> res;
+    mv_mul(a, x, res);
+    return res;
+}
+
+template <typename T>
+inline Matrix<T, 1> operator*(const Matrix_ref<T, 2>& a, const Matrix<T, 1>& x)
+{
+    Matrix<T, 1> res;
+    mv_mul(a, x, res);
     return res;
 }
 

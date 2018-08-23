@@ -23,6 +23,7 @@ TEST_CASE("test_matrix4")
         CHECK(m4.extent(1) == 3);
         CHECK(m4.extent(2) == 4);
         CHECK(m4.extent(3) == 5);
+        CHECK(extent(m4, 3) == 5);
     }
 
     SECTION("subscripting")

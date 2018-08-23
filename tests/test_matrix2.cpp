@@ -141,6 +141,8 @@ TEST_CASE("test_matrix2")
 
     SECTION("slice_diag")
     {
+        ivec s7_ans = {1, 6};
+
         // clang-format off
         imat m7 = {{ 1,  2,  3,  4},
                    { 5,  6,  7,  8},
@@ -149,5 +151,82 @@ TEST_CASE("test_matrix2")
         // clang-format on
 
         auto s7 = m7(slice{0, 2}, slice{0, 2});
+        CHECK(s7.diag() == s7_ans);
+    }
+
+    SECTION("a_plus_b")
+    {
+        imat a = {{1, 2}, {3, 4}};
+        imat b = {{10, 20}, {30, 40}};
+
+        auto c = a + b;
+
+        CHECK(c(0, 0) == 11);
+        CHECK(c(0, 1) == 22);
+        CHECK(c(1, 0) == 33);
+        CHECK(c(1, 1) == 44);
+    }
+
+    SECTION("a_minus_b")
+    {
+        imat a = {{10, 20}, {30, 40}};
+        imat b = {{1, 2}, {3, 4}};
+
+        auto c = a - b;
+
+        CHECK(c(0, 0) == 9);
+        CHECK(c(0, 1) == 18);
+        CHECK(c(1, 0) == 27);
+        CHECK(c(1, 1) == 36);
+    }
+
+    SECTION("copy_ctor")
+    {
+        mat a = {{1.0, 2.0}, {3.0, 4.0}};
+        auto b(a);
+        CHECK(a == b);
+        CHECK(a.size() == b.size());
+        CHECK(a.rows() == b.rows());
+        CHECK(a.cols() == b.cols());
+    }
+
+    SECTION("assignment")
+    {
+        mat a = {{1.0, 2.0}, {3.0, 4.0}};
+        auto b = a;
+        CHECK(a == b);
+        CHECK(a.size() == b.size());
+        CHECK(a.rows() == b.rows());
+        CHECK(a.cols() == b.cols());
+    }
+
+    SECTION("swap")
+    {
+        std::swap(m2, m2);
+        CHECK(m2 == m2);
+
+        imat a1 = {{-1, 0, -6}, {6, 5, 2}, {11, 12, 3}};
+        imat a2 = {{-1, 0, -6}, {6, 5, 2}, {11, 12, 3}};
+        imat a3 = {{11, 12, 3}, {6, 5, 2}, {-1, 0, -6}};
+        std::swap(a2, a3);
+        CHECK(a3 == a1);
+    }
+
+    SECTION("mm_mul")
+    {
+        imat a = {{1, 2, 3}, {4, 5, 6}};
+        imat b = {{7, 8}, {9, 10}, {11, 12}};
+        imat ans = {{58, 64}, {139, 154}};
+
+        CHECK((a * b) == ans);
+    }
+
+    SECTION("mv_mul")
+    {
+        imat a = {{1, -1, 2}, {0, -3, 1}};
+        ivec x = {2, 1, 0};
+        ivec y = {1, -3};
+
+        CHECK((a * x) == y);
     }
 }
