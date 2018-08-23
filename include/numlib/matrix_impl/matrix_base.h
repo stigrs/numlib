@@ -70,7 +70,8 @@ public:
         return desc.extents[1];
     }
 
-    // The slice defining subscripting:
+    // The slice defining the shape of the matrix:
+    const Matrix_slice<N>& shape() const { return desc; }
     const Matrix_slice<N>& descriptor() const { return desc; }
 
 protected:
