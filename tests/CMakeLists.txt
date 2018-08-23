@@ -38,6 +38,8 @@ function(add_numlib_test name)
 endfunction()
 
 set(PROGRAMS 
+	test_constants
+	test_math_core
     test_matrix0
     test_matrix1
     test_matrix2
