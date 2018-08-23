@@ -146,6 +146,8 @@ public:
     void swap_rows(std::size_t m, std::size_t n);
 
     // Resize matrix (elements not preserved).
+    void resize(const Matrix_slice<N>& ms);
+
     template <typename... Exts>
     void resize(Exts... exts);
 
@@ -300,6 +302,13 @@ inline void Matrix<T, N>::swap_rows(std::size_t m, std::size_t n)
     auto a = (*this)[m];
     auto b = (*this)[n];
     std::swap_ranges(a.begin(), a.end(), b.begin());
+}
+
+template <typename T, std::size_t N>
+inline void Matrix<T, N>::resize(const Matrix_slice<N>& ms)
+{
+    this->desc = ms;
+    elems.resize(ms.size);
 }
 
 template <typename T, std::size_t N>
