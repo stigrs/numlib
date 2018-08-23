@@ -13,7 +13,7 @@
 #include <random>
 
 #ifdef __APPLE__
-#include <AccelerateAccelerate.h>
+#include <Accelerate/Accelerate.h>
 #else
 #include <cblas.h>
 #endif
