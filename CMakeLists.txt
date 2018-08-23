@@ -11,7 +11,7 @@ endif()
 # Export compile commands.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Enforce C++14 standard (needed for GSL).
+# Enforce C++14 standard.
 set(CMAKE_CXX_STANDARD 14)
 
 if(WIN32)
@@ -21,6 +21,10 @@ else()
 endif()
 
 option(BUILD_TESTS "Build tests." ON)
+option(BUILD_BENCH "Build benchmarks." OFF)
+if(WIN32)
+	set(BUILD_BENCH "Build benchmarks." ON)
+endif()
 
 # Set default MSVC compiler options to avoid D9025 error.
 if(MSVC)
@@ -78,6 +82,10 @@ if(WIN32)
 	endif()
     find_path(BLAS_INCLUDE_DIR cblas.h HINTS ${BLAS_DIR}/include)
     find_path(LAPACKE_INCLUDE_DIR lapacke.h HINTS ${BLAS_DIR}/include)
+elseif(APPLE)
+	find_package(BLAS REQUIRED HINTS})
+	set(BLAS_INCLUDE_DIR "/usr/include")
+    find_path(LAPACKE_INCLUDE_DIR lapacke.h HINTS ${BLAS_DIR}/include /usr/include /usr/local/include)
 else()
 	find_package(BLAS REQUIRED HINTS})
     find_path(BLAS_INCLUDE_DIR cblas.h HINTS ${BLAS_DIR}/include /usr/include /usr/local/include)
@@ -99,19 +107,21 @@ install(
     FILES_MATCHING PATTERN "*.h"
 )
 
-#add_subdirectory(lib)
-
 if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
+if(BUILD_BENCH)
     # Armadillo library is required.
     if(WIN32)
 		set(ARMA_DIR C:/local/armadillo-code.7.900.1/build/native)
         find_file(ARMADILLO_LIBRARIES armadillo.lib HINTS ${ARMA_DIR}/lib)
         find_path(ARMADILLO_INCLUDE_DIRS armadillo HINTS ${ARMA_DIR}/include)
         add_definitions(-DARMA_NO_DEBUG)
+    else()
+        find_package(Armadillo 7.900.1 REQUIRED)
+        add_definitions(-DARMA_NO_DEBUG)
     endif()
-    enable_testing()
-    add_subdirectory(tests)
-	if(WIN32)
-		add_subdirectory(bench)
-	endif()
+	add_subdirectory(bench)
 endif()

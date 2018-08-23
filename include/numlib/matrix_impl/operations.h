@@ -11,7 +11,12 @@
 
 #include <algorithm>
 #include <random>
+
+#ifdef __APPLE__
+#include <AccelerateAccelerate.h>
+#else
 #include <cblas.h>
+#endif
 
 namespace num {
 

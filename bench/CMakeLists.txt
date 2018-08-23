@@ -4,9 +4,7 @@ project(numlib_bench CXX)
 include_directories(${numlib_SOURCE_DIR}/include)
 include_directories(${BLAS_INCLUDE_DIR})
 include_directories(${LAPACKE_INCLUDE_DIR})
-if(WIN32)
-	include_directories(${ARMADILLO_INCLUDE_DIRS})
-endif()
+include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 set(
     PROGRAMS 
