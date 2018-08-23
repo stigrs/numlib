@@ -559,7 +559,7 @@ template <typename M1, typename M2, typename M3>
 Enable_if<Matrix_type<M1>() && Matrix_type<M2>() && Matrix_type<M3>(), void>
 hadamard_product(const M1& a, const M2& b, M3& res)
 {
-    static_assert(M1::order == M2::order == M3::order,
+    static_assert((M1::order == M2::order) && (M2::order == M3::order),
                   "bad matrix order for hadamard product");
     assert(a.shape() == b.shape());
     res.resize(a.shape());
