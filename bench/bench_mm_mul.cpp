@@ -22,6 +22,8 @@ void print(int n, int m, const Timer& t_arma, const Timer& t_mm_mul)
 
 void benchmark(int n, int m)
 {
+    using namespace Numlib;
+
     arma::mat a1 = arma::ones<arma::mat>(n, m);
     arma::mat a2 = arma::ones<arma::mat>(m, n);
     auto t1 = std::chrono::high_resolution_clock::now();
@@ -29,8 +31,8 @@ void benchmark(int n, int m)
     auto t2 = std::chrono::high_resolution_clock::now();
     Timer t_arma = t2 - t1;
 
-    num::mat b1 = num::ones<num::mat>(n, m);
-    num::mat b2 = num::ones<num::mat>(m, n);
+    Mat<double> b1 = ones<Mat<double>>(n, m);
+    Mat<double> b2 = ones<Mat<double>>(m, n);
     t1 = std::chrono::high_resolution_clock::now();
     auto b3 = b1 * b2;
     t2 = std::chrono::high_resolution_clock::now();

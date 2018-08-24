@@ -9,9 +9,9 @@
 
 TEST_CASE("test_matrix2")
 {
-    using namespace num;
+    using namespace Numlib;
 
-    imat m2 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
+    Matrix<int, 2> m2 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
 
     SECTION("rank") { CHECK(m2.rank() == 2); }
     SECTION("size") { CHECK(m2.size() == 12); }
@@ -129,9 +129,9 @@ TEST_CASE("test_matrix2")
 
     SECTION("diag")
     {
-        ivec m6_ans = {1, 1, 1};
+        Matrix<int, 1> m6_ans = {1, 1, 1};
 
-        auto m6 = zeros<imat>(3, 3);
+        auto m6 = zeros<Matrix<int, 2>>(3, 3);
         auto d = m6.diag();
 
         d = 1;
@@ -141,13 +141,13 @@ TEST_CASE("test_matrix2")
 
     SECTION("slice_diag")
     {
-        ivec s7_ans = {1, 6};
+        Matrix<int, 1> s7_ans = {1, 6};
 
         // clang-format off
-        imat m7 = {{ 1,  2,  3,  4},
-                   { 5,  6,  7,  8},
-                   { 9, 10, 11, 12},
-                   {13, 14, 15, 16}};
+        Matrix<int, 2> m7 = {{ 1,  2,  3,  4},
+                             { 5,  6,  7,  8},
+                             { 9, 10, 11, 12},
+                             {13, 14, 15, 16}};
         // clang-format on
 
         auto s7 = m7(slice{0, 2}, slice{0, 2});
@@ -156,8 +156,8 @@ TEST_CASE("test_matrix2")
 
     SECTION("a_plus_b")
     {
-        imat a = {{1, 2}, {3, 4}};
-        imat b = {{10, 20}, {30, 40}};
+        Matrix<int, 2> a = {{1, 2}, {3, 4}};
+        Matrix<int, 2> b = {{10, 20}, {30, 40}};
 
         auto c = a + b;
 
@@ -169,8 +169,8 @@ TEST_CASE("test_matrix2")
 
     SECTION("a_minus_b")
     {
-        imat a = {{10, 20}, {30, 40}};
-        imat b = {{1, 2}, {3, 4}};
+        Matrix<int, 2> a = {{10, 20}, {30, 40}};
+        Matrix<int, 2> b = {{1, 2}, {3, 4}};
 
         auto c = a - b;
 
@@ -182,7 +182,7 @@ TEST_CASE("test_matrix2")
 
     SECTION("copy_ctor")
     {
-        mat a = {{1.0, 2.0}, {3.0, 4.0}};
+        Matrix<double, 2> a = {{1.0, 2.0}, {3.0, 4.0}};
         auto b(a);
         CHECK(a == b);
         CHECK(a.size() == b.size());
@@ -192,7 +192,7 @@ TEST_CASE("test_matrix2")
 
     SECTION("assignment")
     {
-        mat a = {{1.0, 2.0}, {3.0, 4.0}};
+        Matrix<double, 2> a = {{1.0, 2.0}, {3.0, 4.0}};
         auto b = a;
         CHECK(a == b);
         CHECK(a.size() == b.size());
@@ -205,27 +205,27 @@ TEST_CASE("test_matrix2")
         std::swap(m2, m2);
         CHECK(m2 == m2);
 
-        imat a1 = {{-1, 0, -6}, {6, 5, 2}, {11, 12, 3}};
-        imat a2 = {{-1, 0, -6}, {6, 5, 2}, {11, 12, 3}};
-        imat a3 = {{11, 12, 3}, {6, 5, 2}, {-1, 0, -6}};
+        Matrix<int, 2> a1 = {{-1, 0, -6}, {6, 5, 2}, {11, 12, 3}};
+        Matrix<int, 2> a2 = {{-1, 0, -6}, {6, 5, 2}, {11, 12, 3}};
+        Matrix<int, 2> a3 = {{11, 12, 3}, {6, 5, 2}, {-1, 0, -6}};
         std::swap(a2, a3);
         CHECK(a3 == a1);
     }
 
     SECTION("mm_mul")
     {
-        imat a = {{1, 2, 3}, {4, 5, 6}};
-        imat b = {{7, 8}, {9, 10}, {11, 12}};
-        imat ans = {{58, 64}, {139, 154}};
+        Matrix<int, 2> a = {{1, 2, 3}, {4, 5, 6}};
+        Matrix<int, 2> b = {{7, 8}, {9, 10}, {11, 12}};
+        Matrix<int, 2> ans = {{58, 64}, {139, 154}};
 
         CHECK((a * b) == ans);
     }
 
     SECTION("mv_mul")
     {
-        imat a = {{1, -1, 2}, {0, -3, 1}};
-        ivec x = {2, 1, 0};
-        ivec y = {1, -3};
+        Matrix<int, 2> a = {{1, -1, 2}, {0, -3, 1}};
+        Matrix<int, 1> x = {2, 1, 0};
+        Matrix<int, 1> y = {1, -3};
 
         CHECK((a * x) == y);
     }

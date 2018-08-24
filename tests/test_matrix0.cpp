@@ -9,7 +9,7 @@
 
 TEST_CASE("test_matrix0")
 {
-    using namespace num;
+    using namespace Numlib;
 
     Matrix<int, 0> m0 = {1};
 

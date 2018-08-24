@@ -33,8 +33,8 @@ void benchmark(int n)
     auto t2 = std::chrono::high_resolution_clock::now();
     Timer t_arma = t2 - t1;
 
-    num::Matrix<double, 1> va(n);
-    num::Matrix<double, 1> vb(n);
+    Numlib::Vec<double> va(n);
+    Numlib::Vec<double> vb(n);
 
     va = 1.0;
     vb = 1.0;

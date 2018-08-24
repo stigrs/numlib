@@ -7,7 +7,7 @@
 #ifndef NUMLIB_CONSTANTS_H
 #define NUMLIB_CONSTANTS_H
 
-namespace num {
+namespace Numlib {
 
 //------------------------------------------------------------------------------
 //
@@ -85,6 +85,6 @@ constexpr double au_to_kg = m_e;                         // au to kg
 constexpr double au_to_kgm2 = m_u * a_0 * a_0 * 1.0e-20; // amu bohr^2 to kg m^2
 constexpr double GHz_to_K = giga * 4.79924470000e-11;    // GHz to K
 
-} // namespace num
+} // namespace Numlib
 
 #endif // NUMLIB_CONSTANTS_H

@@ -73,9 +73,9 @@ if(WIN32)
     find_path(BLAS_INCLUDE_DIR cblas.h HINTS ${BLAS_DIR}/include)
     find_path(LAPACKE_INCLUDE_DIR lapacke.h HINTS ${BLAS_DIR}/include)
 elseif(APPLE)
-	find_package(BLAS REQUIRED HINTS})
+	find_package(BLAS REQUIRED})
 else()
-	find_package(BLAS REQUIRED HINTS})
+	find_package(BLAS REQUIRED})
     find_path(BLAS_INCLUDE_DIR cblas.h HINTS ${BLAS_DIR}/include /usr/include /usr/local/include)
     find_path(LAPACKE_INCLUDE_DIR lapacke.h HINTS ${BLAS_DIR}/include /usr/include /usr/local/include)
 endif()
@@ -85,7 +85,6 @@ add_library(numlib_h INTERFACE)
 target_include_directories(numlib_h INTERFACE
     $<BUILD_INTERFACE:
         ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${GSL_INCLUDE_DIR}
     >
 )
 

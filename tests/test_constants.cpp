@@ -9,7 +9,7 @@
 
 TEST_CASE("test_constants")
 {
-    using namespace num;
+    using namespace Numlib;
 
     SECTION("constants")
     {

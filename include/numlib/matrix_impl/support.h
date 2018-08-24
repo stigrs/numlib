@@ -15,7 +15,7 @@
 #include <functional>
 #include <numeric>
 
-namespace num {
+namespace Numlib {
 
 // Forward declarations:
 
@@ -24,7 +24,7 @@ struct Matrix_slice;
 
 //------------------------------------------------------------------------------
 
-namespace matrix_impl {
+namespace Matrix_impl {
 
     template <typename... Args>
     constexpr bool Requesting_element()
@@ -214,8 +214,8 @@ namespace matrix_impl {
         return m + n;
     }
 
-} // namespace matrix_impl
+} // namespace Matrix_impl
 
-} // namespace num
+} // namespace Numlib
 
 #endif // NUMLIB_MATRIX_SUPPORT_H

@@ -10,9 +10,9 @@
 
 TEST_CASE("test_matrix1")
 {
-    using namespace num;
+    using namespace Numlib;
 
-    ivec m1 = {1, 2, 3, 4};
+    Matrix<int, 1> m1 = {1, 2, 3, 4};
 
     SECTION("rank") { CHECK(m1.rank() == 1); }
     SECTION("size") { CHECK(m1.size() == 4); }
@@ -98,20 +98,20 @@ TEST_CASE("test_matrix1")
 
     SECTION("vector_addition")
     {
-        ivec v1 = {2, 4, 5};
-        ivec v2 = {2, 4, 6};
-        ivec ans = {4, 8, 11};
+        Matrix<int, 1> v1 = {2, 4, 5};
+        Matrix<int, 1> v2 = {2, 4, 6};
+        Matrix<int, 1> ans = {4, 8, 11};
 
         CHECK((v1 + v2) == ans);
     }
 
     SECTION("hadamard_product")
     {
-        ivec a = {1, 2};
-        ivec b = {3, 4};
-        ivec c = {3, 8};
+        Matrix<int, 1> a = {1, 2};
+        Matrix<int, 1> b = {3, 4};
+        Matrix<int, 1> c = {3, 8};
 
-        ivec res;
+        Matrix<int, 1> res;
         hadamard_product(a, b, res);
         CHECK(res == c);
     }

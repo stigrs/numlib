@@ -20,7 +20,7 @@
 #include <cblas.h>
 #endif
 
-namespace num {
+namespace Numlib {
 
 //------------------------------------------------------------------------------
 //
@@ -670,6 +670,6 @@ std::istream& operator>>(std::istream& from, Matrix<T, 2>& a)
     return from;
 }
 
-} // namespace num
+} // namespace Numlib
 
 #endif // NUMLIB_MATRIX_OPERATIONS_H

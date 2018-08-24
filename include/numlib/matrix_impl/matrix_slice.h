@@ -15,7 +15,7 @@
 #include <initializer_list>
 #include <iterator>
 
-namespace num {
+namespace Numlib {
 
 // Matrix slice.
 //
@@ -72,7 +72,7 @@ Matrix_slice<N>::Matrix_slice(std::size_t s,
 {
     assert(exts.size() == N);
     std::copy(exts.begin(), exts.end(), extents.begin());
-    matrix_impl::compute_strides(*this);
+    Matrix_impl::compute_strides(*this);
 }
 
 template <std::size_t N>
@@ -84,7 +84,7 @@ Matrix_slice<N>::Matrix_slice(std::size_t s,
     assert(exts.size() == N);
     std::copy(exts.begin(), exts.end(), extents.begin());
     std::copy(strs.begin(), strs.end(), strides.begin());
-    size = matrix_impl::compute_size(extents);
+    size = Matrix_impl::compute_size(extents);
 }
 
 template <std::size_t N>
@@ -95,7 +95,7 @@ Matrix_slice<N>::Matrix_slice(Dims... dims) : start{0}
                   "Matrix_slice<N>::Matrix_slice(Dims...): dimension mismatch");
     std::size_t args[N]{std::size_t(dims)...};
     std::copy(std::begin(args), std::end(args), extents.begin());
-    matrix_impl::compute_strides(*this);
+    Matrix_impl::compute_strides(*this);
 }
 
 template <std::size_t N>
@@ -201,7 +201,7 @@ struct Matrix_slice<2> {
     {
         assert(exts.size() == 2);
         std::copy(exts.begin(), exts.end(), extents.begin());
-        matrix_impl::compute_strides(*this);
+        Matrix_impl::compute_strides(*this);
     }
 
     // Starting offset, extents, and strides:
@@ -212,7 +212,7 @@ struct Matrix_slice<2> {
         assert(exts.size() == 2);
         std::copy(exts.begin(), exts.end(), extents.begin());
         std::copy(strs.begin(), strs.end(), strides.begin());
-        size = matrix_impl::compute_size(extents);
+        size = Matrix_impl::compute_size(extents);
     }
 
     // N extents:
@@ -220,7 +220,7 @@ struct Matrix_slice<2> {
     {
         extents[0] = nr;
         extents[1] = nc;
-        matrix_impl::compute_strides(*this);
+        Matrix_impl::compute_strides(*this);
     }
 
     // Calculate index from a set of subscripts:
@@ -260,7 +260,7 @@ struct Matrix_slice<3> {
     {
         assert(exts.size() == 3);
         std::copy(exts.begin(), exts.end(), extents.begin());
-        matrix_impl::compute_strides(*this);
+        Matrix_impl::compute_strides(*this);
     }
 
     // Starting offset, extents, and strides:
@@ -271,7 +271,7 @@ struct Matrix_slice<3> {
         assert(exts.size() == 3);
         std::copy(exts.begin(), exts.end(), extents.begin());
         std::copy(strs.begin(), strs.end(), strides.begin());
-        size = matrix_impl::compute_size(extents);
+        size = Matrix_impl::compute_size(extents);
     }
 
     // N extents:
@@ -280,7 +280,7 @@ struct Matrix_slice<3> {
         extents[0] = n1;
         extents[1] = n2;
         extents[2] = n3;
-        matrix_impl::compute_strides(*this);
+        Matrix_impl::compute_strides(*this);
     }
 
     // Calculate index from a set of subscripts:
@@ -347,6 +347,6 @@ same_extents(const M1& a, const M2& b)
     return same_extents(a.descriptor(), b.descriptor());
 }
 
-} // namespace num
+} // namespace Numlib
 
 #endif // NUMLIB_MATRIX_MATRIX_SLICE_H
