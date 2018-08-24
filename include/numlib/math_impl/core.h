@@ -8,7 +8,7 @@
 #define NUMLIB_MATH_CORE_H
 
 #include <numlib/traits.h>
-#include <cmath>
+#include <cstdlib>
 
 namespace Numlib {
 
