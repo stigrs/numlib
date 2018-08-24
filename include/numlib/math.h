@@ -8,5 +8,6 @@
 #define NUMLIB_MATH_H
 
 #include <numlib/math_impl/core.h>
+#include <numlib/math_impl/calculus.h>
 
 #endif // NUMLIB_MATH_H

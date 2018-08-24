@@ -4,16 +4,17 @@
 // LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
 // and conditions.
 
-#include <numlib/constants.h>
+#include <numlib/math.h>
 #include <catch/catch.hpp>
+#include <functional>
 
-TEST_CASE("test_constants")
+double f(double x) { return x * x; }
+
+TEST_CASE("test_math_calculus")
 {
-    using namespace Numlib::Constants;
-
-    SECTION("constants")
+    SECTION("derivation")
     {
-        CHECK(pi == 3.14159265358979323846);
-        CHECK(h_bar == 1.05457180000e-34);
+        auto dx = Numlib::Math::dfdx(f, 2.0);
+        CHECK(std::abs(dx - 4.0) < 1.0e-8);
     }
 }

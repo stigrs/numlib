@@ -40,6 +40,7 @@ endfunction()
 set(PROGRAMS 
 	test_constants
 	test_math_core
+	test_math_calculus
     test_matrix0
     test_matrix1
     test_matrix2
