@@ -94,6 +94,8 @@ install(
     FILES_MATCHING PATTERN "*.h"
 )
 
+add_subdirectory(lib)
+
 if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)

@@ -30,6 +30,7 @@ function(add_numlib_test name)
     add_executable(${name} ${name}.cpp)
     target_link_libraries (
         ${program} 
+		numlib
 		${BLAS_LIBRARIES}
 		test_catch
     ) 

@@ -175,7 +175,7 @@ operator!=(const M1& a, const M2& b)
 // Matrix addition:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix<T, N>& b)
+inline Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -185,7 +185,8 @@ Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix<T, N>& b)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const Matrix_ref<T, N>& b)
+inline Matrix<T, N> operator+(const Matrix_ref<T, N>& a,
+                              const Matrix_ref<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -195,7 +196,7 @@ Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const Matrix_ref<T, N>& b)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
+inline Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -205,7 +206,7 @@ Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
+inline Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -217,7 +218,7 @@ Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
 // Matrix subtraction:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix<T, N>& b)
+inline Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -227,7 +228,8 @@ Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix<T, N>& b)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix_ref<T, N>& b)
+inline Matrix<T, N> operator-(const Matrix_ref<T, N>& a,
+                              const Matrix_ref<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -237,7 +239,7 @@ Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix_ref<T, N>& b)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
+inline Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -247,7 +249,7 @@ Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
+inline Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -259,7 +261,7 @@ Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
 // Scalar addition:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const Matrix<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator+(const Matrix<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res += scalar;
@@ -267,7 +269,7 @@ Matrix<T, N> operator+(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res += scalar;
@@ -275,7 +277,7 @@ Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const T& scalar, const Matrix<T, N>& a)
+inline Matrix<T, N> operator+(const T& scalar, const Matrix<T, N>& a)
 {
     Matrix<T, N> res = a;
     res += scalar;
@@ -283,7 +285,7 @@ Matrix<T, N> operator+(const T& scalar, const Matrix<T, N>& a)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const T& scalar, const Matrix_ref<T, N>& a)
+inline Matrix<T, N> operator+(const T& scalar, const Matrix_ref<T, N>& a)
 {
     Matrix<T, N> res = a;
     res += scalar;
@@ -293,7 +295,7 @@ Matrix<T, N> operator+(const T& scalar, const Matrix_ref<T, N>& a)
 // Scalar subtraction:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator-(const Matrix<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator-(const Matrix<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res -= scalar;
@@ -301,7 +303,7 @@ Matrix<T, N> operator-(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res -= scalar;
@@ -311,7 +313,7 @@ Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const T& scalar)
 // Scalar multiplication:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator*(const Matrix<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator*(const Matrix<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res *= scalar;
@@ -319,7 +321,7 @@ Matrix<T, N> operator*(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator*(const Matrix_ref<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator*(const Matrix_ref<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res *= scalar;
@@ -327,7 +329,7 @@ Matrix<T, N> operator*(const Matrix_ref<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator*(const T& scalar, const Matrix<T, N>& a)
+inline Matrix<T, N> operator*(const T& scalar, const Matrix<T, N>& a)
 {
     Matrix<T, N> res = a;
     res *= scalar;
@@ -335,7 +337,7 @@ Matrix<T, N> operator*(const T& scalar, const Matrix<T, N>& a)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator*(const T& scalar, const Matrix_ref<T, N>& a)
+inline Matrix<T, N> operator*(const T& scalar, const Matrix_ref<T, N>& a)
 {
     Matrix<T, N> res = a;
     res *= scalar;
@@ -345,7 +347,7 @@ Matrix<T, N> operator*(const T& scalar, const Matrix_ref<T, N>& a)
 // Scalar division:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator/(const Matrix<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator/(const Matrix<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res /= scalar;
@@ -353,7 +355,7 @@ Matrix<T, N> operator/(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator/(const Matrix_ref<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator/(const Matrix_ref<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res /= scalar;
@@ -363,8 +365,8 @@ Matrix<T, N> operator/(const Matrix_ref<T, N>& a, const T& scalar)
 // Scalar modulus:
 
 template <typename T, std::size_t N>
-Enable_if<Integer_type<T>(), Matrix<T, N>> operator%(const Matrix<T, N>& a,
-                                                     const T& scalar)
+inline Enable_if<Integer_type<T>(), Matrix<T, N>>
+operator%(const Matrix<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res %= scalar;
@@ -372,8 +374,8 @@ Enable_if<Integer_type<T>(), Matrix<T, N>> operator%(const Matrix<T, N>& a,
 }
 
 template <typename T, std::size_t N>
-Enable_if<Integer_type<T>(), Matrix<T, N>> operator%(const Matrix_ref<T, N>& a,
-                                                     const T& scalar)
+inline Enable_if<Integer_type<T>(), Matrix<T, N>>
+operator%(const Matrix_ref<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res %= scalar;
@@ -413,8 +415,8 @@ mm_mul(const M1& a, const M2& b, M3& res)
 }
 
 // Use BLAS for double matrices.
-void mm_mul(const Matrix<double, 2>& a, const Matrix<double, 2>& b,
-            Matrix<double, 2>& res)
+inline void mm_mul(const Matrix<double, 2>& a, const Matrix<double, 2>& b,
+                   Matrix<double, 2>& res)
 {
     constexpr double alpha = 1.0;
     constexpr double beta = 0.0;
@@ -493,8 +495,8 @@ mv_mul(const M1& a, const M2& x, M3& y)
 }
 
 // Use BLAS for double matrices and vectors.
-void mv_mul(const Matrix<double, 2>& a, const Matrix<double, 1>& x,
-            Matrix<double, 1>& y)
+inline void mv_mul(const Matrix<double, 2>& a, const Matrix<double, 1>& x,
+                   Matrix<double, 1>& y)
 {
     constexpr double alpha = 1.0;
     constexpr double beta = 0.0;

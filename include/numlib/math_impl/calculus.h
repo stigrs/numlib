@@ -7,10 +7,11 @@
 #ifndef NUMLIB_MATH_CALCULUS_H
 #define NUMLIB_MATH_CALCULUS_H
 
+#include <numlib/matrix.h>
+#include <numlib/traits.h>
 #include <cmath>
 #include <functional>
 #include <limits>
-#include <numlib/traits.h>
 
 namespace Numlib {
 
@@ -27,6 +28,14 @@ namespace Math {
         auto h = std::pow(eps, 1.0 / 3.0) * x; // Numerical recipes
         return (f(x + h) - f(x - h)) / (2.0 * h);
     }
+
+    //--------------------------------------------------------------------------
+    //
+    // Numerical integration:
+
+    // Integrate function values over a non-uniform grid using the
+    // Trapezoidal rule.
+    double trapezoidal(double xlo, double xup, const Vec<double>& y);
 
 } // namespace Math
 

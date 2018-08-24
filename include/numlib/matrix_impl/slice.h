@@ -40,7 +40,7 @@ struct slice {
     std::size_t stride;
 };
 
-std::ostream& operator<<(std::ostream& to, const slice& s)
+inline std::ostream& operator<<(std::ostream& to, const slice& s)
 {
     to << '(' << s.start << ", " << s.length << ", " << s.stride << ')';
     return to;
