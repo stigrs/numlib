@@ -35,7 +35,7 @@ namespace Math {
 
     // Integrate function values over a non-uniform grid using the
     // Trapezoidal rule.
-    double trapezoidal(double xlo, double xup, const Vec<double>& y);
+    double trapz(double xlo, double xup, const Vec<double>& y);
 
 } // namespace Math
 
