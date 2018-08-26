@@ -19,14 +19,14 @@ TEST_CASE("test_math_calculus")
         CHECK(std::abs(dx - 4.0) < 1.0e-8);
     }
 
-    SECTION("integration")
+    SECTION("trapz")
     {
         double xlo = 2.1;
         double xup = 3.6;
 
         Numlib::Vec<double> y = {3.2, 2.7, 2.9, 3.5, 4.1, 5.2};
 
-        double ft = Numlib::Math::trapezoidal(xlo, xup, y);
+        double ft = Numlib::Math::trapz(xlo, xup, y);
 
         CHECK(std::abs(ft - 5.22) < 1.0e-8);
     }
