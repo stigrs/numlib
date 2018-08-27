@@ -10,23 +10,36 @@
 
 TEST_CASE("test_math_linalg")
 {
-    SECTION("max_vec")
-    {
-        using namespace Numlib;
+    using namespace Numlib;
 
+    SECTION("max_min_vec")
+    {
         Vec<int> a = {1, 2, 3, 4};
         CHECK(max(a) == 4);
+        CHECK(min(a) == 1);
     }
 
     SECTION("max_mat")
     {
-        using namespace Numlib;
-
         Mat<int> m = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
         Vec<int> max_row = {3, 6, 9};
         Vec<int> max_col = {7, 8, 9};
 
+        Vec<int> min_row = {1, 4, 7};
+        Vec<int> min_col = {1, 2, 3};
+
         CHECK(max(m, 0) == max_row);
         CHECK(max(m, 1) == max_col);
+        CHECK(min(m, 0) == min_row);
+        CHECK(min(m, 1) == min_col);
+    }
+
+    SECTION("dot")
+    {
+        Vec<int> a = {1, 3, -5};
+        Vec<int> b = {4, -2, -1};
+
+        CHECK(dot(a, b) == 3);
     }
 }
