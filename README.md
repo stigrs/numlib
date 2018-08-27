@@ -6,6 +6,10 @@ BLAS and LAPACK are used for fast numerical performance.
 ## Features
 
 * N-dimensional dense matrices using Stroustrup's matrix design (see TC++PL4) 
+* A few basic mathematical functions not provided by the STL
+* Basic numerical derivation and integration methods
+* Mathematical constants, metric prefixes, physical constants, and 
+  conversion factors
 
 ## Code of Conduct
 
