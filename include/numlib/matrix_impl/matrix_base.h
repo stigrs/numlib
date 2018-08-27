@@ -11,7 +11,7 @@
 
 #include <cassert>
 
-namespace num {
+namespace Numlib {
 
 // Provides support for features common to both matrices and matrix reference.
 template <typename T, std::size_t N>
@@ -78,6 +78,6 @@ protected:
     Matrix_slice<N> desc;
 };
 
-} // namespace num
+} // namespace Numlib
 
 #endif // NUMLIB_MATRIX_MATRIX_BASE_H

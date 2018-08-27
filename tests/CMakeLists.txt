@@ -30,6 +30,7 @@ function(add_numlib_test name)
     add_executable(${name} ${name}.cpp)
     target_link_libraries (
         ${program} 
+		numlib
 		${BLAS_LIBRARIES}
 		test_catch
     ) 
@@ -38,6 +39,10 @@ function(add_numlib_test name)
 endfunction()
 
 set(PROGRAMS 
+	test_constants
+	test_math_core
+	test_math_calculus
+	test_math_linalg
     test_matrix0
     test_matrix1
     test_matrix2

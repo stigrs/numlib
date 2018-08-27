@@ -5,21 +5,23 @@
 // and conditions.
 
 #include <numlib/matrix.h>
+#include <numlib/math.h>
 #include <armadillo>
 #include <chrono>
 #include <iostream>
 #include <valarray>
+#include <numeric>
 
-typedef std::chrono::duration<double, std::milli> Timer;
+using Timer = std::chrono::duration<double, std::micro>;
 
-void print(int n, const Timer& t_arma, const Timer& t_numlib,
-           const Timer& t_val)
+void print(int n, const Timer& t_arma, const Timer& t_num, const Timer& t_val)
 {
-    std::cout << "Vector addition:\n"
-              << "----------------\n"
-              << "size =        " << n << '\n'
-              << "numlib/arma = " << t_numlib.count() / t_arma.count() << "\n"
-              << "numlib/val =  " << t_numlib.count() / t_val.count() << "\n\n";
+    std::cout << "Dot product:\n"
+              << "------------\n"
+              << "size =            " << n << '\n'
+              << "numlib/arma =     " << t_num.count() / t_arma.count() << "\n"
+              << "numlib/valarray = " << t_num.count() / t_val.count()
+              << "\n\n";
 }
 
 void benchmark(int n)
@@ -27,37 +29,30 @@ void benchmark(int n)
     arma::vec aa(n);
     arma::vec ab(n);
     aa.fill(1.0);
-    ab.fill(1.0);
+    ab.fill(2.0);
     auto t1 = std::chrono::high_resolution_clock::now();
-    ab = 2.0 * aa + ab;
+    arma::dot(aa, ab);
     auto t2 = std::chrono::high_resolution_clock::now();
     Timer t_arma = t2 - t1;
 
-    Numlib::Vec<double> va(n);
-    Numlib::Vec<double> vb(n);
-
-    va = 1.0;
-    vb = 1.0;
-
+    Numlib::Vec<double> na(n);
+    Numlib::Vec<double> nb(n);
+    na = 1.0;
+    nb = 2.0;
     t1 = std::chrono::high_resolution_clock::now();
-    vb = 2.0 * va + vb;
+    Numlib::dot(na, nb);
     t2 = std::chrono::high_resolution_clock::now();
-    Timer t_numlib = t2 - t1;
+    Timer t_num = t2 - t1;
 
-    std::valarray<double> wa(1.0, n);
-    std::valarray<double> wb(1.0, n);
+    std::valarray<double> va(1.0, n);
+    std::valarray<double> vb(2.0, n);
+
     t1 = std::chrono::high_resolution_clock::now();
-    wb = 2.0 * wa + wb;
+    std::inner_product(std::begin(va), std::end(va), std::begin(vb), 0.0);
     t2 = std::chrono::high_resolution_clock::now();
     Timer t_val = t2 - t1;
 
-    print(n, t_arma, t_numlib, t_val);
-
-    for (int i = 0; i < n; ++i) {
-        if (ab(i) != vb(i)) {
-            std::cout << "Different\n";
-        }
-    }
+    print(n, t_arma, t_num, t_val);
 }
 
 int main()

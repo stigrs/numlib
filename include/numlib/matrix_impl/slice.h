@@ -17,7 +17,7 @@
 #include <cstddef>
 #include <iostream>
 
-namespace num {
+namespace Numlib {
 
 // A slice describes a sequence of elements in some dimension (or row) of a
 // matrix. It is a triple comprised of a starting index, a number of elements,
@@ -40,13 +40,13 @@ struct slice {
     std::size_t stride;
 };
 
-std::ostream& operator<<(std::ostream& to, const slice& s)
+inline std::ostream& operator<<(std::ostream& to, const slice& s)
 {
     to << '(' << s.start << ", " << s.length << ", " << s.stride << ')';
     return to;
 }
 
-} // namespace num
+} // namespace Numlib
 
 #ifdef _MSC_VER
 #pragma warning(pop)

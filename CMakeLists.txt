@@ -40,9 +40,11 @@ if(MSVC)
 endif()
 
 # Set debugging compiler options.
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pg -Wpedantic -Wall -Wshadow -Wextra -Wno-missing-braces -Werror -Wno-error=strict-overflow")
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -pg")
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    set(CMAKE_CXX_FLAGS_DEBUG "-pg -Wpedantic -Wall -Wshadow -Wextra -Wno-missing-braces -Werror -Wno-error=strict-overflow")
+endif()
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wpedantic -Wall -Wshadow -Wextra -Wno-missing-braces -Werror -Wno-error=strict-overflow")
 endif()
 if(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "/std:c++14 /EHsc /W4 /WX /wd4100 /MT /GR /Zi /Od")
@@ -73,9 +75,9 @@ if(WIN32)
     find_path(BLAS_INCLUDE_DIR cblas.h HINTS ${BLAS_DIR}/include)
     find_path(LAPACKE_INCLUDE_DIR lapacke.h HINTS ${BLAS_DIR}/include)
 elseif(APPLE)
-	find_package(BLAS REQUIRED HINTS})
+	find_package(BLAS)
 else()
-	find_package(BLAS REQUIRED HINTS})
+	find_package(BLAS)
     find_path(BLAS_INCLUDE_DIR cblas.h HINTS ${BLAS_DIR}/include /usr/include /usr/local/include)
     find_path(LAPACKE_INCLUDE_DIR lapacke.h HINTS ${BLAS_DIR}/include /usr/include /usr/local/include)
 endif()
@@ -85,7 +87,6 @@ add_library(numlib_h INTERFACE)
 target_include_directories(numlib_h INTERFACE
     $<BUILD_INTERFACE:
         ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${GSL_INCLUDE_DIR}
     >
 )
 
@@ -94,6 +95,8 @@ install(
     DESTINATION include
     FILES_MATCHING PATTERN "*.h"
 )
+
+add_subdirectory(lib)
 
 if(BUILD_TESTS)
     enable_testing()
