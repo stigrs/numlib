@@ -7,7 +7,7 @@
 #include <numlib/math.h>
 #include <cassert>
 
-double Numlib::Math::trapz(double xlo, double xup, const Vec<double>& y)
+double Numlib::trapz(double xlo, double xup, const Vec<double>& y)
 {
     assert(!y.empty());
 

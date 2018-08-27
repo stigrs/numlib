@@ -9,5 +9,6 @@
 
 #include <numlib/math_impl/core.h>
 #include <numlib/math_impl/calculus.h>
+#include <numlib/math_impl/linalg.h>
 
 #endif // NUMLIB_MATH_H

@@ -7,6 +7,7 @@
 #include <numlib/matrix.h>
 #include <catch/catch.hpp>
 #include <iostream>
+#include <algorithm>
 
 TEST_CASE("test_matrix1")
 {
@@ -114,5 +115,20 @@ TEST_CASE("test_matrix1")
         Matrix<int, 1> res;
         hadamard_product(a, b, res);
         CHECK(res == c);
+    }
+
+    SECTION("compare")
+    {
+        Matrix<int, 1> a = {1, 2, 3, 4};
+        Matrix<int, 1> b = {1, 2, 3, 5};
+
+        CHECK(a == a);
+        CHECK(a != b);
+        CHECK(a < b);
+        CHECK(b > a);
+        CHECK(a <= b);
+        CHECK(b >= a);
+        CHECK(b <= b);
+        CHECK(b >= b);
     }
 }

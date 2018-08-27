@@ -18,7 +18,7 @@ TEST_CASE("test_math_calculus")
 {
     SECTION("derivation")
     {
-        auto dx = Numlib::Math::dfdx(f, 2.0);
+        auto dx = Numlib::dfdx(f, 2.0);
         CHECK(std::abs(dx - 4.0) < 1.0e-8);
     }
 
@@ -29,17 +29,17 @@ TEST_CASE("test_math_calculus")
 
         Numlib::Vec<double> y = {3.2, 2.7, 2.9, 3.5, 4.1, 5.2};
 
-        double ft = Numlib::Math::trapz(xlo, xup, y);
+        double ft = Numlib::trapz(xlo, xup, y);
 
         CHECK(std::abs(ft - 5.22) < 1.0e-8);
     }
 
     SECTION("quad")
     {
-        using namespace Numlib::Math;
+        using namespace Numlib;
 
         double a = 0.0;
-        double b = Numlib::Constants::pi;
+        double b = Constants::pi;
 
         double res = quad<5>([](double x) { return std::sin(x); }, a, b);
         CHECK(std::abs(res - 2.0) < 5.0e-7);

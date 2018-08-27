@@ -168,6 +168,34 @@ operator!=(const M1& a, const M2& b)
     return !(a == b);
 }
 
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(), bool>
+operator<(const M1& a, const M2& b)
+{
+    return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
+}
+
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(), bool>
+operator>(const M1& a, const M2& b)
+{
+    return b < a;
+}
+
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(), bool>
+operator<=(const M1& a, const M2& b)
+{
+    return !(a > b);
+}
+
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(), bool>
+operator>=(const M1& a, const M2& b)
+{
+    return !(a < b);
+}
+
 //------------------------------------------------------------------------------
 //
 // Binary arithmetic operations:
@@ -415,7 +443,8 @@ mm_mul(const M1& a, const M2& b, M3& res)
 }
 
 // Use BLAS for double matrices.
-inline void mm_mul(const Matrix<double, 2>& a, const Matrix<double, 2>& b,
+inline void mm_mul(const Matrix<double, 2>& a,
+                   const Matrix<double, 2>& b,
                    Matrix<double, 2>& res)
 {
     constexpr double alpha = 1.0;
@@ -495,7 +524,8 @@ mv_mul(const M1& a, const M2& x, M3& y)
 }
 
 // Use BLAS for double matrices and vectors.
-inline void mv_mul(const Matrix<double, 2>& a, const Matrix<double, 1>& x,
+inline void mv_mul(const Matrix<double, 2>& a,
+                   const Matrix<double, 1>& x,
                    Matrix<double, 1>& y)
 {
     constexpr double alpha = 1.0;

@@ -9,7 +9,7 @@
 
 TEST_CASE("test_math_core")
 {
-    using namespace Numlib::Math;
+    using namespace Numlib;
 
     SECTION("even_odd")
     {
