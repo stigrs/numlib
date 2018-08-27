@@ -31,9 +31,10 @@ void benchmark(int n)
     aa.fill(1.0);
     ab.fill(2.0);
     auto t1 = std::chrono::high_resolution_clock::now();
-    arma::dot(aa, ab);
+    auto dot_arma = arma::dot(aa, ab);
     auto t2 = std::chrono::high_resolution_clock::now();
     Timer t_arma = t2 - t1;
+    (void) dot_arma; // ignore unused result
 
     Numlib::Vec<double> na(n);
     Numlib::Vec<double> nb(n);

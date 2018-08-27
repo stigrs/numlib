@@ -19,6 +19,12 @@ TEST_CASE("test_math_linalg")
         CHECK(min(a) == 1);
     }
 
+    SECTION("sum_vec")
+    {
+        Vec<int> a = {1, 2, 3, 4};
+        CHECK(sum(a) == 10);
+    }
+
     SECTION("max_mat")
     {
         Mat<int> m = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};

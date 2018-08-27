@@ -74,6 +74,14 @@ min(const M& mat, std::size_t dim)
     return result;
 }
 
+template <typename M>
+inline Enable_if<Matrix_type<M>(), typename M::value_type> sum(const M& vec)
+{
+    static_assert(M::order == 1, "bad rank for min(vec)");
+    constexpr auto zero = Value_type<M>{0};
+    return std::accumulate(vec.begin(), vec.end(), zero);
+}
+
 //------------------------------------------------------------------------------
 //
 // Vector dot and cross products:
