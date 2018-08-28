@@ -5,6 +5,7 @@
 // and conditions.
 
 #include <numlib/matrix.h>
+#include <numlib/math.h>
 #include <armadillo>
 #include <chrono>
 #include <iostream>
@@ -15,13 +16,15 @@ typedef std::chrono::duration<double, std::milli> Timer;
 void print(int n,
            const Timer& t_arma,
            const Timer& t_numlib,
-           const Timer& t_val)
+           const Timer& t_val,
+           const Timer& t_axpy)
 {
     std::cout << "Vector addition:\n"
               << "----------------\n"
               << "size =        " << n << '\n'
               << "numlib/arma = " << t_numlib.count() / t_arma.count() << "\n"
-              << "numlib/val =  " << t_numlib.count() / t_val.count() << "\n\n";
+              << "numlib/val =  " << t_numlib.count() / t_val.count() << "\n"
+              << "axpy/arma =   " << t_axpy.count() / t_arma.count() << "\n\n";
 }
 
 void benchmark(int n)
@@ -50,6 +53,16 @@ void benchmark(int n)
     t2 = std::chrono::high_resolution_clock::now();
     Timer t_numlib = t2 - t1;
 
+    va = 1.0;
+    vb = 1.0;
+
+    t1 = std::chrono::high_resolution_clock::now();
+    for (int it = 0; it < 10; ++it) {
+        axpy(2.0, va, vb);
+    }
+    t2 = std::chrono::high_resolution_clock::now();
+    Timer t_axpy = t2 - t1;
+
     std::valarray<double> wa(1.0, n);
     std::valarray<double> wb(1.0, n);
     t1 = std::chrono::high_resolution_clock::now();
@@ -59,7 +72,7 @@ void benchmark(int n)
     t2 = std::chrono::high_resolution_clock::now();
     Timer t_val = t2 - t1;
 
-    print(n, t_arma, t_numlib, t_val);
+    print(n, t_arma, t_numlib, t_val, t_axpy);
 }
 
 int main()

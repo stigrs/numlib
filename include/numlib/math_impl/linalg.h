@@ -14,6 +14,12 @@
 #include <functional>
 #include <cmath>
 
+#ifdef __APPLE__
+#include <Accelerate/Accelerate.h>
+#else
+#include <cblas.h>
+#endif
+
 namespace Numlib {
 
 //------------------------------------------------------------------------------
@@ -177,19 +183,69 @@ norm(const M& vec)
     return result;
 }
 
+template <typename M>
+inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(), M>
+normalize(const M& vec)
+{
+    static_assert(M::order == 1, "normalize: bad matrix rank");
+    constexpr auto zero = Value_type<M>{0};
+
+    M result(vec);
+    auto n = norm(vec);
+    if (n > zero) {
+        result /= n;
+    }
+    return result;
+}
+
 //------------------------------------------------------------------------------
 //
 // Vector dot and cross products:
 
-template <typename M>
-inline Enable_if<Matrix_type<M>(), typename M::value_type> dot(const M& x,
-                                                               const M& y)
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>, typename M1::value_type>
+dot(const M1& x, const M2& y)
 {
-    static_assert(M::order == 1, "bad rank for dot product");
+    static_assert(M1::order == 1, "bad rank for dot product");
+    static_assert(M2::order == 1, "bad rank for dot product");
     assert(same_extents(x, y));
 
-    constexpr auto zero = Value_type<M>{0};
+    constexpr auto zero = Value_type<M1>{0};
     return std::inner_product(x.begin(), x.end(), y.begin(), zero);
+}
+
+template <typename T>
+inline void
+cross(const Matrix<T, 1>& x, const Matrix<T, 1>& y, Matrix<T, 1>& res)
+{
+    assert(x.size() == 3 && x.size() == y.size());
+    res.resize(3);
+    res(0) = x(1) * y(2) - x(2) * y(1);
+    res(1) = x(2) * y(0) - x(0) * y(2);
+    res(2) = x(0) * y(1) - x(1) * y(0);
+}
+
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(),
+                 Matrix<typename M1::value_type, 1>>
+cross(const M1& x, const M2& y)
+{
+    Matrix<typename M1::value_type, 1> res;
+    cross(x, y, res);
+    return res;
+}
+
+//------------------------------------------------------------------------------
+//
+// Compute vector-scalar product and add the result to a vector:
+
+template <typename T>
+inline void axpy(const T& a, const Matrix<T, 1>& x, Matrix<T, 1>& y)
+{
+    assert(same_extents(x, y));
+    for (std::size_t i = 0; i < x.size(); ++i) {
+        y(i) = a * x(i) + y(i);
+    }
 }
 
 } // namespace Numlib

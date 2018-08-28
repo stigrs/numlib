@@ -76,6 +76,13 @@ TEST_CASE("test_math_linalg")
         CHECK(vn * vn == 14.0);
     }
 
+    SECTION("normalize")
+    {
+        Vec<double> v = {1.0, 2.0, 3.0};
+        Vec<double> vn = normalize(v);
+        CHECK(vn == v / std::sqrt(14.0));
+    }
+
     SECTION("trace")
     {
         Mat<int> a = {{-1, 0, 3}, {11, 5, 2}, {6, 12, -6}};
@@ -91,5 +98,14 @@ TEST_CASE("test_math_linalg")
         Vec<int> b = {4, -2, -1};
 
         CHECK(dot(a, b) == 3);
+    }
+
+    SECTION("cross")
+    {
+        Vec<double> a = {3.0, -3.0, 1.0};
+        Vec<double> b = {4.0, 9.0, 2.0};
+        Vec<double> axb = {-15.0, -2.0, 39.0};
+
+        CHECK(cross(a, b) == axb);
     }
 }
