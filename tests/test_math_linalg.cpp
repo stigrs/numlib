@@ -25,7 +25,13 @@ TEST_CASE("test_math_linalg")
         CHECK(sum(a) == 10);
     }
 
-    SECTION("max_mat")
+    SECTION("prod_vec")
+    {
+        Vec<int> a = {1, 2, 3, 4};
+        CHECK(prod(a) == 24);
+    }
+
+    SECTION("max_min_mat")
     {
         Mat<int> m = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 
@@ -39,6 +45,28 @@ TEST_CASE("test_math_linalg")
         CHECK(max(m, 1) == max_col);
         CHECK(min(m, 0) == min_row);
         CHECK(min(m, 1) == min_col);
+    }
+
+    SECTION("sum_mat")
+    {
+        Mat<int> m = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+        Vec<int> sum_row = {6, 15, 24};
+        Vec<int> sum_col = {12, 15, 18};
+
+        CHECK(sum(m, 0) == sum_row);
+        CHECK(sum(m, 1) == sum_col);
+    }
+
+    SECTION("prod_mat")
+    {
+        Mat<int> m = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+        Vec<int> prod_row = {6, 120, 504};
+        Vec<int> prod_col = {28, 80, 162};
+
+        CHECK(prod(m, 0) == prod_row);
+        CHECK(prod(m, 1) == prod_col);
     }
 
     SECTION("dot")

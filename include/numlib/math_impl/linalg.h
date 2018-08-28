@@ -11,6 +11,7 @@
 #include <numlib/traits.h>
 #include <algorithm>
 #include <numeric>
+#include <functional>
 
 namespace Numlib {
 
@@ -77,9 +78,61 @@ min(const M& mat, std::size_t dim)
 template <typename M>
 inline Enable_if<Matrix_type<M>(), typename M::value_type> sum(const M& vec)
 {
-    static_assert(M::order == 1, "bad rank for min(vec)");
+    static_assert(M::order == 1, "bad rank for sum(vec)");
     constexpr auto zero = Value_type<M>{0};
     return std::accumulate(vec.begin(), vec.end(), zero);
+}
+
+template <typename M>
+inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
+sum(const M& mat, std::size_t dim)
+{
+    static_assert(M::order == 2, "bad rank for sum(mat)");
+    assert(dim >= 0 && dim < M::order);
+
+    Vec<Value_type<M>> result(mat.extent(dim));
+    if (dim == 0) { // row
+        for (std::size_t i = 0; i < mat.rows(); ++i) {
+            result(i) = sum(mat.row(i));
+        }
+    }
+    else { // column
+        for (std::size_t i = 0; i < mat.rows(); ++i) {
+            result(i) = sum(mat.column(i));
+        }
+    }
+    return result;
+}
+
+template <typename M>
+inline Enable_if<Matrix_type<M>(), typename M::value_type> prod(const M& vec)
+{
+    static_assert(M::order == 1, "bad rank for prod(vec)");
+
+    using U = typename M::value_type;
+    constexpr auto one = U{1};
+    return std::accumulate(vec.begin(), vec.end(), one, std::multiplies<U>());
+}
+
+template <typename M>
+inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
+prod(const M& mat, std::size_t dim)
+{
+    static_assert(M::order == 2, "bad rank for prod(mat)");
+    assert(dim >= 0 && dim < M::order);
+
+    Vec<Value_type<M>> result(mat.extent(dim));
+    if (dim == 0) { // row
+        for (std::size_t i = 0; i < mat.rows(); ++i) {
+            result(i) = prod(mat.row(i));
+        }
+    }
+    else { // column
+        for (std::size_t i = 0; i < mat.rows(); ++i) {
+            result(i) = prod(mat.column(i));
+        }
+    }
+    return result;
 }
 
 //------------------------------------------------------------------------------
