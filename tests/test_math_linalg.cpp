@@ -69,6 +69,22 @@ TEST_CASE("test_math_linalg")
         CHECK(prod(m, 1) == prod_col);
     }
 
+    SECTION("norm")
+    {
+        Vec<double> v = {1.0, 2.0, 3.0};
+        auto vn = norm(v);
+        CHECK(vn * vn == 14.0);
+    }
+
+    SECTION("trace")
+    {
+        Mat<int> a = {{-1, 0, 3}, {11, 5, 2}, {6, 12, -6}};
+        const auto asub = a(slice(0, 2), slice(0, 2));
+
+        CHECK(trace(a) == -2);
+        CHECK(trace(asub) == 4);
+    }
+
     SECTION("dot")
     {
         Vec<int> a = {1, 3, -5};

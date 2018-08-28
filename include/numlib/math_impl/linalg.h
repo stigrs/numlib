@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <numeric>
 #include <functional>
+#include <cmath>
 
 namespace Numlib {
 
@@ -109,9 +110,9 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> prod(const M& vec)
 {
     static_assert(M::order == 1, "bad rank for prod(vec)");
 
-    using U = typename M::value_type;
-    constexpr auto one = U{1};
-    return std::accumulate(vec.begin(), vec.end(), one, std::multiplies<U>());
+    using T = typename M::value_type;
+    constexpr auto one = T{1};
+    return std::accumulate(vec.begin(), vec.end(), one, std::multiplies<T>());
 }
 
 template <typename M>
@@ -131,6 +132,47 @@ prod(const M& mat, std::size_t dim)
         for (std::size_t i = 0; i < mat.rows(); ++i) {
             result(i) = prod(mat.column(i));
         }
+    }
+    return result;
+}
+
+//------------------------------------------------------------------------------
+//
+// Compute trace of a square matrix:
+
+template <typename M>
+inline Enable_if<Matrix_type<M>(), typename M::value_type> trace(const M& mat)
+{
+    static_assert(M::order == 2, "trace: bad matrix rank");
+    assert(mat.rows() == mat.cols());
+
+    constexpr auto zero = Value_type<M>{0};
+
+    const auto d = mat.diag();
+    return std::accumulate(d.begin(), d.end(), zero);
+}
+
+//------------------------------------------------------------------------------
+//
+// Vector norm:
+//
+// TODO: Only Euclidean vector norm is implemented so far.
+
+template <typename M>
+inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(),
+                 typename M::value_type>
+norm(const M& vec)
+{
+    static_assert(M::order == 1, "norm: bad matrix rank");
+
+    using T = typename M::value_type;
+
+    T result = T{0};
+    if (!vec.empty()) {
+        for (const auto& x : vec) {
+            result += x * x;
+        }
+        result = std::sqrt(result);
     }
     return result;
 }
