@@ -236,9 +236,8 @@ cross(const M1& x, const M2& y)
 }
 
 //------------------------------------------------------------------------------
-//
-// Compute vector-scalar product and add the result to a vector:
 
+// Compute vector-scalar product and add the result to a vector.
 template <typename T>
 inline void axpy(const T& a, const Matrix<T, 1>& x, Matrix<T, 1>& y)
 {
@@ -247,6 +246,18 @@ inline void axpy(const T& a, const Matrix<T, 1>& x, Matrix<T, 1>& y)
         y(i) = a * x(i) + y(i);
     }
 }
+
+//------------------------------------------------------------------------------
+
+// Determinant of square matrix.
+double det(const Mat<double>& a);
+
+//------------------------------------------------------------------------------
+//
+// Matrix decomposition:
+
+// LU factorization.
+void lu(Mat<double>& a, Vec<int>& ipiv);
 
 } // namespace Numlib
 

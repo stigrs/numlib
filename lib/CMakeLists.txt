@@ -12,6 +12,7 @@ link_directories(${numlib_BINARY_DIR})
 set(
     SRC_FILES
 	calculus.cpp
+	linalg.cpp
 )
 add_library(
     numlib 

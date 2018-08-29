@@ -108,4 +108,24 @@ TEST_CASE("test_math_linalg")
 
         CHECK(cross(a, b) == axb);
     }
+
+    SECTION("det")
+    {
+        const double ans2 = 13.0;
+        const double ans3 = 76.0;
+        const double ans4 = 242.0; // armadillo
+
+        Mat<double> a2 = {{1.0, 5.0}, {-2.0, 3.0}};
+
+        Mat<double> a3 = {{1.0, 5.0, 4.0}, {-2.0, 3.0, 6.0}, {5.0, 1.0, 0.0}};
+
+        Mat<double> a4 = {{1.0, 5.0, 4.0, 2.0},
+                          {-2.0, 3.0, 6.0, 4.0},
+                          {5.0, 1.0, 0.0, -1.0},
+                          {2.0, 3.0, -4.0, 0.0}};
+
+        CHECK(std::abs(det(a2) - ans2) < 1.0e-12);
+        CHECK(std::abs(det(a3) - ans3) < 1.0e-12);
+        CHECK(std::abs(det(a4) - ans4) < 1.0e-12);
+    }
 }
