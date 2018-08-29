@@ -32,6 +32,7 @@ function(add_numlib_test name)
         ${program} 
 		numlib
 		${BLAS_LIBRARIES}
+		${LAPACK_LIBRARIES}
 		test_catch
     ) 
     add_dependencies(${name} Catch)

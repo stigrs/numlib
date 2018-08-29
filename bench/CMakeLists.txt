@@ -24,6 +24,7 @@ foreach(program ${PROGRAMS})
 	target_link_libraries (
 		${program} 
 		${BLAS_LIBRARIES}
+		${LAPACK_LIBRARIES}
 		${ARMADILLO_LIBRARIES} 
 	) 
 endforeach()
