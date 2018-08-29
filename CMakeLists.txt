@@ -76,10 +76,10 @@ if(WIN32)
     find_path(LAPACKE_INCLUDE_DIR lapacke.h HINTS ${BLAS_DIR}/include)
 elseif(APPLE)
 	find_package(BLAS)
-	find_package(LAPACK)
 else()
+    # Workaround: LAPACKE is not a part of OpenBLAS on Ubuntu
 	find_package(BLAS)
-	find_package(LAPACK)
+	find_file(LAPACK_LIBRARIES liblapacke.so HINTS /usr/lib/x86_64-linux-gnu) 
     find_path(BLAS_INCLUDE_DIR cblas.h HINTS ${BLAS_DIR}/include /usr/include /usr/local/include)
     find_path(LAPACKE_INCLUDE_DIR lapacke.h HINTS ${BLAS_DIR}/include /usr/include /usr/local/include)
 endif()
@@ -99,7 +99,6 @@ install(
 )
 
 add_subdirectory(lib)
-
 if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
