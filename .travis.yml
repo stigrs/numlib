@@ -254,6 +254,8 @@ install:
       export PATH=${DEPS_DIR}/cmake/bin:${PATH}
     else
       brew install cmake || brew upgrade cmake
+      brew tap homebrew/science
+      brew install openblas
     fi
   - cmake --version
    

@@ -79,7 +79,7 @@ elseif(APPLE)
 else()
     # Workaround: LAPACKE is not a part of OpenBLAS on Ubuntu
 	find_package(BLAS)
-	find_file(LAPACK_LIBRARIES liblapacke.so HINTS /usr/lib/x86_64-linux-gnu) 
+	find_file(LAPACK_LIBRARIES liblapacke.so HINTS /usr/lib /usr/lib/x86_64-linux-gnu) 
     find_path(BLAS_INCLUDE_DIR cblas.h HINTS ${BLAS_DIR}/include /usr/include /usr/local/include)
     find_path(LAPACKE_INCLUDE_DIR lapacke.h HINTS ${BLAS_DIR}/include /usr/include /usr/local/include)
 endif()
