@@ -252,6 +252,9 @@ inline void axpy(const T& a, const Matrix<T, 1>& x, Matrix<T, 1>& y)
 // Determinant of square matrix.
 double det(const Mat<double>& a);
 
+// Matrix inversion.
+void inv(Mat<double>& a);
+
 //------------------------------------------------------------------------------
 //
 // Matrix decomposition:

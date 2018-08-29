@@ -45,6 +45,25 @@ double Numlib::det(const Mat<double>& a)
     return ddet;
 }
 
+void Numlib::inv(Mat<double>& a)
+{
+    assert(a.rows() == a.cols());
+
+    if (det(a) == 0.0) {
+        throw Math_error("inv: matrix not invertible");
+    }
+    const int n = static_cast<int>(a.rows());
+    const int lda = n;
+
+    Vec<int> ipiv(n);
+    lu(a, ipiv); // perform LU factorization
+
+    int info = LAPACKE_dgetri(LAPACK_ROW_MAJOR, n, a.data(), lda, ipiv.data());
+    if (info != 0) {
+        throw Math_error("dgetri: matrix inversion failed");
+    }
+}
+
 void Numlib::lu(Mat<double>& a, Vec<int>& ipiv)
 {
     const int m = static_cast<int>(a.rows());
