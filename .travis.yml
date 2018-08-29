@@ -256,6 +256,7 @@ install:
       brew install cmake || brew upgrade cmake
       brew tap homebrew/science
       brew install openblas
+      brew link --force openblas
     fi
   - cmake --version
    
