@@ -203,7 +203,8 @@ normalize(const M& vec)
 // Vector dot and cross products:
 
 template <typename M1, typename M2>
-inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>, typename M1::value_type>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(),
+                 typename M1::value_type>
 dot(const M1& x, const M2& y)
 {
     static_assert(M1::order == 1, "bad rank for dot product");
