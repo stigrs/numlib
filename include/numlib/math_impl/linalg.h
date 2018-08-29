@@ -9,16 +9,11 @@
 
 #include <numlib/matrix.h>
 #include <numlib/traits.h>
+#include <cblas.h>
 #include <algorithm>
 #include <numeric>
 #include <functional>
 #include <cmath>
-
-#ifdef __APPLE__
-#include <Accelerate/Accelerate.h>
-#else
-#include <cblas.h>
-#endif
 
 namespace Numlib {
 

@@ -6,13 +6,8 @@
 
 #include <numlib/matrix.h>
 #include <numlib/math.h>
-#include <cmath>
-
-#ifdef __APPLE__
-#include <Accelerate/Accelerate.h>
-#else
 #include <lapacke.h>
-#endif
+#include <cmath>
 
 double Numlib::det(const Mat<double>& a)
 {

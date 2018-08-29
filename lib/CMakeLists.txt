@@ -2,11 +2,8 @@ cmake_minimum_required(VERSION 3.4.3)
 project(numlib_lib CXX)
 
 include_directories(${numlib_SOURCE_DIR}/include)
-if(NOT APPLE)
-	include_directories(${BLAS_INCLUDE_DIR})
-	include_directories(${LAPACKE_INCLUDE_DIR})
-endif()
-
+include_directories(${BLAS_INCLUDE_DIR})
+include_directories(${LAPACKE_INCLUDE_DIR})
 link_directories(${numlib_BINARY_DIR})
 
 set(
@@ -20,6 +17,8 @@ add_library(
 )
 target_link_libraries(
     numlib 
+	${BLAS_LIBRARIES}
+	${LAPACK_LIBRARIES}
 ) 
 
 install(

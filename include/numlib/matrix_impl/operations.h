@@ -9,16 +9,11 @@
 #ifndef NUMLIB_MATRIX_OPERATIONS_H
 #define NUMLIB_MATRIX_OPERATIONS_H
 
+#include <cblas.h>
 #include <algorithm>
 #include <random>
 #include <iomanip>
 #include <iostream>
-
-#ifdef __APPLE__
-#include <Accelerate/Accelerate.h>
-#else
-#include <cblas.h>
-#endif
 
 namespace Numlib {
 
