@@ -25,6 +25,7 @@ void benchmark(int n)
 {
     arma::vec aa(n);
     aa.fill(1.0);
+
     double nrm;
     auto t1 = std::chrono::high_resolution_clock::now();
     for (int it = 0; it < 10; ++it) {
