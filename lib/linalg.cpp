@@ -19,7 +19,7 @@ double Numlib::det(const Mat<double>& a)
     assert(a.rows() == a.cols());
 
     double ddet = 0.0;
-    int n = a.rows();
+    const int n = static_cast<int>(a.rows());
 
     if (n == 1) {
         ddet = a(0, 0);
@@ -47,8 +47,8 @@ double Numlib::det(const Mat<double>& a)
 
 void Numlib::lu(Mat<double>& a, Vec<int>& ipiv)
 {
-    const int m = a.rows();
-    const int n = a.cols();
+    const int m = static_cast<int>(a.rows());
+    const int n = static_cast<int>(a.cols());
     const int lda = n;
 
     ipiv.resize(std::min(m, n));
