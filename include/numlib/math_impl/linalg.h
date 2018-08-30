@@ -10,6 +10,7 @@
 #include <numlib/matrix.h>
 #include <numlib/traits.h>
 #include <cblas.h>
+#include <lapacke.h>
 #include <algorithm>
 #include <numeric>
 #include <functional>
@@ -247,19 +248,71 @@ inline void axpy(const T& a, const Matrix<T, 1>& x, Matrix<T, 1>& y)
 }
 
 //------------------------------------------------------------------------------
+//
+// Matrix decomposition:
+
+// LU factorization.
+inline void lu(Mat<double>& a, Vec<int>& ipiv)
+{
+    const int m = narrow_cast<int>(a.rows());
+    const int n = narrow_cast<int>(a.cols());
+    const int lda = n;
+
+    ipiv.resize(std::min(m, n));
+
+    int info =
+        LAPACKE_dgetrf(LAPACK_ROW_MAJOR, m, n, a.data(), lda, ipiv.data());
+    if (info < 0) {
+        throw Math_error("dgetrf: illegal input parameter");
+    }
+    if (info > 0) {
+        throw Math_error("dgetrf: U matrix is singular");
+    }
+}
+
+//------------------------------------------------------------------------------
 
 // Determinant of square matrix.
 double det(const Mat<double>& a);
 
 // Matrix inversion.
-void inv(Mat<double>& a);
+inline void inv(Mat<double>& a)
+{
+    assert(a.rows() == a.cols());
+
+    if (det(a) == 0.0) {
+        throw Math_error("inv: matrix not invertible");
+    }
+    const int n = narrow_cast<int>(a.rows());
+    const int lda = n;
+
+    Vec<int> ipiv(n);
+    lu(a, ipiv); // perform LU factorization
+
+    int info = LAPACKE_dgetri(LAPACK_ROW_MAJOR, n, a.data(), lda, ipiv.data());
+    if (info != 0) {
+        throw Math_error("dgetri: matrix inversion failed");
+    }
+}
 
 //------------------------------------------------------------------------------
 //
-// Matrix decomposition:
+// Eigensolvers:
 
-// LU factorization.
-void lu(Mat<double>& a, Vec<int>& ipiv);
+// Compute eigenvalues and eigenvectors of a real symmetric matrix.
+inline void eigs(Mat<double>& a, Vec<double>& w)
+{
+    assert(a.rows() == a.cols());
+
+    int n = narrow_cast<int>(a.rows());
+    w.resize(n);
+
+    int info =
+        LAPACKE_dsyevd(LAPACK_ROW_MAJOR, 'V', 'U', n, a.data(), n, w.data());
+    if (info != 0) {
+        throw Math_error("dsyevd failed");
+    }
+}
 
 } // namespace Numlib
 
