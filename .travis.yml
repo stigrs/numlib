@@ -78,25 +78,6 @@ matrix:
     - env: COMPILER=clang++-3.6 BUILD_TYPE=Release
       addons: *clang36
 
-    # Clang 3.7
-    - env: COMPILER=clang++-3.7 BUILD_TYPE=Debug
-      addons: &clang37
-        apt:
-          packages:
-            - clang-3.7
-            - g++-5
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.7
-
-    - env: COMPILER=clang++-3.7 BUILD_TYPE=Release
-      addons: *clang37
-
     # Clang 3.8
     - env: COMPILER=clang++-3.8 BUILD_TYPE=Debug
       addons: &clang38
@@ -254,6 +235,7 @@ install:
       export PATH=${DEPS_DIR}/cmake/bin:${PATH}
     else
       brew install cmake || brew upgrade cmake
+      brew install homebrew/core/openblas || brew link --overwrite gcc
     fi
   - cmake --version
    

@@ -2,10 +2,8 @@ cmake_minimum_required(VERSION 3.4.3)
 project(numlib_tests CXX)
 
 include_directories(${numlib_SOURCE_DIR}/include)
-if(NOT APPLE)
-	include_directories(${BLAS_INCLUDE_DIR})
-	include_directories(${LAPACKE_INCLUDE_DIR})
-endif()
+include_directories(${BLAS_INCLUDE_DIR})
+include_directories(${LAPACKE_INCLUDE_DIR})
 
 # Copy *.inp files to build directory.
 file(GLOB INP_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/*.inp")
@@ -32,6 +30,7 @@ function(add_numlib_test name)
         ${program} 
 		numlib
 		${BLAS_LIBRARIES}
+		${LAPACK_LIBRARIES}
 		test_catch
     ) 
     add_dependencies(${name} Catch)

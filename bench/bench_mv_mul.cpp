@@ -27,14 +27,18 @@ void benchmark(int n, int m)
     arma::mat a1 = arma::ones<arma::mat>(n, m);
     arma::mat a2 = arma::ones<arma::mat>(m);
     auto t1 = std::chrono::high_resolution_clock::now();
-    arma::vec a3 = a1 * a2;
+    for (int it = 0; it < 10; ++it) {
+        arma::vec a3 = a1 * a2;
+    }
     auto t2 = std::chrono::high_resolution_clock::now();
     Timer t_arma = t2 - t1;
 
     Mat<double> b1 = ones<Mat<double>>(n, m);
     Vec<double> b2 = ones<Vec<double>>(m);
     t1 = std::chrono::high_resolution_clock::now();
-    auto b3 = b1 * b2;
+    for (int it = 0; it < 10; ++it) {
+        auto b3 = b1 * b2;
+    }
     t2 = std::chrono::high_resolution_clock::now();
     Timer t_mv_mul = t2 - t1;
 

@@ -39,7 +39,7 @@ regarding the licensing of Catch2 and origin.
 The test suite that exercises Numlib has been built and passes successfully 
 on the following platforms:
 * GNU/Linux using GCC 5.5.0, 6.4.0, 7.3.0
-* GNU/Linux using Clang 3.6, 3.7, 3.8, 3.9, 4.0, 5.0
+* GNU/Linux using Clang 3.6, 3.8, 3.9, 4.0, 5.0
 * OS X El Capitan (10.12) using Apple LLVM 8.3.0
 * OS X High Sierra (10.13) using Apple LLVM 9.1, 9.4
 * Windows using Visual Studio 2017 (x86 and x64)

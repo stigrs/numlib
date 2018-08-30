@@ -19,7 +19,19 @@ TEST_CASE("test_math_linalg")
         CHECK(min(a) == 1);
     }
 
-    SECTION("max_mat")
+    SECTION("sum_vec")
+    {
+        Vec<int> a = {1, 2, 3, 4};
+        CHECK(sum(a) == 10);
+    }
+
+    SECTION("prod_vec")
+    {
+        Vec<int> a = {1, 2, 3, 4};
+        CHECK(prod(a) == 24);
+    }
+
+    SECTION("max_min_mat")
     {
         Mat<int> m = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 
@@ -35,11 +47,107 @@ TEST_CASE("test_math_linalg")
         CHECK(min(m, 1) == min_col);
     }
 
+    SECTION("sum_mat")
+    {
+        Mat<int> m = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+        Vec<int> sum_row = {6, 15, 24};
+        Vec<int> sum_col = {12, 15, 18};
+
+        CHECK(sum(m, 0) == sum_row);
+        CHECK(sum(m, 1) == sum_col);
+    }
+
+    SECTION("prod_mat")
+    {
+        Mat<int> m = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+        Vec<int> prod_row = {6, 120, 504};
+        Vec<int> prod_col = {28, 80, 162};
+
+        CHECK(prod(m, 0) == prod_row);
+        CHECK(prod(m, 1) == prod_col);
+    }
+
+    SECTION("norm")
+    {
+        Vec<double> v = {1.0, 2.0, 3.0};
+        auto vn = norm(v);
+        CHECK(vn * vn == 14.0);
+    }
+
+    SECTION("normalize")
+    {
+        Vec<double> v = {1.0, 2.0, 3.0};
+        Vec<double> vn = normalize(v);
+        CHECK(vn == v / std::sqrt(14.0));
+    }
+
+    SECTION("trace")
+    {
+        Mat<int> a = {{-1, 0, 3}, {11, 5, 2}, {6, 12, -6}};
+        const auto asub = a(slice(0, 2), slice(0, 2));
+
+        CHECK(trace(a) == -2);
+        CHECK(trace(asub) == 4);
+    }
+
     SECTION("dot")
     {
         Vec<int> a = {1, 3, -5};
         Vec<int> b = {4, -2, -1};
 
         CHECK(dot(a, b) == 3);
+    }
+
+    SECTION("cross")
+    {
+        Vec<double> a = {3.0, -3.0, 1.0};
+        Vec<double> b = {4.0, 9.0, 2.0};
+        Vec<double> axb = {-15.0, -2.0, 39.0};
+
+        CHECK(cross(a, b) == axb);
+    }
+
+    SECTION("det")
+    {
+        const double ans2 = 13.0;
+        const double ans3 = 76.0;
+        const double ans4 = 242.0; // armadillo
+
+        Mat<double> a2 = {{1.0, 5.0}, {-2.0, 3.0}};
+
+        Mat<double> a3 = {{1.0, 5.0, 4.0}, {-2.0, 3.0, 6.0}, {5.0, 1.0, 0.0}};
+
+        Mat<double> a4 = {{1.0, 5.0, 4.0, 2.0},
+                          {-2.0, 3.0, 6.0, 4.0},
+                          {5.0, 1.0, 0.0, -1.0},
+                          {2.0, 3.0, -4.0, 0.0}};
+
+        CHECK(std::abs(det(a2) - ans2) < 1.0e-12);
+        CHECK(std::abs(det(a3) - ans3) < 1.0e-12);
+        CHECK(std::abs(det(a4) - ans4) < 1.0e-12);
+    }
+
+    SECTION("inv")
+    {
+        Mat<double> a = {{1.0, 5.0, 4.0, 2.0},
+                         {-2.0, 3.0, 6.0, 4.0},
+                         {5.0, 1.0, 0.0, -1.0},
+                         {2.0, 3.0, -4.0, 0.0}};
+
+        // Numpy:
+        Mat<double> ainv = {{-0.19008264, 0.16528926, 0.28099174, 0.05785124},
+                            {0.34710744, -0.21487603, -0.16528926, 0.02479339},
+                            {0.16528926, -0.0785124, 0.01652893, -0.20247934},
+                            {-0.60330579, 0.61157025, 0.23966942, 0.31404959}};
+
+        inv(a);
+
+        for (std::size_t i = 0; i < a.rows(); ++i) {
+            for (std::size_t j = 0; j < a.cols(); ++j) {
+                CHECK(std::abs(a(i, j) - ainv(i, j)) < 1.0e-8);
+            }
+        }
     }
 }
