@@ -27,7 +27,7 @@ target_link_libraries(
 function(add_numlib_test name)
     add_executable(${name} ${name}.cpp)
     target_link_libraries (
-        ${program} 
+        ${name} 
 		numlib
 		${BLAS_LIBRARIES}
 		${LAPACK_LIBRARIES}
