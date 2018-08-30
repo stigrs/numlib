@@ -226,6 +226,9 @@ inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(),
                  Matrix<typename M1::value_type, 1>>
 cross(const M1& x, const M2& y)
 {
+    static_assert(Same<M1::value_type, M2::value_type>(),
+                  "cross: different value types");
+
     Matrix<typename M1::value_type, 1> res;
     cross(x, y, res);
     return res;
