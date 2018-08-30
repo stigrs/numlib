@@ -445,9 +445,9 @@ inline void mm_mul(const Matrix<double, 2>& a,
     constexpr double alpha = 1.0;
     constexpr double beta = 0.0;
 
-    const int m = static_cast<int>(a.rows());
-    const int n = static_cast<int>(b.cols());
-    const int k = static_cast<int>(a.cols());
+    const int m = narrow_cast<int>(a.rows());
+    const int n = narrow_cast<int>(b.cols());
+    const int k = narrow_cast<int>(a.cols());
 
     const int lda = k;
     const int ldb = n;
@@ -528,14 +528,14 @@ inline void mv_mul(const Matrix<double, 2>& a,
 
     assert(x.size() == a.cols());
 
-    const int m = static_cast<int>(a.rows());
-    const int n = static_cast<int>(a.cols());
+    const int m = narrow_cast<int>(a.rows());
+    const int n = narrow_cast<int>(a.cols());
 
     y.resize(m);
 
     const int lda = n;
-    const int incx = static_cast<int>(x.descriptor().strides[0]);
-    const int incy = static_cast<int>(y.descriptor().strides[0]);
+    const int incx = narrow_cast<int>(x.descriptor().strides[0]);
+    const int incy = narrow_cast<int>(y.descriptor().strides[0]);
 
     cblas_dgemv(CblasRowMajor, CblasNoTrans, m, n, alpha, a.data(), lda,
                 x.data(), incx, beta, y.data(), incy);

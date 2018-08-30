@@ -4,7 +4,6 @@
 // LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
 // and conditions.
 
-#include <numlib/matrix.h>
 #include <numlib/math.h>
 #include <lapacke.h>
 #include <cmath>
@@ -14,7 +13,7 @@ double Numlib::det(const Mat<double>& a)
     assert(a.rows() == a.cols());
 
     double ddet = 0.0;
-    const int n = static_cast<int>(a.rows());
+    const int n = narrow_cast<int>(a.rows());
 
     if (n == 1) {
         ddet = a(0, 0);
@@ -35,7 +34,7 @@ double Numlib::det(const Mat<double>& a)
             }
         }
         ddet = prod(tmp.diag());
-        ddet *= std::pow(-1.0, static_cast<double>(permut));
+        ddet *= std::pow(-1.0, narrow_cast<double>(permut));
     }
     return ddet;
 }
@@ -47,7 +46,7 @@ void Numlib::inv(Mat<double>& a)
     if (det(a) == 0.0) {
         throw Math_error("inv: matrix not invertible");
     }
-    const int n = static_cast<int>(a.rows());
+    const int n = narrow_cast<int>(a.rows());
     const int lda = n;
 
     Vec<int> ipiv(n);
@@ -61,8 +60,8 @@ void Numlib::inv(Mat<double>& a)
 
 void Numlib::lu(Mat<double>& a, Vec<int>& ipiv)
 {
-    const int m = static_cast<int>(a.rows());
-    const int n = static_cast<int>(a.cols());
+    const int m = narrow_cast<int>(a.rows());
+    const int n = narrow_cast<int>(a.cols());
     const int lda = n;
 
     ipiv.resize(std::min(m, n));
