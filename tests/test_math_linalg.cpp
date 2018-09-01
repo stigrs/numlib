@@ -180,4 +180,15 @@ TEST_CASE("test_math_linalg")
             }
         }
     }
+
+    SECTION("eig")
+    {
+        Mat<double> a1 = {{1.0, 5.0, 4.0, 2.0},
+                          {-2.0, 3.0, 6.0, 4.0},
+                          {5.0, 1.0, 0.0, -1.0},
+                          {2.0, 3.0, -4.0, 0.0}};
+
+        Mat<double> evec;
+        Vec<double> eval;
+    }
 }
