@@ -228,7 +228,7 @@ inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(),
                  Vec<typename M1::value_type>>
 cross(const M1& x, const M2& y)
 {
-    static_assert(Same<M1::value_type, M2::value_type>(),
+    static_assert(Same<Value_type<M1>(), Value_type<M2>()>(),
                   "cross: different value types");
 
     Vec<typename M1::value_type> res;
@@ -275,9 +275,9 @@ inline Mat<T> transpose(const Mat<T>& m)
 // LU factorization.
 inline void lu(Mat<double>& a, Vec<int>& ipiv)
 {
-    const std::ptrdiff_t m = narrow_cast<std::ptrdiff_t>(a.rows());
-    const std::ptrdiff_t n = narrow_cast<std::ptrdiff_t>(a.cols());
-    const std::ptrdiff_t lda = n;
+    const int m = narrow_cast<int>(a.rows());
+    const int n = narrow_cast<int>(a.cols());
+    const int lda = n;
 
     ipiv.resize(std::min(m, n));
 
@@ -304,8 +304,8 @@ inline void inv(Mat<double>& a)
     if (det(a) == 0.0) {
         throw Math_error("inv: matrix not invertible");
     }
-    const std::ptrdiff_t n = narrow_cast<std::ptrdiff_t>(a.rows());
-    const std::ptrdiff_t lda = n;
+    const int n = narrow_cast<int>(a.rows());
+    const int lda = n;
 
     Vec<int> ipiv(n);
     lu(a, ipiv); // perform LU factorization
@@ -325,7 +325,7 @@ inline void eigs(Mat<double>& a, Vec<double>& w)
 {
     assert(a.rows() == a.cols());
 
-    std::ptrdiff_t n = narrow_cast<std::ptrdiff_t>(a.rows());
+    int n = narrow_cast<int>(a.rows());
     w.resize(n);
 
     int info =

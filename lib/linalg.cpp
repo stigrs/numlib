@@ -12,7 +12,7 @@ double Numlib::det(const Mat<double>& a)
     assert(a.rows() == a.cols());
 
     double ddet = 0.0;
-    const std::ptrdiff_t n = narrow_cast<std::ptrdiff_t>(a.rows());
+    const int n = narrow_cast<int>(a.rows());
 
     if (n == 1) {
         ddet = a(0, 0);
@@ -44,7 +44,7 @@ void Numlib::eig(Mat<double>& a,
 {
     assert(a.rows() == a.cols());
 
-    const std::ptrdiff_t n = narrow_cast<std::ptrdiff_t>(a.cols());
+    const int n = narrow_cast<int>(a.cols());
 
     evec.resize(n, n);
     eval.resize(n);
