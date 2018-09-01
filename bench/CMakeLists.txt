@@ -15,6 +15,7 @@ set(
 	bench_mm_mul
 	bench_mv_mul
 	bench_norm
+	bench_transpose
 )
 
 foreach(program ${PROGRAMS})

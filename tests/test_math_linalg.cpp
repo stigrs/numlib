@@ -109,6 +109,14 @@ TEST_CASE("test_math_linalg")
         CHECK(cross(a, b) == axb);
     }
 
+    SECTION("transpose")
+    {
+        Mat<int> m = {{1, 2}, {3, 4}, {5, 6}};
+        Mat<int> ans = {{1, 3, 5}, {2, 4, 6}};
+
+        CHECK(transpose(m) == ans);
+    }
+
     SECTION("det")
     {
         const double ans2 = 13.0;
@@ -177,6 +185,48 @@ TEST_CASE("test_math_linalg")
         for (int i = 0; i < 5; ++i) {
             for (int j = 0; j < 5; ++j) {
                 CHECK(std::abs(a(i, j) - evec(i, j)) < 1.0e-4);
+            }
+        }
+    }
+
+    SECTION("eig")
+    {
+		// Numpy:
+        Vec<double> eval_re = {-3.17360337, -3.17360337, 2.84219813,
+                               7.50500862};
+
+        Vec<double> eval_im = {1.12844169, -1.12844169, 0.0, 0.0};
+
+        Mat<double> evec_re = {
+            {-0.16889612, -0.16889612, -0.19514446, 0.70845976},
+            {0.61501958, 0.61501958, 0.08601687, 0.46590401},
+            {-0.19838031, -0.19838031, -0.58764782, 0.52110625},
+            {-0.72497646, -0.72497646, 0.78050610, 0.09729590}};
+
+        Mat<double> evec_im = {{-0.11229493, 0.11229493, 0.0, 0.0},
+                               {-0.03942734, 0.03942734, 0.0, 0.0},
+                               {0.11880544, -0.11880544, 0.0, 0.0},
+                               {0.0, 0.0, 0.0, 0.0}};
+
+        Mat<double> a = {{1.0, 5.0, 4.0, 2.0},
+                         {-2.0, 3.0, 6.0, 4.0},
+                         {5.0, 1.0, 0.0, -1.0},
+                         {2.0, 3.0, -4.0, 0.0}};
+
+        Vec<std::complex<double>> eval(4);
+        Mat<std::complex<double>> evec(4, 4);
+
+        eig(a, evec, eval);
+
+        for (std::size_t i = 0; i < eval.size(); ++i) {
+            CHECK(std::abs(eval(i).real() - eval_re(i)) < 5.0e-8);
+            CHECK(std::abs(eval(i).imag() - eval_im(i)) < 5.0e-8);
+        }
+
+        for (std::size_t i = 0; i < evec.rows(); ++i) {
+            for (std::size_t j = 0; j < evec.cols(); ++j) {
+                CHECK(std::abs(evec(i, j).real() - evec_re(i, j)) < 5.0e-9);
+                CHECK(std::abs(evec(i, j).imag() - evec_im(i, j)) < 5.0e-9);
             }
         }
     }

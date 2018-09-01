@@ -15,6 +15,7 @@
 #include <numeric>
 #include <functional>
 #include <cmath>
+#include <complex>
 
 namespace Numlib {
 
@@ -213,7 +214,7 @@ dot(const M1& x, const M2& y)
 
 template <typename T>
 inline void
-cross(const Matrix<T, 1>& x, const Matrix<T, 1>& y, Matrix<T, 1>& res)
+cross(const Vec<T>& x, const Vec<T>& y, Vec<T>& res)
 {
     assert(x.size() == 3 && x.size() == y.size());
     res.resize(3);
@@ -224,13 +225,13 @@ cross(const Matrix<T, 1>& x, const Matrix<T, 1>& y, Matrix<T, 1>& res)
 
 template <typename M1, typename M2>
 inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(),
-                 Matrix<typename M1::value_type, 1>>
+                 Vec<typename M1::value_type>>
 cross(const M1& x, const M2& y)
 {
     static_assert(Same<M1::value_type, M2::value_type>(),
                   "cross: different value types");
 
-    Matrix<typename M1::value_type, 1> res;
+    Vec<typename M1::value_type> res;
     cross(x, y, res);
     return res;
 }
@@ -239,7 +240,7 @@ cross(const M1& x, const M2& y)
 
 // Compute vector-scalar product and add the result to a vector.
 template <typename T>
-inline void axpy(const T& a, const Matrix<T, 1>& x, Matrix<T, 1>& y)
+inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
 {
     assert(same_extents(x, y));
     for (std::size_t i = 0; i < x.size(); ++i) {
@@ -249,14 +250,34 @@ inline void axpy(const T& a, const Matrix<T, 1>& x, Matrix<T, 1>& y)
 
 //------------------------------------------------------------------------------
 //
+// Transpose:
+
+template <typename T>
+inline Mat<T> transpose(const Mat<T>& m)
+{
+    const std::size_t n = m.rows();
+    const std::size_t p = m.cols();
+
+    Mat<T> res(p, n);
+
+    for (std::size_t i = 0; i < p; ++i) {
+        for (std::size_t j = 0; j < n; ++j) {
+			res(i, j) = m.data()[i + j * p];	
+		}
+    }
+    return res;
+}
+
+//------------------------------------------------------------------------------
+//
 // Matrix decomposition:
 
 // LU factorization.
 inline void lu(Mat<double>& a, Vec<int>& ipiv)
 {
-    const int m = narrow_cast<int>(a.rows());
-    const int n = narrow_cast<int>(a.cols());
-    const int lda = n;
+    const std::ptrdiff_t m = narrow_cast<std::ptrdiff_t>(a.rows());
+    const std::ptrdiff_t n = narrow_cast<std::ptrdiff_t>(a.cols());
+    const std::ptrdiff_t lda = n;
 
     ipiv.resize(std::min(m, n));
 
@@ -283,8 +304,8 @@ inline void inv(Mat<double>& a)
     if (det(a) == 0.0) {
         throw Math_error("inv: matrix not invertible");
     }
-    const int n = narrow_cast<int>(a.rows());
-    const int lda = n;
+    const std::ptrdiff_t n = narrow_cast<std::ptrdiff_t>(a.rows());
+    const std::ptrdiff_t lda = n;
 
     Vec<int> ipiv(n);
     lu(a, ipiv); // perform LU factorization
@@ -304,7 +325,7 @@ inline void eigs(Mat<double>& a, Vec<double>& w)
 {
     assert(a.rows() == a.cols());
 
-    int n = narrow_cast<int>(a.rows());
+    std::ptrdiff_t n = narrow_cast<std::ptrdiff_t>(a.rows());
     w.resize(n);
 
     int info =
@@ -313,6 +334,11 @@ inline void eigs(Mat<double>& a, Vec<double>& w)
         throw Math_error("dsyevd failed");
     }
 }
+
+// Compute eigenvalues and eigenvectors of a real non-symmetric matrix.
+void eig(Mat<double>& a,
+         Mat<std::complex<double>>& evec,
+         Vec<std::complex<double>>& eval);
 
 } // namespace Numlib
 
