@@ -74,3 +74,48 @@ void Numlib::eig(Mat<double>& a,
         }
     }
 }
+
+void Numlib::schmidt(Mat<double>& a, std::size_t n)
+{
+    std::size_t n_out = 0;
+    std::size_t n_orb = n;
+    std::size_t n_bas = a.rows();
+
+    Vec<double> work(n_bas);
+    work = 0.0;
+
+	double r_min = 0.1;
+
+    while (n_orb < n_bas) {
+        std::size_t lim = n_orb + n_bas;
+        for (std::size_t i = 0; i < lim; ++i) {
+            if (n_out >= n_bas) {
+                return;
+            }
+            auto an = a.column(n_out);
+            if (i < n_orb) {
+                auto ai = a.column(i);
+                an = ai;
+            }
+            else {
+				an = 0.0;
+				a(i - n_orb, n_out) = 1.0;
+			}
+			for (std::size_t j = 0; j < n_out; ++j) {
+				auto aj = a.column(j);
+				work(j) = dot(aj, an);
+			}
+			for (std::size_t j = 0; j < n_out; ++j) {
+				auto aj = a.column(j);
+				an = an - work(j) * aj;
+			}
+			double r = std::sqrt(dot(an, an));
+			if(r >= r_min) {
+				++n_out;
+				an /= r;
+			}
+        }
+		r_min /= 10.0;
+		n_orb = n_out;
+    }
+}

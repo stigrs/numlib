@@ -213,8 +213,7 @@ dot(const M1& x, const M2& y)
 }
 
 template <typename T>
-inline void
-cross(const Vec<T>& x, const Vec<T>& y, Vec<T>& res)
+inline void cross(const Vec<T>& x, const Vec<T>& y, Vec<T>& res)
 {
     assert(x.size() == 3 && x.size() == y.size());
     res.resize(3);
@@ -249,9 +248,8 @@ inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
 }
 
 //------------------------------------------------------------------------------
-//
-// Transpose:
 
+// Transpose.
 template <typename T>
 inline Mat<T> transpose(const Mat<T>& m)
 {
@@ -262,8 +260,8 @@ inline Mat<T> transpose(const Mat<T>& m)
 
     for (std::size_t i = 0; i < p; ++i) {
         for (std::size_t j = 0; j < n; ++j) {
-			res(i, j) = m.data()[i + j * p];	
-		}
+            res(i, j) = m.data()[i + j * p];
+        }
     }
     return res;
 }
@@ -325,7 +323,7 @@ inline void eigs(Mat<double>& a, Vec<double>& w)
 {
     assert(a.rows() == a.cols());
 
-    int n = narrow_cast<int>(a.rows());
+    const int n = narrow_cast<int>(a.rows());
     w.resize(n);
 
     int info =
@@ -339,6 +337,33 @@ inline void eigs(Mat<double>& a, Vec<double>& w)
 void eig(Mat<double>& a,
          Mat<std::complex<double>>& evec,
          Vec<std::complex<double>>& eval);
+
+//------------------------------------------------------------------------------
+
+// Solve linear system of equations.
+inline void linsolve(Mat<double>& a, Mat<double>& b)
+{
+    assert(a.rows() == a.cols());
+    assert(b.rows() == a.cols());
+
+    const int n = narrow_cast<int>(a.cols());
+    const int nrhs = narrow_cast<int>(b.cols());
+    const int lda = n;
+    const int ldb = nrhs;
+
+    Vec<int> ipiv(n);
+
+    int info = LAPACKE_dgesv(LAPACK_ROW_MAJOR, n, nrhs, a.data(), lda,
+                             ipiv.data(), b.data(), ldb);
+    if (info != 0) {
+        throw Math_error("dgesv: factor U is singular");
+    }
+}
+
+//------------------------------------------------------------------------------
+
+// Schmidt orthogonalization of n orbitals in a.
+void schmidt(Mat<double>& a, std::size_t n);
 
 } // namespace Numlib
 

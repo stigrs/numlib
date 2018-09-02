@@ -191,7 +191,7 @@ TEST_CASE("test_math_linalg")
 
     SECTION("eig")
     {
-		// Numpy:
+        // Numpy:
         Vec<double> eval_re = {-3.17360337, -3.17360337, 2.84219813,
                                7.50500862};
 
@@ -228,6 +228,19 @@ TEST_CASE("test_math_linalg")
                 CHECK(std::abs(evec(i, j).real() - evec_re(i, j)) < 5.0e-9);
                 CHECK(std::abs(evec(i, j).imag() - evec_im(i, j)) < 5.0e-9);
             }
+        }
+    }
+
+    SECTION("linsolve")
+    {
+        Mat<double> A = {{1.0, 2.0, 3.0}, {2.0, 3.0, 4.0}, {3.0, 4.0, 1.0}};
+        Mat<double> B = {{14.0}, {20.0}, {14.0}};
+        Vec<double> x = {1.0, 2.0, 3.0};
+
+        linsolve(A, B);
+
+        for (std::size_t i = 0; i < B.rows(); ++i) {
+            CHECK(std::abs(B(i, 0) - x(i)) < 1.0e-12);
         }
     }
 }
