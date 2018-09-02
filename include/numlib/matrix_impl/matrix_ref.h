@@ -197,6 +197,14 @@ Matrix_ref<T, N>::Matrix_ref(const Matrix_ref& m)
 }
 
 template <typename T, std::size_t N>
+inline Matrix_ref<T, N>& Matrix_ref<T, N>::operator=(const Matrix_ref<T, N>& m)
+{
+	assert(same_extents(this->descriptor(), m.descriptor()));
+	std::copy(m.begin(), m.end(), begin());
+	return *this;
+}
+
+template <typename T, std::size_t N>
 template <typename U>
 Matrix_ref<T, N>& Matrix_ref<T, N>::operator=(const Matrix_ref<U, N>& m)
 {
