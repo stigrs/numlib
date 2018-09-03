@@ -15,6 +15,16 @@
 
 //------------------------------------------------------------------------------
 
+// BLAS integer types:
+
+#ifdef USE_MKL
+#define BLAS_INT MKL_INT
+#else
+#define BLAS_INT int
+#endif
+
+//------------------------------------------------------------------------------
+
 // Type queries:
 
 template <typename U>
@@ -104,10 +114,10 @@ struct substitution_succeeded<substitution_failure> : std::false_type {
 // Type cast:
 
 // A searchable way to do narrowing casts of values.
-template<typename T, typename U>
+template <typename T, typename U>
 constexpr T narrow_cast(U&& u)
 {
-	return static_cast<T>(std::forward<U>(u));
+    return static_cast<T>(std::forward<U>(u));
 }
 
 #endif // NUMLIB_TRAITS_H

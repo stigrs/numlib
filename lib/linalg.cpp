@@ -12,7 +12,7 @@ double Numlib::det(const Mat<double>& a)
     assert(a.rows() == a.cols());
 
     double ddet = 0.0;
-    const int n = narrow_cast<int>(a.rows());
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
 
     if (n == 1) {
         ddet = a(0, 0);
@@ -22,12 +22,12 @@ double Numlib::det(const Mat<double>& a)
     }
     else { // use LU decomposition
         Mat<double> tmp(a);
-        Vec<int> ipiv;
+        Vec<BLAS_INT> ipiv;
 
         lu(tmp, ipiv);
 
-        int permut = 0;
-        for (int i = 1; i <= n; ++i) {
+        BLAS_INT permut = 0;
+        for (BLAS_INT i = 1; i <= n; ++i) {
             if (i != ipiv(i - 1)) { // Fortran uses base 1
                 permut++;
             }
@@ -44,7 +44,7 @@ void Numlib::eig(Mat<double>& a,
 {
     assert(a.rows() == a.cols());
 
-    const int n = narrow_cast<int>(a.cols());
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
 
     evec.resize(n, n);
     eval.resize(n);
@@ -54,8 +54,9 @@ void Numlib::eig(Mat<double>& a,
     Mat<double> vr(n, n);
     Mat<double> vl(n, n);
 
-    int info = LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'V', n, a.data(), n,
-                             wr.data(), wi.data(), vl.data(), n, vr.data(), n);
+    BLAS_INT info =
+        LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'V', n, a.data(), n, wr.data(),
+                      wi.data(), vl.data(), n, vr.data(), n);
     if (info != 0) {
         throw Math_error("dgeev failed");
     }
@@ -84,7 +85,7 @@ void Numlib::schmidt(Mat<double>& a, std::size_t n)
     Vec<double> work(n_bas);
     work = 0.0;
 
-	double r_min = 0.1;
+    double r_min = 0.1;
 
     while (n_orb < n_bas) {
         std::size_t lim = n_orb + n_bas;
@@ -98,24 +99,24 @@ void Numlib::schmidt(Mat<double>& a, std::size_t n)
                 an = ai;
             }
             else {
-				an = 0.0;
-				a(i - n_orb, n_out) = 1.0;
-			}
-			for (std::size_t j = 0; j < n_out; ++j) {
-				auto aj = a.column(j);
-				work(j) = dot(aj, an);
-			}
-			for (std::size_t j = 0; j < n_out; ++j) {
-				auto aj = a.column(j);
-				an = an - work(j) * aj;
-			}
-			double r = std::sqrt(dot(an, an));
-			if(r >= r_min) {
-				++n_out;
-				an /= r;
-			}
+                an = 0.0;
+                a(i - n_orb, n_out) = 1.0;
+            }
+            for (std::size_t j = 0; j < n_out; ++j) {
+                auto aj = a.column(j);
+                work(j) = dot(aj, an);
+            }
+            for (std::size_t j = 0; j < n_out; ++j) {
+                auto aj = a.column(j);
+                an = an - work(j) * aj;
+            }
+            double r = std::sqrt(dot(an, an));
+            if (r >= r_min) {
+                ++n_out;
+                an /= r;
+            }
         }
-		r_min /= 10.0;
-		n_orb = n_out;
+        r_min /= 10.0;
+        n_orb = n_out;
     }
 }
