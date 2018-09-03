@@ -1,13 +1,15 @@
 # numlib [![Build Status](https://travis-ci.org/stigrs/numlib.svg?branch=master)](https://travis-ci.org/stigrs/numlib)[![Build status](https://ci.appveyor.com/api/projects/status/github/stigrs/numlib?svg=true)](https://ci.appveyor.com/project/stigrs/numlib)
 
 Numlib provides a C++ library for linear algebra and scientific computing. 
-BLAS and LAPACK are used for fast numerical performance. 
+BLAS and LAPACK are used for fast numerical performance. Currently, OpenBLAS
+and Intel MKL is supported.
 
 ## Features
 
 * N-dimensional dense matrices using Stroustrup's matrix design (see TC++PL4) 
 * A few basic mathematical functions not provided by the STL
 * Basic numerical derivation and integration methods
+* Basic linear algebra methods
 * Mathematical constants, metric prefixes, physical constants, and 
   conversion factors
 
@@ -31,7 +33,7 @@ regarding the licensing of Catch2 and origin.
 ### Requirements
 
 * [CMake](https://cmake.org) 3.4.3
-* [OpenBLAS](https://www.openblas.net/) 0.2.14.1 (Linux and Windows)
+* [OpenBLAS](https://www.openblas.net/) 0.2.14.1 
 * [Armadillo](http://arma.sourceforge.net) 7.900.1 (for benchmarking)
 
 ### Supported Platforms
