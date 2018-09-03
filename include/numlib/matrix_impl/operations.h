@@ -9,7 +9,12 @@
 #ifndef NUMLIB_MATRIX_OPERATIONS_H
 #define NUMLIB_MATRIX_OPERATIONS_H
 
+#ifdef USE_MKL
+#include <mkl.h>
+#else
 #include <cblas.h>
+#endif
+
 #include <algorithm>
 #include <random>
 #include <iomanip>

@@ -5,8 +5,11 @@ include_directories(${numlib_SOURCE_DIR}/include)
 if(WIN32)
     include_directories(${ARMADILLO_INCLUDE_DIRS})
 endif()
-include_directories(${BLAS_INCLUDE_DIR})
-include_directories(${LAPACKE_INCLUDE_DIR})
+include_directories(${BLAS_INCLUDE_DIRS})
+include_directories(${LAPACKE_INCLUDE_DIRS})
+if(MKL_FOUND)
+	link_directories(${MKL_LIBRARY_DIRS})
+endif()
 
 set(
     PROGRAMS 

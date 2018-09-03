@@ -11,9 +11,11 @@
 #include <string>
 
 #ifdef _MSC_VER // ugly hack since Visual Studio does not support C99 _Complex
+#ifndef USE_MKL
 #include <complex>
 #define lapack_complex_float std::complex<float>
 #define lapack_complex_double std::complex<double>
+#endif
 #endif
 
 // Math error.

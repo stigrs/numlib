@@ -7,10 +7,15 @@
 #ifndef NUMLIB_MATH_LINALG_H
 #define NUMLIB_MATH_LINALG_H
 
-#include <numlib/matrix.h>
-#include <numlib/traits.h>
+#ifdef USE_MKL
+#include <mkl.h>
+#else
 #include <cblas.h>
 #include <lapacke.h>
+#endif
+
+#include <numlib/matrix.h>
+#include <numlib/traits.h>
 #include <algorithm>
 #include <numeric>
 #include <functional>
