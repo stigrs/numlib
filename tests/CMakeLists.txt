@@ -8,13 +8,6 @@ if(MKL_FOUND)
 	link_directories(${MKL_LIBRARY_DIRS})
 endif()
 
-# Copy *.inp files to build directory.
-file(GLOB INP_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/*.inp")
-
-foreach(inp_file_name ${INP_FILES})
-    file(COPY "${inp_file_name}" DESTINATION "${CMAKE_BINARY_DIR}/tests")
-endforeach()
-
 # Prepare "Catch" library for other executables.
 set(CATCH_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 add_library(Catch INTERFACE)
@@ -55,6 +48,8 @@ set(PROGRAMS
 foreach(program ${PROGRAMS})
     add_numlib_test(${program})
 	if(WIN32)
-		set_tests_properties(${program} PROPERTIES ENVIRONMENT "PATH=${BLAS_BIN};$ENV{PATH}")
+		if(NOT MKL_FOUND)
+			set_tests_properties(${program} PROPERTIES ENVIRONMENT "PATH=${BLAS_BIN};$ENV{PATH}")
+		endif()
 	endif()
 endforeach()
