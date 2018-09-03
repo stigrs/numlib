@@ -15,16 +15,6 @@
 
 //------------------------------------------------------------------------------
 
-// BLAS integer types:
-
-#ifdef USE_MKL
-#define BLAS_INT MKL_INT
-#else
-#define BLAS_INT int
-#endif
-
-//------------------------------------------------------------------------------
-
 // Type queries:
 
 template <typename U>

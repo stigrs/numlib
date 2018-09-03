@@ -276,15 +276,15 @@ inline Mat<T> transpose(const Mat<T>& m)
 // Matrix decomposition:
 
 // LU factorization.
-inline void lu(Mat<double>& a, Vec<BLAS_INT>& ipiv)
+inline void lu(Mat<double>& a, Vec<int>& ipiv)
 {
-    const BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
-    const BLAS_INT lda = n;
+    const int m = narrow_cast<int>(a.rows());
+    const int n = narrow_cast<int>(a.cols());
+    const int lda = n;
 
     ipiv.resize(std::min(m, n));
 
-    BLAS_INT info =
+    int info =
         LAPACKE_dgetrf(LAPACK_ROW_MAJOR, m, n, a.data(), lda, ipiv.data());
     if (info < 0) {
         throw Math_error("dgetrf: illegal input parameter");
@@ -307,14 +307,13 @@ inline void inv(Mat<double>& a)
     if (det(a) == 0.0) {
         throw Math_error("inv: matrix not invertible");
     }
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
-    const BLAS_INT lda = n;
+    const int n = narrow_cast<int>(a.rows());
+    const int lda = n;
 
-    Vec<BLAS_INT> ipiv(n);
+    Vec<int> ipiv(n);
     lu(a, ipiv); // perform LU factorization
 
-    BLAS_INT info =
-        LAPACKE_dgetri(LAPACK_ROW_MAJOR, n, a.data(), lda, ipiv.data());
+    int info = LAPACKE_dgetri(LAPACK_ROW_MAJOR, n, a.data(), lda, ipiv.data());
     if (info != 0) {
         throw Math_error("dgetri: matrix inversion failed");
     }
@@ -329,10 +328,10 @@ inline void eigs(Mat<double>& a, Vec<double>& w)
 {
     assert(a.rows() == a.cols());
 
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
+    const int n = narrow_cast<int>(a.rows());
     w.resize(n);
 
-    BLAS_INT info =
+    int info =
         LAPACKE_dsyevd(LAPACK_ROW_MAJOR, 'V', 'U', n, a.data(), n, w.data());
     if (info != 0) {
         throw Math_error("dsyevd failed");
@@ -352,15 +351,15 @@ inline void linsolve(Mat<double>& a, Mat<double>& b)
     assert(a.rows() == a.cols());
     assert(b.rows() == a.cols());
 
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
-    const BLAS_INT nrhs = narrow_cast<BLAS_INT>(b.cols());
-    const BLAS_INT lda = n;
-    const BLAS_INT ldb = nrhs;
+    const int n = narrow_cast<int>(a.cols());
+    const int nrhs = narrow_cast<int>(b.cols());
+    const int lda = n;
+    const int ldb = nrhs;
 
-    Vec<BLAS_INT> ipiv(n);
+    Vec<int> ipiv(n);
 
-    BLAS_INT info = LAPACKE_dgesv(LAPACK_ROW_MAJOR, n, nrhs, a.data(), lda,
-                                  ipiv.data(), b.data(), ldb);
+    int info = LAPACKE_dgesv(LAPACK_ROW_MAJOR, n, nrhs, a.data(), lda,
+                             ipiv.data(), b.data(), ldb);
     if (info != 0) {
         throw Math_error("dgesv: factor U is singular");
     }

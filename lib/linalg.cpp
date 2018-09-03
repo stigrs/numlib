@@ -12,7 +12,7 @@ double Numlib::det(const Mat<double>& a)
     assert(a.rows() == a.cols());
 
     double ddet = 0.0;
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
+    const int n = narrow_cast<int>(a.rows());
 
     if (n == 1) {
         ddet = a(0, 0);
@@ -22,12 +22,12 @@ double Numlib::det(const Mat<double>& a)
     }
     else { // use LU decomposition
         Mat<double> tmp(a);
-        Vec<BLAS_INT> ipiv;
+        Vec<int> ipiv;
 
         lu(tmp, ipiv);
 
-        BLAS_INT permut = 0;
-        for (BLAS_INT i = 1; i <= n; ++i) {
+        int permut = 0;
+        for (int i = 1; i <= n; ++i) {
             if (i != ipiv(i - 1)) { // Fortran uses base 1
                 permut++;
             }
@@ -44,7 +44,7 @@ void Numlib::eig(Mat<double>& a,
 {
     assert(a.rows() == a.cols());
 
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+    const int n = narrow_cast<int>(a.cols());
 
     evec.resize(n, n);
     eval.resize(n);
@@ -54,9 +54,8 @@ void Numlib::eig(Mat<double>& a,
     Mat<double> vr(n, n);
     Mat<double> vl(n, n);
 
-    BLAS_INT info =
-        LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'V', n, a.data(), n, wr.data(),
-                      wi.data(), vl.data(), n, vr.data(), n);
+    int info = LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'V', n, a.data(), n,
+                             wr.data(), wi.data(), vl.data(), n, vr.data(), n);
     if (info != 0) {
         throw Math_error("dgeev failed");
     }
