@@ -97,7 +97,7 @@ inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
 sum(const M& mat, std::ptrdiff_t dim)
 {
     static_assert(M::order == 2, "bad rank for sum(mat)");
-    assert(dim >= 0 && dim < staic_cast<std::ptrdiff_t>(M::order));
+    assert(dim >= 0 && dim < static_cast<std::ptrdiff_t>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
     if (dim == 0) { // row
