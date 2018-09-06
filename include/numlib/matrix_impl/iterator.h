@@ -63,13 +63,14 @@ private:
     // Move to the next element in the range.
     void increment();
 
-    const Matrix_slice<N>& desc;        // describes the iterator range
-    std::array<std::size_t, N> indexes; // counting indexes
-    T* ptr;                             // current element
+    const Matrix_slice<N>& desc;           // describes the iterator range
+    std::array<std::ptrdiff_t, N> indexes; // counting indexes
+    T* ptr;                                // current element
 };
 
 template <typename T, std::size_t N>
-Slice_iterator<T, N>::Slice_iterator(const Matrix_slice<N>& ms, T* p,
+Slice_iterator<T, N>::Slice_iterator(const Matrix_slice<N>& ms,
+                                     T* p,
                                      bool limit)
     : desc(ms)
 {
@@ -94,7 +95,7 @@ Slice_iterator<T, N>& Slice_iterator<T, N>::operator=(const Slice_iterator& it)
 template <typename T, std::size_t N>
 void Slice_iterator<T, N>::increment()
 {
-    std::size_t d = N - 1;
+    std::ptrdiff_t d = N - 1;
     while (true) {
         ptr += desc.strides[d];
         ++indexes[d];

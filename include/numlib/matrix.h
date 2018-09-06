@@ -9,7 +9,6 @@
 #ifndef NUMLIB_MATRIX_H
 #define NUMLIB_MATRIX_H
 
-#include <cstddef>
 #include <numlib/traits.h>
 #include <numlib/matrix_impl/traits.h>
 

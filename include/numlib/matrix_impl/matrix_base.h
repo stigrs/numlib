@@ -21,13 +21,13 @@ public:
     static constexpr std::size_t order = N;
 
     using value_type = T;
-    using size_type = std::size_t;
+    using size_type = std::ptrdiff_t;
 
     Matrix_base() = default;
 
     // Need a static_cast to avoid narrowing error:
     template <typename... Exts>
-    explicit Matrix_base(Exts... exts) : desc{static_cast<std::size_t>(exts)...}
+    explicit Matrix_base(Exts... exts) : desc{static_cast<size_type>(exts)...}
     {
     }
 
@@ -44,7 +44,7 @@ public:
     ~Matrix_base() = default;
 
     // Matrix rank.
-    size_type rank() const { return N; }
+    std::size_t rank() const { return N; }
 
     // Total number of elements:
     size_type size() const { return desc.size; }

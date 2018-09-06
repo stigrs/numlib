@@ -114,20 +114,17 @@ public:
     }
 
     // Row subscripting.
-    Matrix_ref<T, N - 1> operator[](std::size_t n) { return row(n); }
+    Matrix_ref<T, N - 1> operator[](size_type n) { return row(n); }
 
-    Matrix_ref<const T, N - 1> operator[](std::size_t n) const
-    {
-        return row(n);
-    }
+    Matrix_ref<const T, N - 1> operator[](size_type n) const { return row(n); }
 
     // Return a reference to the n'th row of the Matrix_ref.
-    Matrix_ref<T, N - 1> row(std::size_t n);
-    Matrix_ref<const T, N - 1> row(std::size_t n) const;
+    Matrix_ref<T, N - 1> row(size_type n);
+    Matrix_ref<const T, N - 1> row(size_type n) const;
 
     // Return a reference to the n'th column of the Matrix_ref.
-    Matrix_ref<T, N - 1> column(std::size_t n);
-    Matrix_ref<const T, N - 1> column(std::size_t n) const;
+    Matrix_ref<T, N - 1> column(size_type n);
+    Matrix_ref<const T, N - 1> column(size_type n) const;
 
     // Return a reference to the diagonal of a square Matrix_ref of rank 2.
     Matrix_ref<T, N - 1> diag();
@@ -144,7 +141,7 @@ public:
     // Mutators:
 
     void swap(Matrix_ref& m);
-    void swap_rows(std::size_t m, std::size_t n);
+    void swap_rows(size_type m, size_type n);
 
     // Apply f(x) for every element x:
     template <typename F>
@@ -199,9 +196,9 @@ Matrix_ref<T, N>::Matrix_ref(const Matrix_ref& m)
 template <typename T, std::size_t N>
 inline Matrix_ref<T, N>& Matrix_ref<T, N>::operator=(const Matrix_ref<T, N>& m)
 {
-	assert(same_extents(this->descriptor(), m.descriptor()));
-	std::copy(m.begin(), m.end(), begin());
-	return *this;
+    assert(same_extents(this->descriptor(), m.descriptor()));
+    std::copy(m.begin(), m.end(), begin());
+    return *this;
 }
 
 template <typename T, std::size_t N>
@@ -239,7 +236,7 @@ Matrix_ref<T, N>& Matrix_ref<T, N>::operator=(const Matrix<value_type, N>& m)
 }
 
 template <typename T, std::size_t N>
-inline Matrix_ref<T, N - 1> Matrix_ref<T, N>::row(std::size_t n)
+inline Matrix_ref<T, N - 1> Matrix_ref<T, N>::row(size_type n)
 {
     assert(n < this->rows());
     auto r = Matrix_impl::slice_dim<0>(this->desc, n);
@@ -247,7 +244,7 @@ inline Matrix_ref<T, N - 1> Matrix_ref<T, N>::row(std::size_t n)
 }
 
 template <typename T, std::size_t N>
-inline Matrix_ref<const T, N - 1> Matrix_ref<T, N>::row(std::size_t n) const
+inline Matrix_ref<const T, N - 1> Matrix_ref<T, N>::row(size_type n) const
 {
     assert(n < this->rows());
     auto r = Matrix_impl::slice_dim<0>(this->desc, n);
@@ -255,7 +252,7 @@ inline Matrix_ref<const T, N - 1> Matrix_ref<T, N>::row(std::size_t n) const
 }
 
 template <typename T, std::size_t N>
-inline Matrix_ref<T, N - 1> Matrix_ref<T, N>::column(std::size_t n)
+inline Matrix_ref<T, N - 1> Matrix_ref<T, N>::column(size_type n)
 {
     assert(n < this->cols());
     auto c = Matrix_impl::slice_dim<1>(this->desc, n);
@@ -263,7 +260,7 @@ inline Matrix_ref<T, N - 1> Matrix_ref<T, N>::column(std::size_t n)
 }
 
 template <typename T, std::size_t N>
-inline Matrix_ref<const T, N - 1> Matrix_ref<T, N>::column(std::size_t n) const
+inline Matrix_ref<const T, N - 1> Matrix_ref<T, N>::column(size_type n) const
 {
     assert(n < this->cols());
     auto c = Matrix_impl::slice_dim<1>(this->desc, n);
@@ -308,7 +305,7 @@ inline void Matrix_ref<T, N>::swap(Matrix_ref& m)
 }
 
 template <typename T, std::size_t N>
-inline void Matrix_ref<T, N>::swap_rows(std::size_t m, std::size_t n)
+inline void Matrix_ref<T, N>::swap_rows(size_type m, size_type n)
 {
     auto a = (*this)[m];
     auto b = (*this)[n];

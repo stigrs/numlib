@@ -152,8 +152,8 @@ TEST_CASE("test_math_linalg")
 
         inv(a);
 
-        for (std::size_t i = 0; i < a.rows(); ++i) {
-            for (std::size_t j = 0; j < a.cols(); ++j) {
+        for (std::ptrdiff_t i = 0; i < a.rows(); ++i) {
+            for (std::ptrdiff_t j = 0; j < a.cols(); ++j) {
                 CHECK(std::abs(a(i, j) - ainv(i, j)) < 1.0e-8);
             }
         }
@@ -218,13 +218,13 @@ TEST_CASE("test_math_linalg")
 
         eig(a, evec, eval);
 
-        for (std::size_t i = 0; i < eval.size(); ++i) {
+        for (std::ptrdiff_t i = 0; i < eval.size(); ++i) {
             CHECK(std::abs(eval(i).real() - eval_re(i)) < 5.0e-8);
             CHECK(std::abs(eval(i).imag() - eval_im(i)) < 5.0e-8);
         }
 
-        for (std::size_t i = 0; i < evec.rows(); ++i) {
-            for (std::size_t j = 0; j < evec.cols(); ++j) {
+        for (std::ptrdiff_t i = 0; i < evec.rows(); ++i) {
+            for (std::ptrdiff_t j = 0; j < evec.cols(); ++j) {
                 CHECK(std::abs(evec(i, j).real() - evec_re(i, j)) < 5.0e-9);
                 CHECK(std::abs(evec(i, j).imag() - evec_im(i, j)) < 5.0e-9);
             }
@@ -239,7 +239,7 @@ TEST_CASE("test_math_linalg")
 
         linsolve(A, B);
 
-        for (std::size_t i = 0; i < B.rows(); ++i) {
+        for (std::ptrdiff_t i = 0; i < B.rows(); ++i) {
             CHECK(std::abs(B(i, 0) - x(i)) < 1.0e-12);
         }
     }

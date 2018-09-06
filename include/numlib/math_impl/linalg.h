@@ -37,19 +37,19 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> max(const M& vec)
 
 template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
-max(const M& mat, std::size_t dim)
+max(const M& mat, std::ptrdiff_t dim)
 {
     static_assert(M::order == 2, "bad rank for max(mat)");
     assert(dim >= 0 && dim < M::order);
 
     Vec<Value_type<M>> result(mat.extent(dim));
     if (dim == 0) { // row
-        for (std::size_t i = 0; i < mat.rows(); ++i) {
+        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
             result(i) = max(mat.row(i));
         }
     }
     else { // column
-        for (std::size_t i = 0; i < mat.rows(); ++i) {
+        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
             result(i) = max(mat.column(i));
         }
     }
@@ -65,19 +65,19 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> min(const M& vec)
 
 template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
-min(const M& mat, std::size_t dim)
+min(const M& mat, std::ptrdiff_t dim)
 {
     static_assert(M::order == 2, "bad rank for min(mat)");
     assert(dim >= 0 && dim < M::order);
 
     Vec<Value_type<M>> result(mat.extent(dim));
     if (dim == 0) { // row
-        for (std::size_t i = 0; i < mat.rows(); ++i) {
+        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
             result(i) = min(mat.row(i));
         }
     }
     else { // column
-        for (std::size_t i = 0; i < mat.rows(); ++i) {
+        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
             result(i) = min(mat.column(i));
         }
     }
@@ -94,19 +94,19 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> sum(const M& vec)
 
 template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
-sum(const M& mat, std::size_t dim)
+sum(const M& mat, std::ptrdiff_t dim)
 {
     static_assert(M::order == 2, "bad rank for sum(mat)");
     assert(dim >= 0 && dim < M::order);
 
     Vec<Value_type<M>> result(mat.extent(dim));
     if (dim == 0) { // row
-        for (std::size_t i = 0; i < mat.rows(); ++i) {
+        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
             result(i) = sum(mat.row(i));
         }
     }
     else { // column
-        for (std::size_t i = 0; i < mat.rows(); ++i) {
+        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
             result(i) = sum(mat.column(i));
         }
     }
@@ -125,19 +125,19 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> prod(const M& vec)
 
 template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
-prod(const M& mat, std::size_t dim)
+prod(const M& mat, std::ptrdiff_t dim)
 {
     static_assert(M::order == 2, "bad rank for prod(mat)");
     assert(dim >= 0 && dim < M::order);
 
     Vec<Value_type<M>> result(mat.extent(dim));
     if (dim == 0) { // row
-        for (std::size_t i = 0; i < mat.rows(); ++i) {
+        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
             result(i) = prod(mat.row(i));
         }
     }
     else { // column
-        for (std::size_t i = 0; i < mat.rows(); ++i) {
+        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
             result(i) = prod(mat.column(i));
         }
     }
@@ -247,7 +247,7 @@ template <typename T>
 inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
 {
     assert(same_extents(x, y));
-    for (std::size_t i = 0; i < x.size(); ++i) {
+    for (std::ptrdiff_t i = 0; i < x.size(); ++i) {
         y(i) = a * x(i) + y(i);
     }
 }
@@ -258,13 +258,13 @@ inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
 template <typename T>
 inline Mat<T> transpose(const Mat<T>& m)
 {
-    const std::size_t n = m.rows();
-    const std::size_t p = m.cols();
+    const std::ptrdiff_t n = m.rows();
+    const std::ptrdiff_t p = m.cols();
 
     Mat<T> res(p, n);
 
-    for (std::size_t i = 0; i < p; ++i) {
-        for (std::size_t j = 0; j < n; ++j) {
+    for (std::ptrdiff_t i = 0; i < p; ++i) {
+        for (std::ptrdiff_t j = 0; j < n; ++j) {
             res(i, j) = m.data()[i + j * p];
         }
     }
@@ -276,15 +276,15 @@ inline Mat<T> transpose(const Mat<T>& m)
 // Matrix decomposition:
 
 // LU factorization.
-inline void lu(Mat<double>& a, Vec<int>& ipiv)
+inline void lu(Mat<double>& a, Vec<BLAS_INT>& ipiv)
 {
-    const int m = narrow_cast<int>(a.rows());
-    const int n = narrow_cast<int>(a.cols());
-    const int lda = n;
+    const BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+    const BLAS_INT lda = n;
 
     ipiv.resize(std::min(m, n));
 
-    int info =
+    BLAS_INT info =
         LAPACKE_dgetrf(LAPACK_ROW_MAJOR, m, n, a.data(), lda, ipiv.data());
     if (info < 0) {
         throw Math_error("dgetrf: illegal input parameter");
@@ -307,13 +307,14 @@ inline void inv(Mat<double>& a)
     if (det(a) == 0.0) {
         throw Math_error("inv: matrix not invertible");
     }
-    const int n = narrow_cast<int>(a.rows());
-    const int lda = n;
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
+    const BLAS_INT lda = n;
 
-    Vec<int> ipiv(n);
+    Vec<BLAS_INT> ipiv(n);
     lu(a, ipiv); // perform LU factorization
 
-    int info = LAPACKE_dgetri(LAPACK_ROW_MAJOR, n, a.data(), lda, ipiv.data());
+    BLAS_INT info =
+        LAPACKE_dgetri(LAPACK_ROW_MAJOR, n, a.data(), lda, ipiv.data());
     if (info != 0) {
         throw Math_error("dgetri: matrix inversion failed");
     }
@@ -328,10 +329,10 @@ inline void eigs(Mat<double>& a, Vec<double>& w)
 {
     assert(a.rows() == a.cols());
 
-    const int n = narrow_cast<int>(a.rows());
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
     w.resize(n);
 
-    int info =
+    BLAS_INT info =
         LAPACKE_dsyevd(LAPACK_ROW_MAJOR, 'V', 'U', n, a.data(), n, w.data());
     if (info != 0) {
         throw Math_error("dsyevd failed");
@@ -351,15 +352,15 @@ inline void linsolve(Mat<double>& a, Mat<double>& b)
     assert(a.rows() == a.cols());
     assert(b.rows() == a.cols());
 
-    const int n = narrow_cast<int>(a.cols());
-    const int nrhs = narrow_cast<int>(b.cols());
-    const int lda = n;
-    const int ldb = nrhs;
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+    const BLAS_INT nrhs = narrow_cast<BLAS_INT>(b.cols());
+    const BLAS_INT lda = n;
+    const BLAS_INT ldb = nrhs;
 
-    Vec<int> ipiv(n);
+    Vec<BLAS_INT> ipiv(n);
 
-    int info = LAPACKE_dgesv(LAPACK_ROW_MAJOR, n, nrhs, a.data(), lda,
-                             ipiv.data(), b.data(), ldb);
+    BLAS_INT info = LAPACKE_dgesv(LAPACK_ROW_MAJOR, n, nrhs, a.data(), lda,
+                                  ipiv.data(), b.data(), ldb);
     if (info != 0) {
         throw Math_error("dgesv: factor U is singular");
     }
@@ -368,7 +369,7 @@ inline void linsolve(Mat<double>& a, Mat<double>& b)
 //------------------------------------------------------------------------------
 
 // Schmidt orthogonalization of n orbitals in a.
-void schmidt(Mat<double>& a, std::size_t n);
+void schmidt(Mat<double>& a, std::ptrdiff_t n);
 
 } // namespace Numlib
 

@@ -34,6 +34,7 @@ function(add_numlib_test name)
 endfunction()
 
 set(PROGRAMS 
+	test_band_matrix
 	test_constants
 	test_math_core
 	test_math_calculus
