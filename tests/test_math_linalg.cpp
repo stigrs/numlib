@@ -231,6 +231,36 @@ TEST_CASE("test_math_linalg")
         }
     }
 
+    SECTION("eigs_band_matrix")
+    {
+        // Example from scipy:
+        Mat<double> a = {{1.0, 5.0, 2.0, 0.0},
+                         {5.0, 2.0, 5.0, 2.0},
+                         {2.0, 5.0, 3.0, 5.0},
+                         {0.0, 2.0, 5.0, 4.0}};
+
+        Vec<double> w = {-4.26200532, -2.22987175, 3.95222349, 12.53965359};
+        Mat<double> v = {{0.54585106, -0.73403852, 0.39896071, -0.06375287},
+                         {-0.49026342, 0.04827646, 0.67105283, -0.55407514},
+                         {-0.58943537, -0.41123929, 0.15802574, 0.6771086},
+                         {0.33801529, 0.53827417, 0.60460427, 0.48006276}};
+
+        Band_matrix<double> ab(3, 3, a);
+        Mat<double> evec;
+        Vec<double> eval;
+
+        eigs(ab, evec, eval);
+
+        for (Index i = 0; i < eval.size(); ++i) {
+            CHECK(std::abs(eval(i) - w(i)) < 5.0e-9);
+        }
+        for (Index i = 0; i < evec.rows(); ++i) {
+            for (Index j = 0; j < evec.cols(); ++j) {
+                CHECK(std::abs(evec(i, j) - v(i, j)) < 1.0e-8);
+            }
+        }
+    }
+
     SECTION("linsolve")
     {
         Mat<double> A = {{1.0, 2.0, 3.0}, {2.0, 3.0, 4.0}, {3.0, 4.0, 1.0}};

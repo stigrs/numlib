@@ -14,8 +14,9 @@
 #include <lapacke.h>
 #endif
 
-#include <numlib/matrix.h>
 #include <numlib/traits.h>
+#include <numlib/matrix.h>
+#include <numlib/band_matrix.h>
 #include <algorithm>
 #include <numeric>
 #include <functional>
@@ -343,6 +344,27 @@ inline void eigs(Mat<double>& a, Vec<double>& w)
 void eig(Mat<double>& a,
          Mat<std::complex<double>>& evec,
          Vec<std::complex<double>>& eval);
+
+// Compute eigenvalues and eigenvectors of a real symmetric band matrix.
+inline void eigs(Band_matrix<double>& ab, Mat<double>& evec, Vec<double>& eval)
+{
+    assert(ab.rows() == ab.cols());
+    assert(ab.upper() == ab.lower());
+
+    evec.resize(ab.rows(), ab.cols());
+    eval.resize(ab.cols());
+
+    const BLAS_INT n = ab.cols();
+    const BLAS_INT kd = ab.upper();
+    const BLAS_INT ldab = ab.leading_dim();
+    const BLAS_INT ldz = ab.cols();
+
+    BLAS_INT info = LAPACKE_dsbev(LAPACK_COL_MAJOR, 'V', 'U', n, kd, ab.data(),
+                                  ldab, eval.data(), evec.data(), ldz);
+    if (info != 0) {
+        throw Math_error("dsbev failed");
+    }
+}
 
 //------------------------------------------------------------------------------
 
