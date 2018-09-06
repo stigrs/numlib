@@ -6,7 +6,9 @@ and Intel MKL is supported.
 
 ## Features
 
-* N-dimensional dense matrices using Stroustrup's matrix design (see TC++PL4) 
+* N-dimensional dense matrices using Stroustrup's matrix design 
+  (row-major storage order) 
+* Band matrices (column-major storage order)
 * A few basic mathematical functions not provided by the STL
 * Basic numerical derivation and integration methods
 * Basic linear algebra methods
