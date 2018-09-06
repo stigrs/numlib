@@ -7,6 +7,10 @@
 #ifndef NUMLIB_BAND_MATRIX_OPERATIONS_H
 #define NUMLIB_BAND_MATRIX_OPERATIONS_H
 
+#include <iomanip>
+#include <iostream>
+#include <algorithm>
+
 namespace Numlib {
 
 //------------------------------------------------------------------------------
@@ -53,6 +57,108 @@ inline std::ptrdiff_t bwidth(const Band_matrix<T>& ab, std::ptrdiff_t uplo)
     else {
         return ab.upper();
     }
+}
+
+//------------------------------------------------------------------------------
+//
+// Equality comparable:
+
+// Two band matrices compare equal when they have the same elements.
+
+template <typename T>
+inline bool operator==(const Band_matrix<T>& a, const Band_matrix<T>& b)
+{
+    assert(a.rows() == b.rows() && a.cols() == b.cols());
+    return std::equal(a.begin(), a.end(), b.begin());
+}
+
+template <typename T>
+inline bool operator!=(const Band_matrix<T>& a, const Band_matrix<T>& b)
+{
+    return !(a == b);
+}
+
+//------------------------------------------------------------------------------
+//
+// Binary arithmetic operations:
+
+// Scalar addition:
+
+template <typename T>
+inline Band_matrix<T> operator+(const Band_matrix<T>& a, const T& scalar)
+{
+    Band_matrix<T> res(a);
+    return res += scalar;
+}
+
+template <typename T>
+inline Band_matrix<T> operator+(const T& scalar, const Band_matrix<T>& a)
+{
+    Band_matrix<T> res(a);
+    return res += scalar;
+}
+
+// Scalar subtraction:
+
+template <typename T>
+inline Band_matrix<T> operator-(const Band_matrix<T>& a, const T& scalar)
+{
+    Band_matrix<T> res(a);
+    return res -= scalar;
+}
+
+// Scalar multiplication:
+
+template <typename T>
+inline Band_matrix<T> operator*(const Band_matrix<T>& a, const T& scalar)
+{
+    Band_matrix<T> res(a);
+    return res *= scalar;
+}
+
+template <typename T>
+inline Band_matrix<T> operator*(const T& scalar, const Band_matrix<T>& a)
+{
+    Band_matrix<T> res(a);
+    return res *= scalar;
+}
+
+// Scalar division:
+
+template <typename T>
+inline Band_matrix<T> operator/(const Band_matrix<T>& a, const T& scalar)
+{
+    Band_matrix<T> res(a);
+    return res /= scalar;
+}
+
+// Scalar modulus:
+
+template <typename T>
+inline Band_matrix<T> operator%(const Band_matrix<T>& a, const T& scalar)
+{
+    Band_matrix<T> res(a);
+    return res %= scalar;
+}
+
+//------------------------------------------------------------------------------
+//
+// Output to stream:
+
+template <typename T>
+std::ostream& operator<<(std::ostream& to, const Band_matrix<T>& ab)
+{
+    to << ab.rows() << " x " << ab.cols() << "\n[";
+    for (std::ptrdiff_t i = 0; i < ab.rows(); ++i) {
+        for (std::ptrdiff_t j = 0; j < ab.cols(); ++j) {
+            to << std::setw(9) << ab(i, j) << " ";
+        }
+        if (i != ab.rows() - 1) {
+            to << "\n ";
+        }
+    }
+    to << "]\n";
+    return to;
 }
 
 } // namespace Numlib
