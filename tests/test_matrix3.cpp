@@ -5,14 +5,14 @@
 // and conditions.
 
 #include <numlib/matrix.h>
-#include <catch/catch.hpp>
-#include <iostream>
+#include <catch2/catch.hpp>
 
 TEST_CASE("test_matrix3")
 {
-    using namespace num;
+    using namespace Numlib;
 
-    icube m3 = {{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
+    Matrix<int, 3> m3 = {
+        {{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
 
     SECTION("rank") { CHECK(m3.rank() == 3); }
     SECTION("size") { CHECK(m3.size() == 12); }

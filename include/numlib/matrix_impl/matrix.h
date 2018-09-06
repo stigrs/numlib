@@ -14,7 +14,7 @@
 #include <utility>
 #include <vector>
 
-namespace num {
+namespace Numlib {
 
 // N-dimensional dense matrix class using row-major storage order.
 //
@@ -81,52 +81,52 @@ public:
     // Subscripting:
 
     template <typename... Args>
-    Enable_if<matrix_impl::Requesting_element<Args...>(), T&>
+    Enable_if<Matrix_impl::Requesting_element<Args...>(), T&>
     operator()(Args... args)
     {
-        assert(matrix_impl::check_bounds(this->desc, args...));
+        assert(Matrix_impl::check_bounds(this->desc, args...));
         return *(data() + this->desc(args...));
     }
 
     template <typename... Args>
-    Enable_if<matrix_impl::Requesting_element<Args...>(), const T&>
+    Enable_if<Matrix_impl::Requesting_element<Args...>(), const T&>
     operator()(Args... args) const
     {
-        assert(matrix_impl::check_bounds(this->desc, args...));
+        assert(Matrix_impl::check_bounds(this->desc, args...));
         return *(data() + this->desc(args...));
     }
 
     template <typename... Args>
-    Enable_if<matrix_impl::Requesting_slice<Args...>(), Matrix_ref<T, N>>
+    Enable_if<Matrix_impl::Requesting_slice<Args...>(), Matrix_ref<T, N>>
     operator()(const Args&... args)
     {
         Matrix_slice<N> d;
-        d.start = matrix_impl::do_slice(this->desc, d, args...);
-        d.size = matrix_impl::compute_size(d.extents);
+        d.start = Matrix_impl::do_slice(this->desc, d, args...);
+        d.size = Matrix_impl::compute_size(d.extents);
         return {d, data()};
     }
 
     template <typename... Args>
-    Enable_if<matrix_impl::Requesting_slice<Args...>(), Matrix_ref<const T, N>>
+    Enable_if<Matrix_impl::Requesting_slice<Args...>(), Matrix_ref<const T, N>>
     operator()(const Args&... args) const
     {
         Matrix_slice<N> d;
-        d.start = matrix_impl::do_slice(this->desc, d, args...);
-        d.size = matrix_impl::compute_size(d.extents);
+        d.start = Matrix_impl::do_slice(this->desc, d, args...);
+        d.size = Matrix_impl::compute_size(d.extents);
         return {d, data()};
     }
 
     // Row subscripting.
-    Matrix_ref<T, N - 1> operator[](std::size_t n);
-    Matrix_ref<const T, N - 1> operator[](std::size_t n) const;
+    Matrix_ref<T, N - 1> operator[](size_type n);
+    Matrix_ref<const T, N - 1> operator[](size_type n) const;
 
     // Return a reference to the n'th row of the matrix.
-    Matrix_ref<T, N - 1> row(std::size_t n);
-    Matrix_ref<const T, N - 1> row(std::size_t n) const;
+    Matrix_ref<T, N - 1> row(size_type n);
+    Matrix_ref<const T, N - 1> row(size_type n) const;
 
     // Return a reference to the n'th column of the matrix.
-    Matrix_ref<T, N - 1> column(std::size_t n);
-    Matrix_ref<const T, N - 1> column(std::size_t n) const;
+    Matrix_ref<T, N - 1> column(size_type n);
+    Matrix_ref<const T, N - 1> column(size_type n) const;
 
     // Return a reference to the diagonal of a square two-dimensional matrix.
     Matrix_ref<T, N - 1> diag();
@@ -143,7 +143,7 @@ public:
     // Mutators:
 
     void swap(Matrix& m);
-    void swap_rows(std::size_t m, std::size_t n);
+    void swap_rows(size_type m, size_type n);
 
     // Resize matrix (elements not preserved).
     void resize(const Matrix_slice<N>& ms);
@@ -212,11 +212,11 @@ template <typename T, std::size_t N>
 inline Matrix<T, N>::Matrix(Matrix_initializer<T, N> init)
 {
     this->desc.start = 0;
-    this->desc.extents = matrix_impl::derive_extents<N>(init);
-    matrix_impl::compute_strides(this->desc);
+    this->desc.extents = Matrix_impl::derive_extents<N>(init);
+    Matrix_impl::compute_strides(this->desc);
     elems.reserve(this->desc.size);
-    matrix_impl::insert_flat(init, elems);
-    assert(elems.size() == this->desc.size);
+    Matrix_impl::insert_flat(init, elems);
+    assert(static_cast<size_type>(elems.size()) == this->desc.size);
 }
 
 template <typename T, std::size_t N>
@@ -228,34 +228,34 @@ inline Matrix<T, N>& Matrix<T, N>::operator=(Matrix_initializer<T, N> init)
 }
 
 template <typename T, std::size_t N>
-inline Matrix_ref<T, N - 1> Matrix<T, N>::row(std::size_t n)
+inline Matrix_ref<T, N - 1> Matrix<T, N>::row(size_type n)
 {
     assert(n < this->rows());
-    auto r = matrix_impl::slice_dim<0>(this->desc, n);
+    auto r = Matrix_impl::slice_dim<0>(this->desc, n);
     return {r, data()};
 }
 
 template <typename T, std::size_t N>
-inline Matrix_ref<const T, N - 1> Matrix<T, N>::row(std::size_t n) const
+inline Matrix_ref<const T, N - 1> Matrix<T, N>::row(size_type n) const
 {
     assert(n < this->rows());
-    auto r = matrix_impl::slice_dim<0>(this->desc, n);
+    auto r = Matrix_impl::slice_dim<0>(this->desc, n);
     return {r, data()};
 }
 
 template <typename T, std::size_t N>
-inline Matrix_ref<T, N - 1> Matrix<T, N>::column(std::size_t n)
+inline Matrix_ref<T, N - 1> Matrix<T, N>::column(size_type n)
 {
     assert(n < this->cols());
-    auto c = matrix_impl::slice_dim<1>(this->desc, n);
+    auto c = Matrix_impl::slice_dim<1>(this->desc, n);
     return {c, data()};
 }
 
 template <typename T, std::size_t N>
-inline Matrix_ref<const T, N - 1> Matrix<T, N>::column(std::size_t n) const
+inline Matrix_ref<const T, N - 1> Matrix<T, N>::column(size_type n) const
 {
     assert(n < this->cols());
-    auto c = matrix_impl::slice_dim<1>(this->desc, n);
+    auto c = Matrix_impl::slice_dim<1>(this->desc, n);
     return {c, data()};
 }
 
@@ -269,7 +269,7 @@ inline Matrix_ref<T, N - 1> Matrix<T, N>::diag()
     d.start = this->desc.start;
     d.extents[0] = this->rows();
     d.strides[0] = this->rows() + 1;
-    d.size = matrix_impl::compute_size(d.extents);
+    d.size = Matrix_impl::compute_size(d.extents);
 
     return {d, data()};
 }
@@ -284,7 +284,7 @@ inline Matrix_ref<const T, N - 1> Matrix<T, N>::diag() const
     d.start = this->desc.start;
     d.extents[0] = this->rows();
     d.strides[0] = this->rows() + 1;
-    d.size = matrix_impl::compute_size(d.extents);
+    d.size = Matrix_impl::compute_size(d.extents);
 
     return {d, data()};
 }
@@ -297,7 +297,7 @@ inline void Matrix<T, N>::swap(Matrix& m)
 }
 
 template <typename T, std::size_t N>
-inline void Matrix<T, N>::swap_rows(std::size_t m, std::size_t n)
+inline void Matrix<T, N>::swap_rows(size_type m, size_type n)
 {
     auto a = (*this)[m];
     auto b = (*this)[n];
@@ -316,7 +316,7 @@ template <typename... Exts>
 inline void Matrix<T, N>::resize(Exts... exts)
 {
     assert(sizeof...(Exts) == this->rank());
-    Matrix_slice<N> d{static_cast<std::size_t>(exts)...}; // avoid C2398 error
+    Matrix_slice<N> d{static_cast<size_type>(exts)...}; // avoid C2398 error
     this->desc = d;
     elems.resize(this->size());
 }
@@ -437,6 +437,6 @@ private:
     T elem;
 };
 
-} // namespace num
+} // namespace Numlib
 
 #endif // NUMLIB_MATRIX_MATRIX_H

@@ -9,7 +9,7 @@
 #ifndef NUMLIB_MATRIX_TRAITS_H
 #define NUMLIB_MATRIX_TRAITS_H
 
-namespace num {
+namespace Numlib {
 
 namespace Matrix_impl {
 
@@ -58,6 +58,6 @@ constexpr bool Matrix_type()
     return Matrix_impl::has_order<T>::value;
 }
 
-} // namespace num
+} // namespace Numlib
 
 #endif // NUMLIB_MATRIX_TRAITS_H

@@ -9,15 +9,10 @@
 #ifndef NUMLIB_MATRIX_SLICE_H
 #define NUMLIB_MATRIX_SLICE_H
 
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4245) // signed/unsigned error caused by size_t(-1)
-#endif
-
 #include <cstddef>
 #include <iostream>
 
-namespace num {
+namespace Numlib {
 
 // A slice describes a sequence of elements in some dimension (or row) of a
 // matrix. It is a triple comprised of a starting index, a number of elements,
@@ -26,30 +21,29 @@ namespace num {
 struct slice {
     slice() : start(-1), length(-1), stride(1) {}
 
-    explicit slice(std::size_t s) : start(s), length(-1), stride(1) {}
+    explicit slice(std::ptrdiff_t s) : start(s), length(-1), stride(1) {}
 
-    slice(std::size_t s, std::size_t l, std::size_t n = 1)
+    slice(std::ptrdiff_t s, std::ptrdiff_t l, std::ptrdiff_t n = 1)
         : start(s), length(l), stride(n)
     {
     }
 
-    std::size_t operator()(std::size_t i) const { return start + i * stride; }
+    std::ptrdiff_t operator()(std::ptrdiff_t i) const
+    {
+        return start + i * stride;
+    }
 
-    std::size_t start;
-    std::size_t length;
-    std::size_t stride;
+    std::ptrdiff_t start;
+    std::ptrdiff_t length;
+    std::ptrdiff_t stride;
 };
 
-std::ostream& operator<<(std::ostream& to, const slice& s)
+inline std::ostream& operator<<(std::ostream& to, const slice& s)
 {
     to << '(' << s.start << ", " << s.length << ", " << s.stride << ')';
     return to;
 }
 
-} // namespace num
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+} // namespace Numlib
 
 #endif // NUMLIB_MATRIX_SLICE_H

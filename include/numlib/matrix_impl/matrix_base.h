@@ -11,7 +11,7 @@
 
 #include <cassert>
 
-namespace num {
+namespace Numlib {
 
 // Provides support for features common to both matrices and matrix reference.
 template <typename T, std::size_t N>
@@ -21,13 +21,13 @@ public:
     static constexpr std::size_t order = N;
 
     using value_type = T;
-    using size_type = std::size_t;
+    using size_type = std::ptrdiff_t;
 
     Matrix_base() = default;
 
     // Need a static_cast to avoid narrowing error:
     template <typename... Exts>
-    explicit Matrix_base(Exts... exts) : desc{static_cast<std::size_t>(exts)...}
+    explicit Matrix_base(Exts... exts) : desc{static_cast<size_type>(exts)...}
     {
     }
 
@@ -44,7 +44,7 @@ public:
     ~Matrix_base() = default;
 
     // Matrix rank.
-    size_type rank() const { return N; }
+    std::size_t rank() const { return N; }
 
     // Total number of elements:
     size_type size() const { return desc.size; }
@@ -52,7 +52,7 @@ public:
     // Number of elements in the N'th dimension:
     size_type extent(size_type n) const
     {
-        assert(n >= 0 && n < order);
+        assert(n >= 0 && n < static_cast<std::ptrdiff_t>(order));
         return desc.extents[n];
     }
 
@@ -78,6 +78,6 @@ protected:
     Matrix_slice<N> desc;
 };
 
-} // namespace num
+} // namespace Numlib
 
 #endif // NUMLIB_MATRIX_MATRIX_BASE_H

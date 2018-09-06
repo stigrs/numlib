@@ -5,14 +5,13 @@
 // and conditions.
 
 #include <numlib/matrix.h>
-#include <catch/catch.hpp>
-#include <iostream>
+#include <catch2/catch.hpp>
 
 TEST_CASE("test_matrix4")
 {
-    using namespace num;
+    using namespace Numlib;
 
-    auto m4 = zeros<Matrix<int, 4>>(2, 3, 4, 5);
+    auto m4 = zeros<Hypercube<int>>(2, 3, 4, 5);
 
     SECTION("rank") { CHECK(m4.rank() == 4); }
     SECTION("size") { CHECK(m4.size() == 120); }

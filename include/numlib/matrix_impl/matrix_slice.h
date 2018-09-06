@@ -15,7 +15,7 @@
 #include <initializer_list>
 #include <iterator>
 
-namespace num {
+namespace Numlib {
 
 // Matrix slice.
 //
@@ -36,11 +36,12 @@ struct Matrix_slice {
     Matrix_slice& operator=(const Matrix_slice&) = default;
 
     // Starting offset and extents:
-    Matrix_slice(std::size_t s, std::initializer_list<std::size_t> exts);
+    Matrix_slice(std::ptrdiff_t s, std::initializer_list<std::ptrdiff_t> exts);
 
     // Starting offset, extents, and strides:
-    Matrix_slice(std::size_t s, std::initializer_list<std::size_t> exts,
-                 std::initializer_list<std::size_t> strs);
+    Matrix_slice(std::ptrdiff_t s,
+                 std::initializer_list<std::ptrdiff_t> exts,
+                 std::initializer_list<std::ptrdiff_t> strs);
 
     // N extents:
     template <typename... Dims>
@@ -49,42 +50,42 @@ struct Matrix_slice {
     // Calculate index from a set of subscripts:
     template <typename... Dims>
 #ifdef _MSC_VER // Workaround for internal compiler error in VS 2017
-    std::size_t operator()(Dims... dims) const;
+    std::ptrdiff_t operator()(Dims... dims) const;
 #else
-    Enable_if<All(Convertible<Dims, std::size_t>()...), std::size_t>
+    Enable_if<All(Convertible<Dims, std::ptrdiff_t>()...), std::ptrdiff_t>
     operator()(Dims... dims) const;
 #endif // _MSC_VER
 
     // Calculate offset given a range.
     template <typename R>
-    std::size_t offset(R&& range) const;
+    std::ptrdiff_t offset(R&& range) const;
 
-    std::size_t size;                   // total number of elements
-    std::size_t start;                  // starting offset
-    std::array<std::size_t, N> extents; // number of elements in each dimension
-    std::array<std::size_t, N> strides; // offsets between elements in each dim
+    std::ptrdiff_t size;                   // total number of elements
+    std::ptrdiff_t start;                  // starting offset
+    std::array<std::ptrdiff_t, N> extents; // number of elements in each dim
+    std::array<std::ptrdiff_t, N> strides; // offsets between elements
 };
 
 template <std::size_t N>
-Matrix_slice<N>::Matrix_slice(std::size_t s,
-                              std::initializer_list<std::size_t> exts)
+Matrix_slice<N>::Matrix_slice(std::ptrdiff_t s,
+                              std::initializer_list<std::ptrdiff_t> exts)
     : start(s)
 {
     assert(exts.size() == N);
     std::copy(exts.begin(), exts.end(), extents.begin());
-    matrix_impl::compute_strides(*this);
+    Matrix_impl::compute_strides(*this);
 }
 
 template <std::size_t N>
-Matrix_slice<N>::Matrix_slice(std::size_t s,
-                              std::initializer_list<std::size_t> exts,
-                              std::initializer_list<std::size_t> strs)
+Matrix_slice<N>::Matrix_slice(std::ptrdiff_t s,
+                              std::initializer_list<std::ptrdiff_t> exts,
+                              std::initializer_list<std::ptrdiff_t> strs)
     : start(s)
 {
     assert(exts.size() == N);
     std::copy(exts.begin(), exts.end(), extents.begin());
     std::copy(strs.begin(), strs.end(), strides.begin());
-    size = matrix_impl::compute_size(extents);
+    size = Matrix_impl::compute_size(extents);
 }
 
 template <std::size_t N>
@@ -93,32 +94,32 @@ Matrix_slice<N>::Matrix_slice(Dims... dims) : start{0}
 {
     static_assert(sizeof...(Dims) == N,
                   "Matrix_slice<N>::Matrix_slice(Dims...): dimension mismatch");
-    std::size_t args[N]{std::size_t(dims)...};
+    std::ptrdiff_t args[N]{std::ptrdiff_t(dims)...};
     std::copy(std::begin(args), std::end(args), extents.begin());
-    matrix_impl::compute_strides(*this);
+    Matrix_impl::compute_strides(*this);
 }
 
 template <std::size_t N>
 template <typename... Dims>
 #ifdef _MSC_VER // Workaround for internal compiler error in VS 2017
-inline std::size_t
+inline std::ptrdiff_t
 #else
-inline Enable_if<All(Convertible<Dims, std::size_t>()...), std::size_t>
+inline Enable_if<All(Convertible<Dims, std::ptrdiff_t>()...), std::ptrdiff_t>
 #endif // _MSC_VER
 Matrix_slice<N>::operator()(Dims... dims) const
 {
     static_assert(sizeof...(Dims) == N,
                   "Matrix_slice<N>::operator(): dimension mismatch");
-    std::size_t args[N]{std::size_t(dims)...};
-    return start +
-           std::inner_product(args, args + N, strides.begin(), std::size_t{0});
+    std::ptrdiff_t args[N]{std::ptrdiff_t(dims)...};
+    return start + std::inner_product(args, args + N, strides.begin(),
+                                      std::ptrdiff_t{0});
 }
 
 template <std::size_t N>
 template <typename R>
-inline std::size_t Matrix_slice<N>::offset(R&& range) const
+inline std::ptrdiff_t Matrix_slice<N>::offset(R&& range) const
 {
-    constexpr std::size_t zero = 0;
+    constexpr std::ptrdiff_t zero = 0;
     return start + std::inner_product(strides.begin(), strides.end(),
                                       std::begin(range), zero);
 }
@@ -138,7 +139,7 @@ struct Matrix_slice<1> {
     Matrix_slice& operator=(const Matrix_slice&) = default;
 
     // Starting offset and extents:
-    Matrix_slice(std::size_t s, std::size_t exts)
+    Matrix_slice(std::ptrdiff_t s, std::ptrdiff_t exts)
     {
         start = s;
         extents[0] = exts;
@@ -147,7 +148,7 @@ struct Matrix_slice<1> {
     }
 
     // Starting offset, extents, and strides:
-    Matrix_slice(std::size_t s, std::size_t exts, std::size_t strs)
+    Matrix_slice(std::ptrdiff_t s, std::ptrdiff_t exts, std::ptrdiff_t strs)
     {
         start = s;
         extents[0] = exts;
@@ -156,7 +157,7 @@ struct Matrix_slice<1> {
     }
 
     // N extents:
-    Matrix_slice(std::size_t exts)
+    Matrix_slice(std::ptrdiff_t exts)
     {
         start = 0;
         extents[0] = exts;
@@ -164,25 +165,27 @@ struct Matrix_slice<1> {
         size = exts;
     }
 
-    // Calculate index from a set of subscripts:
-    std::size_t operator()(std::size_t i) const
+    // Calculate std::ptrdiff_t from a set of subscripts:
+    std::ptrdiff_t operator()(std::ptrdiff_t i) const
     {
         return start + i * strides[0];
     }
 
     // Calculate offset given a range.
     template <typename R>
-    std::size_t offset(R&& range) const
+    std::ptrdiff_t offset(R&& range) const
     {
-        constexpr std::size_t zero = 0;
+        constexpr std::ptrdiff_t zero = 0;
         return start + std::inner_product(strides.begin(), strides.end(),
                                           std::begin(range), zero);
     }
 
-    std::size_t size;                   // total number of elements
-    std::size_t start;                  // starting offset
-    std::array<std::size_t, 1> extents; // number of elements in each dimension
-    std::array<std::size_t, 1> strides; // offsets between elements in each dim
+    std::ptrdiff_t size;  // total number of elements
+    std::ptrdiff_t start; // starting offset
+    std::array<std::ptrdiff_t, 1>
+        extents; // number of elements in each dimension
+    std::array<std::ptrdiff_t, 1>
+        strides; // offsets between elements in each dim
 };
 
 // Matrix_slice to describe two-dimensional matrix (matrix).
@@ -196,52 +199,53 @@ struct Matrix_slice<2> {
     Matrix_slice& operator=(const Matrix_slice&) = default;
 
     // Starting offset and extents:
-    Matrix_slice(std::size_t s, std::initializer_list<std::size_t> exts)
+    Matrix_slice(std::ptrdiff_t s, std::initializer_list<std::ptrdiff_t> exts)
         : start(s)
     {
         assert(exts.size() == 2);
         std::copy(exts.begin(), exts.end(), extents.begin());
-        matrix_impl::compute_strides(*this);
+        Matrix_impl::compute_strides(*this);
     }
 
     // Starting offset, extents, and strides:
-    Matrix_slice(std::size_t s, std::initializer_list<std::size_t> exts,
-                 std::initializer_list<std::size_t> strs)
+    Matrix_slice(std::ptrdiff_t s,
+                 std::initializer_list<std::ptrdiff_t> exts,
+                 std::initializer_list<std::ptrdiff_t> strs)
         : start(s)
     {
         assert(exts.size() == 2);
         std::copy(exts.begin(), exts.end(), extents.begin());
         std::copy(strs.begin(), strs.end(), strides.begin());
-        size = matrix_impl::compute_size(extents);
+        size = Matrix_impl::compute_size(extents);
     }
 
     // N extents:
-    Matrix_slice(std::size_t nr, std::size_t nc) : start{0}
+    Matrix_slice(std::ptrdiff_t nr, std::ptrdiff_t nc) : start{0}
     {
         extents[0] = nr;
         extents[1] = nc;
-        matrix_impl::compute_strides(*this);
+        Matrix_impl::compute_strides(*this);
     }
 
     // Calculate index from a set of subscripts:
-    std::size_t operator()(std::size_t i, std::size_t j) const
+    std::ptrdiff_t operator()(std::ptrdiff_t i, std::ptrdiff_t j) const
     {
         return start + i * strides[0] + j * strides[1];
     }
 
     // Calculate offset given a range.
     template <typename R>
-    std::size_t offset(R&& range) const
+    std::ptrdiff_t offset(R&& range) const
     {
-        constexpr std::size_t zero = 0;
+        constexpr std::ptrdiff_t zero = 0;
         return start + std::inner_product(strides.begin(), strides.end(),
                                           std::begin(range), zero);
     }
 
-    std::size_t size;                   // total number of elements
-    std::size_t start;                  // starting offset
-    std::array<std::size_t, 2> extents; // number of elements in each dimension
-    std::array<std::size_t, 2> strides; // offsets between elements in each dim
+    std::ptrdiff_t size;                   // total number of elements
+    std::ptrdiff_t start;                  // starting offset
+    std::array<std::ptrdiff_t, 2> extents; // number of elements in each dim
+    std::array<std::ptrdiff_t, 2> strides; // offsets between elements
 };
 
 // Matrix_slice to describe three-dimensional matrix (cube).
@@ -255,53 +259,56 @@ struct Matrix_slice<3> {
     Matrix_slice& operator=(const Matrix_slice&) = default;
 
     // Starting offset and extents:
-    Matrix_slice(std::size_t s, std::initializer_list<std::size_t> exts)
+    Matrix_slice(std::ptrdiff_t s, std::initializer_list<std::ptrdiff_t> exts)
         : start(s)
     {
         assert(exts.size() == 3);
         std::copy(exts.begin(), exts.end(), extents.begin());
-        matrix_impl::compute_strides(*this);
+        Matrix_impl::compute_strides(*this);
     }
 
     // Starting offset, extents, and strides:
-    Matrix_slice(std::size_t s, std::initializer_list<std::size_t> exts,
-                 std::initializer_list<std::size_t> strs)
+    Matrix_slice(std::ptrdiff_t s,
+                 std::initializer_list<std::ptrdiff_t> exts,
+                 std::initializer_list<std::ptrdiff_t> strs)
         : start(s)
     {
         assert(exts.size() == 3);
         std::copy(exts.begin(), exts.end(), extents.begin());
         std::copy(strs.begin(), strs.end(), strides.begin());
-        size = matrix_impl::compute_size(extents);
+        size = Matrix_impl::compute_size(extents);
     }
 
     // N extents:
-    Matrix_slice(std::size_t n1, std::size_t n2, std::size_t n3) : start{0}
+    Matrix_slice(std::ptrdiff_t n1, std::ptrdiff_t n2, std::ptrdiff_t n3)
+        : start{0}
     {
         extents[0] = n1;
         extents[1] = n2;
         extents[2] = n3;
-        matrix_impl::compute_strides(*this);
+        Matrix_impl::compute_strides(*this);
     }
 
     // Calculate index from a set of subscripts:
-    std::size_t operator()(std::size_t i, std::size_t j, std::size_t k) const
+    std::ptrdiff_t
+    operator()(std::ptrdiff_t i, std::ptrdiff_t j, std::ptrdiff_t k) const
     {
         return start + i * strides[0] + j * strides[1] + k * strides[2];
     }
 
     // Calculate offset given a range.
     template <typename R>
-    std::size_t offset(R&& range) const
+    std::ptrdiff_t offset(R&& range) const
     {
-        constexpr std::size_t zero = 0;
+        constexpr std::ptrdiff_t zero = 0;
         return start + std::inner_product(strides.begin(), strides.end(),
                                           std::begin(range), zero);
     }
 
-    std::size_t size;                   // total number of elements
-    std::size_t start;                  // starting offset
-    std::array<std::size_t, 3> extents; // number of elements in each dimension
-    std::array<std::size_t, 3> strides; // offsets between elements in each dim
+    std::ptrdiff_t size;                   // total number of elements
+    std::ptrdiff_t start;                  // starting offset
+    std::array<std::ptrdiff_t, 3> extents; // number of elements in each dim
+    std::array<std::ptrdiff_t, 3> strides; // offsets between elements
 };
 
 //------------------------------------------------------------------------------
@@ -347,6 +354,6 @@ same_extents(const M1& a, const M2& b)
     return same_extents(a.descriptor(), b.descriptor());
 }
 
-} // namespace num
+} // namespace Numlib
 
 #endif // NUMLIB_MATRIX_MATRIX_SLICE_H

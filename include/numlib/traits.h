@@ -9,8 +9,24 @@
 #ifndef NUMLIB_TRAITS_H
 #define NUMLIB_TRAITS_H
 
+#include <cstddef>
 #include <type_traits>
 #include <initializer_list>
+#include <utility>
+
+//------------------------------------------------------------------------------
+
+// Signed index type:
+//
+// C++ Core Guidelines recommends to use a signed integer type for subscripts/
+// indices. The Guidelines Support Library (GSL) provides gsl::index as a
+// typedef to std::ptrdiff_t to avoid the ugliness of using ptrdiff_t.
+//
+// Here, a typedef to ptrdiff_t is provided in the global namespace in order to
+// avoid linking with the GSL. Hopefully, this can be replaced by std::index in
+// the future.
+
+using Index = std::ptrdiff_t;
 
 //------------------------------------------------------------------------------
 
@@ -97,5 +113,16 @@ struct substitution_succeeded : std::true_type {
 template <>
 struct substitution_succeeded<substitution_failure> : std::false_type {
 };
+
+//------------------------------------------------------------------------------
+//
+// Type cast:
+
+// A searchable way to do narrowing casts of values.
+template <typename T, typename U>
+constexpr T narrow_cast(U&& u)
+{
+    return static_cast<T>(std::forward<U>(u));
+}
 
 #endif // NUMLIB_TRAITS_H

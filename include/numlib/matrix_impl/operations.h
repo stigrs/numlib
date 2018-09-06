@@ -9,18 +9,18 @@
 #ifndef NUMLIB_MATRIX_OPERATIONS_H
 #define NUMLIB_MATRIX_OPERATIONS_H
 
+#ifdef USE_MKL
+#include <mkl.h>
+#else
+#include <cblas.h>
+#endif
+
 #include <algorithm>
 #include <random>
 #include <iomanip>
 #include <iostream>
 
-#ifdef __APPLE__
-#include <Accelerate/Accelerate.h>
-#else
-#include <cblas.h>
-#endif
-
-namespace num {
+namespace Numlib {
 
 //------------------------------------------------------------------------------
 //
@@ -35,14 +35,14 @@ inline Enable_if<Matrix_type<M>(), std::size_t> rank(const M& m)
 
 // Return matrix size.
 template <typename M>
-inline Enable_if<Matrix_type<M>(), std::size_t> size(const M& m)
+inline Enable_if<Matrix_type<M>(), std::ptrdiff_t> size(const M& m)
 {
     return m.size();
 }
 
 // Return number of rows.
 template <typename M>
-inline Enable_if<Matrix_type<M>(), std::size_t> rows(const M& m)
+inline Enable_if<Matrix_type<M>(), std::ptrdiff_t> rows(const M& m)
 {
     static_assert(0 < M::order, "");
     return m.extent(0);
@@ -50,7 +50,7 @@ inline Enable_if<Matrix_type<M>(), std::size_t> rows(const M& m)
 
 // Return number of columns.
 template <typename M>
-inline Enable_if<Matrix_type<M>(), std::size_t> cols(const M& m)
+inline Enable_if<Matrix_type<M>(), std::ptrdiff_t> cols(const M& m)
 {
     static_assert(0 < M::order, "");
     return m.extent(1);
@@ -58,10 +58,10 @@ inline Enable_if<Matrix_type<M>(), std::size_t> cols(const M& m)
 
 // Return extent.
 template <typename M>
-inline Enable_if<Matrix_type<M>(), std::size_t> extent(const M& m,
-                                                       std::size_t dim)
+inline Enable_if<Matrix_type<M>(), std::ptrdiff_t> extent(const M& m,
+                                                          std::ptrdiff_t dim)
 {
-    assert(dim < m.rank());
+    assert(dim < static_cast<std::ptrdiff_t>(m.rank()));
     return m.extent(dim);
 }
 
@@ -168,6 +168,34 @@ operator!=(const M1& a, const M2& b)
     return !(a == b);
 }
 
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(), bool>
+operator<(const M1& a, const M2& b)
+{
+    return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
+}
+
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(), bool>
+operator>(const M1& a, const M2& b)
+{
+    return b < a;
+}
+
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(), bool>
+operator<=(const M1& a, const M2& b)
+{
+    return !(a > b);
+}
+
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(), bool>
+operator>=(const M1& a, const M2& b)
+{
+    return !(a < b);
+}
+
 //------------------------------------------------------------------------------
 //
 // Binary arithmetic operations:
@@ -175,7 +203,7 @@ operator!=(const M1& a, const M2& b)
 // Matrix addition:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix<T, N>& b)
+inline Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -185,7 +213,8 @@ Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix<T, N>& b)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const Matrix_ref<T, N>& b)
+inline Matrix<T, N> operator+(const Matrix_ref<T, N>& a,
+                              const Matrix_ref<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -195,7 +224,7 @@ Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const Matrix_ref<T, N>& b)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
+inline Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -205,7 +234,7 @@ Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
+inline Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -217,7 +246,7 @@ Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
 // Matrix subtraction:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix<T, N>& b)
+inline Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -227,7 +256,8 @@ Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix<T, N>& b)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix_ref<T, N>& b)
+inline Matrix<T, N> operator-(const Matrix_ref<T, N>& a,
+                              const Matrix_ref<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -237,7 +267,7 @@ Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix_ref<T, N>& b)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
+inline Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -247,7 +277,7 @@ Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
+inline Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -259,7 +289,7 @@ Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
 // Scalar addition:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const Matrix<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator+(const Matrix<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res += scalar;
@@ -267,7 +297,7 @@ Matrix<T, N> operator+(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res += scalar;
@@ -275,7 +305,7 @@ Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const T& scalar, const Matrix<T, N>& a)
+inline Matrix<T, N> operator+(const T& scalar, const Matrix<T, N>& a)
 {
     Matrix<T, N> res = a;
     res += scalar;
@@ -283,7 +313,7 @@ Matrix<T, N> operator+(const T& scalar, const Matrix<T, N>& a)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator+(const T& scalar, const Matrix_ref<T, N>& a)
+inline Matrix<T, N> operator+(const T& scalar, const Matrix_ref<T, N>& a)
 {
     Matrix<T, N> res = a;
     res += scalar;
@@ -293,7 +323,7 @@ Matrix<T, N> operator+(const T& scalar, const Matrix_ref<T, N>& a)
 // Scalar subtraction:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator-(const Matrix<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator-(const Matrix<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res -= scalar;
@@ -301,7 +331,7 @@ Matrix<T, N> operator-(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res -= scalar;
@@ -311,7 +341,7 @@ Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const T& scalar)
 // Scalar multiplication:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator*(const Matrix<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator*(const Matrix<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res *= scalar;
@@ -319,7 +349,7 @@ Matrix<T, N> operator*(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator*(const Matrix_ref<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator*(const Matrix_ref<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res *= scalar;
@@ -327,7 +357,7 @@ Matrix<T, N> operator*(const Matrix_ref<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator*(const T& scalar, const Matrix<T, N>& a)
+inline Matrix<T, N> operator*(const T& scalar, const Matrix<T, N>& a)
 {
     Matrix<T, N> res = a;
     res *= scalar;
@@ -335,7 +365,7 @@ Matrix<T, N> operator*(const T& scalar, const Matrix<T, N>& a)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator*(const T& scalar, const Matrix_ref<T, N>& a)
+inline Matrix<T, N> operator*(const T& scalar, const Matrix_ref<T, N>& a)
 {
     Matrix<T, N> res = a;
     res *= scalar;
@@ -345,7 +375,7 @@ Matrix<T, N> operator*(const T& scalar, const Matrix_ref<T, N>& a)
 // Scalar division:
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator/(const Matrix<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator/(const Matrix<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res /= scalar;
@@ -353,7 +383,7 @@ Matrix<T, N> operator/(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
-Matrix<T, N> operator/(const Matrix_ref<T, N>& a, const T& scalar)
+inline Matrix<T, N> operator/(const Matrix_ref<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res /= scalar;
@@ -363,8 +393,8 @@ Matrix<T, N> operator/(const Matrix_ref<T, N>& a, const T& scalar)
 // Scalar modulus:
 
 template <typename T, std::size_t N>
-Enable_if<Integer_type<T>(), Matrix<T, N>> operator%(const Matrix<T, N>& a,
-                                                     const T& scalar)
+inline Enable_if<Integer_type<T>(), Matrix<T, N>>
+operator%(const Matrix<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res %= scalar;
@@ -372,8 +402,8 @@ Enable_if<Integer_type<T>(), Matrix<T, N>> operator%(const Matrix<T, N>& a,
 }
 
 template <typename T, std::size_t N>
-Enable_if<Integer_type<T>(), Matrix<T, N>> operator%(const Matrix_ref<T, N>& a,
-                                                     const T& scalar)
+inline Enable_if<Integer_type<T>(), Matrix<T, N>>
+operator%(const Matrix_ref<T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res %= scalar;
@@ -395,17 +425,17 @@ mm_mul(const M1& a, const M2& b, M3& res)
 
     using value_type = typename M1::value_type;
 
-    const std::size_t n = a.extent(0);
-    const std::size_t m = a.extent(1);
-    const std::size_t p = b.extent(1);
+    const std::ptrdiff_t n = a.extent(0);
+    const std::ptrdiff_t m = a.extent(1);
+    const std::ptrdiff_t p = b.extent(1);
     assert(m == b.extent(0));
 
     res.resize(n, p);
 
-    for (std::size_t i = 0; i != n; ++i) {
-        for (std::size_t j = 0; j != p; ++j) {
+    for (std::ptrdiff_t i = 0; i != n; ++i) {
+        for (std::ptrdiff_t j = 0; j != p; ++j) {
             res(i, j) = value_type{0};
-            for (std::size_t k = 0; k != m; ++k) {
+            for (std::ptrdiff_t k = 0; k != m; ++k) {
                 res(i, j) += a(i, k) * b(k, j);
             }
         }
@@ -413,19 +443,20 @@ mm_mul(const M1& a, const M2& b, M3& res)
 }
 
 // Use BLAS for double matrices.
-void mm_mul(const Matrix<double, 2>& a, const Matrix<double, 2>& b,
-            Matrix<double, 2>& res)
+inline void mm_mul(const Matrix<double, 2>& a,
+                   const Matrix<double, 2>& b,
+                   Matrix<double, 2>& res)
 {
     constexpr double alpha = 1.0;
     constexpr double beta = 0.0;
 
-    const int m = static_cast<int>(a.rows());
-    const int n = static_cast<int>(b.cols());
-    const int k = static_cast<int>(a.cols());
+    const BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    const BLAS_INT n = narrow_cast<BLAS_INT>(b.cols());
+    const BLAS_INT k = narrow_cast<BLAS_INT>(a.cols());
 
-    const int lda = k;
-    const int ldb = n;
-    const int ldc = n;
+    const BLAS_INT lda = k;
+    const BLAS_INT ldb = n;
+    const BLAS_INT ldc = n;
 
     res.resize(ldc, m);
 
@@ -484,31 +515,32 @@ mv_mul(const M1& a, const M2& x, M3& y)
 
     y.resize(a.rows());
 
-    for (std::size_t i = 0; i != a.rows(); ++i) {
+    for (std::ptrdiff_t i = 0; i != a.rows(); ++i) {
         y(i) = value_type{0};
-        for (std::size_t j = 0; j != a.cols(); ++j) {
+        for (std::ptrdiff_t j = 0; j != a.cols(); ++j) {
             y(i) += a(i, j) * x(j);
         }
     }
 }
 
 // Use BLAS for double matrices and vectors.
-void mv_mul(const Matrix<double, 2>& a, const Matrix<double, 1>& x,
-            Matrix<double, 1>& y)
+inline void mv_mul(const Matrix<double, 2>& a,
+                   const Matrix<double, 1>& x,
+                   Matrix<double, 1>& y)
 {
     constexpr double alpha = 1.0;
     constexpr double beta = 0.0;
 
     assert(x.size() == a.cols());
 
-    const int m = static_cast<int>(a.rows());
-    const int n = static_cast<int>(a.cols());
+    const BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
 
     y.resize(m);
 
-    const int lda = n;
-    const int incx = 1;
-    const int incy = 1;
+    const BLAS_INT lda = n;
+    const BLAS_INT incx = narrow_cast<BLAS_INT>(x.descriptor().strides[0]);
+    const BLAS_INT incy = narrow_cast<BLAS_INT>(y.descriptor().strides[0]);
 
     cblas_dgemv(CblasRowMajor, CblasNoTrans, m, n, alpha, a.data(), lda,
                 x.data(), incx, beta, y.data(), incy);
@@ -576,7 +608,7 @@ template <typename T>
 std::ostream& operator<<(std::ostream& to, const Matrix<T, 1>& a)
 {
     to << a.size() << '\n' << "[ ";
-    for (std::size_t i = 0; i < a.size(); ++i) {
+    for (std::ptrdiff_t i = 0; i < a.size(); ++i) {
         to << std::setw(9) << a(i) << " ";
         if (!((i + 1) % 7) && (i != (a.size() - 1))) {
             to << "\n  ";
@@ -590,7 +622,7 @@ template <typename T>
 std::ostream& operator<<(std::ostream& to, const Matrix_ref<T, 1>& a)
 {
     to << a.size() << '\n' << "[ ";
-    for (std::size_t i = 0; i < a.size(); ++i) {
+    for (std::ptrdiff_t i = 0; i < a.size(); ++i) {
         to << std::setw(9) << a(i) << " ";
         if (!((i + 1) % 7) && (i != (a.size() - 1))) {
             to << "\n  ";
@@ -604,13 +636,13 @@ std::ostream& operator<<(std::ostream& to, const Matrix_ref<T, 1>& a)
 template <typename T>
 std::istream& operator>>(std::istream& from, Matrix<T, 1>& a)
 {
-    std::size_t n;
+    std::ptrdiff_t n;
     from >> n;
     a.resize(n);
 
     char ch;
     from >> ch; // [
-    for (std::size_t i = 0; i < n; ++i) {
+    for (std::ptrdiff_t i = 0; i < n; ++i) {
         from >> a(i);
     }
     from >> ch; // ]
@@ -621,8 +653,8 @@ template <typename T>
 std::ostream& operator<<(std::ostream& to, const Matrix<T, 2>& a)
 {
     to << a.rows() << " x " << a.cols() << "\n[";
-    for (std::size_t i = 0; i < a.rows(); ++i) {
-        for (std::size_t j = 0; j < a.cols(); ++j) {
+    for (std::ptrdiff_t i = 0; i < a.rows(); ++i) {
+        for (std::ptrdiff_t j = 0; j < a.cols(); ++j) {
             to << std::setw(9) << a(i, j) << " ";
         }
         if (i != (a.rows() - 1)) {
@@ -637,8 +669,8 @@ template <typename T>
 std::ostream& operator<<(std::ostream& to, const Matrix_ref<T, 2>& a)
 {
     to << a.rows() << " x " << a.cols() << "\n[";
-    for (std::size_t i = 0; i < a.rows(); ++i) {
-        for (std::size_t j = 0; j < a.cols(); ++j) {
+    for (std::ptrdiff_t i = 0; i < a.rows(); ++i) {
+        for (std::ptrdiff_t j = 0; j < a.cols(); ++j) {
             to << std::setw(9) << a(i, j) << " ";
         }
         if (i != (a.rows() - 1)) {
@@ -653,16 +685,16 @@ std::ostream& operator<<(std::ostream& to, const Matrix_ref<T, 2>& a)
 template <typename T>
 std::istream& operator>>(std::istream& from, Matrix<T, 2>& a)
 {
-    std::size_t m;
-    std::size_t n;
+    std::ptrdiff_t m;
+    std::ptrdiff_t n;
     char ch;
 
     from >> m >> ch >> n; // m x n
     a.resize(m, n);
 
     from >> ch; // [
-    for (std::size_t i = 0; i < m; ++i) {
-        for (std::size_t j = 0; j < n; ++j) {
+    for (std::ptrdiff_t i = 0; i < m; ++i) {
+        for (std::ptrdiff_t j = 0; j < n; ++j) {
             from >> a(i, j);
         }
     }
@@ -670,6 +702,6 @@ std::istream& operator>>(std::istream& from, Matrix<T, 2>& a)
     return from;
 }
 
-} // namespace num
+} // namespace Numlib
 
 #endif // NUMLIB_MATRIX_OPERATIONS_H
