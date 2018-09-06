@@ -354,10 +354,10 @@ inline void eigs(Band_matrix<double>& ab, Mat<double>& evec, Vec<double>& eval)
     evec.resize(ab.rows(), ab.cols());
     eval.resize(ab.cols());
 
-    const BLAS_INT n = ab.cols();
-    const BLAS_INT kd = ab.upper();
-    const BLAS_INT ldab = ab.leading_dim();
-    const BLAS_INT ldz = ab.cols();
+    const BLAS_INT n = narrow_cast<BLAS_INT>(ab.cols());
+    const BLAS_INT kd = narrow_cast<BLAS_INT>(ab.upper());
+    const BLAS_INT ldab = narrow_cast<BLAS_INT>(ab.leading_dim());
+    const BLAS_INT ldz = narrow_cast<BLAS_INT>(ab.cols());
 
     BLAS_INT info = LAPACKE_dsbev(LAPACK_COL_MAJOR, 'V', 'U', n, kd, ab.data(),
                                   ldab, eval.data(), evec.data(), ldz);
