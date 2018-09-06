@@ -19,6 +19,10 @@ namespace Numlib {
 // The band matrix class provides support for indexing and basic
 // arithmetic operations.
 //
+// Note:
+// Column-major storage order was selected in order to enable use of
+// Intel MKL routines.
+//
 // Template paramenters:
 //   T - The element type stored by the band matrix
 //
