@@ -1,5 +1,3 @@
-// Copyright (c) 2008-2010 Kent State University
-// Copyright (c) 2011-2012 Texas A&M University
 // Copyright (c) 2018 Stig Rune Sellevag
 //
 // This file is distributed under the MIT License. See the accompanying file
@@ -16,7 +14,7 @@
 
 namespace Numlib {
 
-// Range-checked band matrix using row-major storage order.
+// Range-checked band matrix using column-major storage order.
 //
 // The band matrix class provides support for indexing and basic
 // arithmetic operations.
@@ -45,7 +43,7 @@ public:
 
     // Construct from extents.
     Band_matrix(size_type m, size_type n, size_type kl, size_type ku)
-        : elems((kl + ku + 1) * m), extents{m, n}, bwidth{kl, ku}, zero{T{0}}
+        : elems((kl + ku + 1) * n), extents{m, n}, bwidth{kl, ku}, zero{T{0}}
     {
     }
 
@@ -134,7 +132,7 @@ Band_matrix<T>::Band_matrix(
     size_type m, size_type n, size_type kl, size_type ku, const T (&ab)[nb])
     : elems(nb), extents{m, n}, bwidth{kl, ku}, zero{T{0}}
 {
-    assert(nb >= (kl + ku + 1) * m);
+    assert(nb >= (kl + ku + 1) * n);
     for (size_type i = 0; i < nb; ++i) {
         elems[i] = ab[i];
     }
@@ -142,14 +140,15 @@ Band_matrix<T>::Band_matrix(
 
 template <typename T>
 Band_matrix<T>::Band_matrix(size_type kl, size_type ku, const Matrix<T, 2>& a)
-    : elems((kl + ku + 1) * a.rows()),
+    : elems((kl + ku + 1) * a.cols()),
       extents{a.rows(), a.cols()},
       bwidth{kl, ku},
       zero{T{0}}
 {
-    for (size_type i = 0; i < a.rows(); ++i) {
-        for (size_type j = 0; j < a.cols(); ++j) {
-            (*this)(i, j) = a(i, j);
+    for (size_type j = 0; j < a.cols(); ++j) {
+        for (size_type i = std::max(0, j - ku);
+             i < std::min(a.rows(), j + kl + 1); ++i) {
+            elems[index_map(i, j)] = a(i, j);
         }
     }
 }
@@ -166,7 +165,7 @@ template <typename T>
 inline void
 Band_matrix<T>::resize(size_type m, size_type n, size_type kl, size_type ku)
 {
-    elems.resize((kl + ku + 1) * m);
+    elems.resize((kl + ku + 1) * n);
     extents = {m, n};
     bwidth = {kl, ku};
 }
@@ -223,8 +222,8 @@ inline T& Band_matrix<T>::ref(size_type i, size_type j)
     assert(i >= 0 && i < extents[0]);
     assert(j >= 0 && j < extents[1]);
 
-    if (std::max(size_type{0}, i - bwidth[0]) <= j &&
-        j < std::min(extents[1], i + bwidth[1] + 1)) {
+    if (std::max(0, j - bwidth[1]) <= i &&
+        i < std::min(extents[1], j + bwidth[0] + 1)) {
         return elems[index_map(i, j)];
     }
     else {
@@ -238,8 +237,8 @@ inline const T& Band_matrix<T>::ref(size_type i, size_type j) const
     assert(i >= 0 && i < extents[0]);
     assert(j >= 0 && j < extents[1]);
 
-    if (std::max(static_cast<size_type>(0), i - bwidth[0]) <= j &&
-        j < std::min(extents[1], i + bwidth[1] + 1)) {
+    if (std::max(0, j - bwidth[1]) <= i &&
+        i < std::min(extents[1], j + bwidth[0] + 1)) {
         return elems[index_map(i, j)];
     }
     else {
@@ -250,7 +249,7 @@ inline const T& Band_matrix<T>::ref(size_type i, size_type j) const
 template <typename T>
 inline std::ptrdiff_t Band_matrix<T>::index_map(size_type i, size_type j) const
 {
-    return bwidth[0] + i - j + i * leading_dim();
+    return bwidth[1] + i - j + j * leading_dim();
 }
 
 } // namespace Numlib

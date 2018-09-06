@@ -61,7 +61,7 @@ template <typename M>
 inline Enable_if<Matrix_type<M>(), std::ptrdiff_t> extent(const M& m,
                                                           std::ptrdiff_t dim)
 {
-    assert(dim < m.rank());
+    assert(dim < narrow_cast<std::ptrdiff_t>(m.rank()));
     return m.extent(dim);
 }
 

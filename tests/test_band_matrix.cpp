@@ -14,14 +14,16 @@ TEST_CASE("test_band_matrix")
     {
         using namespace Numlib;
 
-        Mat<int> a = {{11, 12, 0, 0, 0, 0},
-                      {21, 22, 23, 0, 0, 0},
-                      {31, 32, 33, 34, 0, 0},
-                      {0, 42, 43, 44, 45, 0},
-                      {0, 0, 53, 54, 55, 56}};
+        // clang-format off
+        Mat<int> a = {{11, 12,  0,  0,  0},
+                      {21, 22, 23,  0,  0},
+                      {31, 32, 33, 34,  0},
+                      { 0, 42, 43, 44, 45},
+                      { 0,  0, 53, 54, 55}};
+        // clang-format on
 
         Band_matrix<int> ab(2, 1, a);
-
+#
         CHECK(ab(0, 0) == 11);
         CHECK(ab(0, 1) == 12);
         CHECK(ab(1, 0) == 21);
@@ -35,10 +37,8 @@ TEST_CASE("test_band_matrix")
         CHECK(ab(3, 2) == 43);
         CHECK(ab(3, 3) == 44);
         CHECK(ab(3, 4) == 45);
-        CHECK(ab(3, 5) == 0);
         CHECK(ab(4, 2) == 53);
         CHECK(ab(4, 3) == 54);
         CHECK(ab(4, 4) == 55);
-        CHECK(ab(4, 5) == 56);
     }
 }
