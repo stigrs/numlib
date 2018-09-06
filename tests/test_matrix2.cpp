@@ -27,8 +27,8 @@ TEST_CASE("test_matrix2")
     SECTION("subscripting")
     {
         int it = 1;
-        for (std::ptrdiff_t i = 0; i < m2.extent(0); ++i) {
-            for (std::ptrdiff_t j = 0; j < m2.extent(1); ++j) {
+        for (Index i = 0; i < m2.extent(0); ++i) {
+            for (Index j = 0; j < m2.extent(1); ++j) {
                 CHECK(m2(i, j) == it);
                 ++it;
             }
@@ -45,13 +45,13 @@ TEST_CASE("test_matrix2")
         auto r1 = m2.row(1);
         auto r2 = m2.row(2);
 
-        for (std::ptrdiff_t i = 0; i < r0.size(); ++i) {
+        for (Index i = 0; i < r0.size(); ++i) {
             CHECK(r0(i) == m2_r0(i));
         }
-        for (std::ptrdiff_t i = 0; i < r1.size(); ++i) {
+        for (Index i = 0; i < r1.size(); ++i) {
             CHECK(r1(i) == m2_r1(i));
         }
-        for (std::ptrdiff_t i = 0; i < r2.size(); ++i) {
+        for (Index i = 0; i < r2.size(); ++i) {
             CHECK(r2(i) == m2_r2(i));
         }
     }
@@ -68,16 +68,16 @@ TEST_CASE("test_matrix2")
         auto c2 = m2.column(2);
         auto c3 = m2.column(3);
 
-        for (std::ptrdiff_t i = 0; i < c0.size(); ++i) {
+        for (Index i = 0; i < c0.size(); ++i) {
             CHECK(c0(i) == m2_c0(i));
         }
-        for (std::ptrdiff_t i = 0; i < c1.size(); ++i) {
+        for (Index i = 0; i < c1.size(); ++i) {
             CHECK(c1(i) == m2_c1(i));
         }
-        for (std::ptrdiff_t i = 0; i < c2.size(); ++i) {
+        for (Index i = 0; i < c2.size(); ++i) {
             CHECK(c2(i) == m2_c2(i));
         }
-        for (std::ptrdiff_t i = 0; i < c3.size(); ++i) {
+        for (Index i = 0; i < c3.size(); ++i) {
             CHECK(c3(i) == m2_c3(i));
         }
     }
