@@ -12,6 +12,13 @@
 #include <numlib/traits.h>
 #include <numlib/matrix_impl/traits.h>
 
+// Define integer type used by BLAS and LAPACK.
+#ifdef MKL_ILP64
+#define BLAS_INT std::ptrdiff_t
+#else
+#define BLAS_INT int
+#endif
+
 namespace Numlib {
 
 // Forward declarations:

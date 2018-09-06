@@ -18,13 +18,6 @@
 #endif
 #endif
 
-// Define integer type used by BLAS and LAPACK.
-#ifdef MKL_ILP64
-#define BLAS_INT std::ptrdiff_t
-#else
-#define BLAS_INT int
-#endif
-
 // Math error.
 struct Math_error : std::runtime_error {
     Math_error(const std::string& s) : std::runtime_error(s) {}

@@ -52,7 +52,7 @@ public:
     // Number of elements in the N'th dimension:
     size_type extent(size_type n) const
     {
-        assert(n >= 0 && n < order);
+        assert(n >= 0 && n < static_cast<std::ptrdiff_t>(order));
         return desc.extents[n];
     }
 

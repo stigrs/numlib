@@ -146,7 +146,7 @@ Band_matrix<T>::Band_matrix(size_type kl, size_type ku, const Matrix<T, 2>& a)
       zero{T{0}}
 {
     for (size_type j = 0; j < a.cols(); ++j) {
-        for (size_type i = std::max(0, j - ku);
+        for (size_type i = std::max(size_type{0}, j - ku);
              i < std::min(a.rows(), j + kl + 1); ++i) {
             elems[index_map(i, j)] = a(i, j);
         }
@@ -222,7 +222,7 @@ inline T& Band_matrix<T>::ref(size_type i, size_type j)
     assert(i >= 0 && i < extents[0]);
     assert(j >= 0 && j < extents[1]);
 
-    if (std::max(0, j - bwidth[1]) <= i &&
+    if (std::max(size_type{0}, j - bwidth[1]) <= i &&
         i < std::min(extents[1], j + bwidth[0] + 1)) {
         return elems[index_map(i, j)];
     }
@@ -237,7 +237,7 @@ inline const T& Band_matrix<T>::ref(size_type i, size_type j) const
     assert(i >= 0 && i < extents[0]);
     assert(j >= 0 && j < extents[1]);
 
-    if (std::max(0, j - bwidth[1]) <= i &&
+    if (std::max(size_type{0}, j - bwidth[1]) <= i &&
         i < std::min(extents[1], j + bwidth[0] + 1)) {
         return elems[index_map(i, j)];
     }

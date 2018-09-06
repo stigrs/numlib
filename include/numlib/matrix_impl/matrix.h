@@ -216,7 +216,7 @@ inline Matrix<T, N>::Matrix(Matrix_initializer<T, N> init)
     Matrix_impl::compute_strides(this->desc);
     elems.reserve(this->desc.size);
     Matrix_impl::insert_flat(init, elems);
-    assert(narrow_cast<size_type>(elems.size()) == this->desc.size);
+    assert(static_cast<size_type>(elems.size()) == this->desc.size);
 }
 
 template <typename T, std::size_t N>
