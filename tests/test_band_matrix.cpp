@@ -6,7 +6,7 @@
 
 #include <numlib/matrix.h>
 #include <numlib/band_matrix.h>
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 
 TEST_CASE("test_band_matrix")
 {

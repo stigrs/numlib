@@ -5,9 +5,7 @@
 // and conditions.
 
 #include <numlib/matrix.h>
-#include <catch/catch.hpp>
-#include <iostream>
-#include <algorithm>
+#include <catch2/catch.hpp>
 
 TEST_CASE("test_matrix1")
 {
