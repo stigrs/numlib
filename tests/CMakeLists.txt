@@ -9,9 +9,9 @@ if(MKL_FOUND)
 endif()
 
 # Prepare "Catch" library for other executables.
-set(CATCH_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(CATCH_INCLUDE_DIRS ${numlib_SOURCE_DIR}/external/include)
 add_library(Catch INTERFACE)
-target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
+target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIRS})
 
 # Create the main executable for each test.
 add_library(test_catch STATIC test.cpp)
