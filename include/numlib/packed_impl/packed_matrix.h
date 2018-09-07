@@ -67,7 +67,7 @@ public:
     // Return UPLO scheme.
     char uplo_scheme() const
     {
-        if (uplo == upper_triang) {
+        if (uplo == upperang) {
             return 'U';
         }
         else { // lower triangular
@@ -142,7 +142,7 @@ Packed_matrix<T, Uplo>::Packed_matrix(const Matrix<T, 2>& a)
             }
         }
     }
-    else {
+    else { // lower triangular
         for (size_type i = 0; i < a.rows(); ++i) {
             for (size_type j = 0; j <= i; ++j) {
                 (*this)(i, j) = a(i, j);
@@ -222,12 +222,12 @@ operator%=(const T& value)
 template <typename T, Uplo_scheme Uplo>
 inline T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j)
 {
-    static_assert(Uplo == upper_triang || Uplo == lower_triang,
+    static_assert(Uplo == upperang || Uplo == lower_triang,
                   "Packed_matrix: bad storage scheme");
 
     assert(0 <= i && i < extents);
     assert(0 <= j && j < extents);
-    if (Uplo == upper_triang) {
+    if (Uplo == upperang) {
         assert(i <= j);
         return elems[index_map(i, j)];
     }
@@ -240,12 +240,12 @@ inline T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j)
 template <typename T, Uplo_scheme Uplo>
 inline const T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j) const
 {
-    static_assert(Uplo == upper_triang || Uplo == lower_triang,
+    static_assert(Uplo == upperang || Uplo == lower_triang,
                   "Packed_matrix: bad storage scheme");
 
     assert(0 <= i && i < extents);
     assert(0 <= j && j < extents);
-    if (Uplo == upper_triang) {
+    if (Uplo == upperang) {
         if (i <= j) {
             return elems[index_map(i, j)];
         }
@@ -262,11 +262,11 @@ template <typename T, Uplo_scheme Uplo>
 inline std::ptrdiff_t Packed_matrix<T, Uplo>::index_map(size_type i,
                                                         size_type j) const
 {
-    static_assert(Uplo == lower_triang || Uplo == upper_triang,
+    static_assert(Uplo == lower_triang || Uplo == upperang,
                   "Packed_matrix: bad storage scheme");
 
     size_type res = 0;
-    if (Uplo == upper_triang) {
+    if (Uplo == upperang) {
         res = j + i * (2 * extents - i - 1) / 2;
     }
     else if (Uplo == lower_triang) {
