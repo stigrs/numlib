@@ -47,7 +47,7 @@ public:
 
     // Construct from extents.
     Band_matrix(size_type m, size_type n, size_type kl, size_type ku)
-        : elems((kl + ku + 1) * n), extents{m, n}, bwidth{kl, ku}, zero{T{0}}
+        : elems((kl + ku + 1) * n), extents{m, n}, bwidth{kl, ku}
     {
     }
 
@@ -122,7 +122,8 @@ private:
     std::vector<T> elems;
     std::array<size_type, 2> extents;
     std::array<size_type, 2> bwidth;
-    T zero;
+
+    static const T zero;
 
     T& ref(size_type i, size_type j);
     const T& ref(size_type i, size_type j) const;
@@ -134,7 +135,7 @@ template <typename T>
 template <std::ptrdiff_t nb>
 Band_matrix<T>::Band_matrix(
     size_type m, size_type n, size_type kl, size_type ku, const T (&ab)[nb])
-    : elems(nb), extents{m, n}, bwidth{kl, ku}, zero{T{0}}
+    : elems(nb), extents{m, n}, bwidth{kl, ku}
 {
     assert(nb >= (kl + ku + 1) * n);
     for (size_type i = 0; i < nb; ++i) {
@@ -146,8 +147,7 @@ template <typename T>
 Band_matrix<T>::Band_matrix(size_type kl, size_type ku, const Matrix<T, 2>& a)
     : elems((kl + ku + 1) * a.cols()),
       extents{a.rows(), a.cols()},
-      bwidth{kl, ku},
-      zero{T{0}}
+      bwidth{kl, ku}
 {
     for (size_type j = 0; j < a.cols(); ++j) {
         for (size_type i = std::max(size_type{0}, j - ku);
@@ -226,13 +226,9 @@ inline T& Band_matrix<T>::ref(size_type i, size_type j)
     assert(i >= 0 && i < extents[0]);
     assert(j >= 0 && j < extents[1]);
 
-    if (std::max(size_type{0}, j - bwidth[1]) <= i &&
-        i < std::min(extents[1], j + bwidth[0] + 1)) {
-        return elems[index_map(i, j)];
-    }
-    else {
-        return zero;
-    }
+    assert(std::max(size_type{0}, j - bwidth[1]) <= i &&
+           i < std::min(extents[1], j + bwidth[0] + 1));
+    return elems[index_map(i, j)];
 }
 
 template <typename T>
@@ -255,6 +251,9 @@ inline std::ptrdiff_t Band_matrix<T>::index_map(size_type i, size_type j) const
 {
     return bwidth[1] + i - j + j * leading_dim();
 }
+
+template <typename T>
+const typename Band_matrix<T>::value_type Band_matrix<T>::zero = value_type{0};
 
 } // namespace Numlib
 

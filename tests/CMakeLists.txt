@@ -43,7 +43,8 @@ set(PROGRAMS
     test_matrix1
     test_matrix2
     test_matrix3
-    test_matrix4
+	test_matrix4
+	test_packed_matrix
 )
 
 foreach(program ${PROGRAMS})
