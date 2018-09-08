@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7.2)
+cmake_minimum_required(VERSION 3.4.3)
 project(numlib CXX)
 
 # By default, numlib is install in the HOME directory.
