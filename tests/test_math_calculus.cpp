@@ -7,7 +7,7 @@
 #include <numlib/constants.h>
 #include <numlib/math.h>
 #include <numlib/matrix.h>
-#include <catch2/catch.hpp>
+#include <catch/catch.hpp>
 #include <functional>
 #include <cmath>
 #include <limits>

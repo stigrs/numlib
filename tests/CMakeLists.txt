@@ -8,10 +8,33 @@ if(MKL_FOUND)
 	link_directories(${MKL_LIBRARY_DIRS})
 endif()
 
+list(APPEND CATCH_CMAKE_ARGS
+    "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/external"
+    "-DNO_SELFTEST=true"
+)
+
+if(GIT_FOUND)
+    # Add catch
+    ExternalProject_Add(
+        catch
+        PREFIX ${CMAKE_BINARY_DIR}/catch
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG v2.0.1
+        CMAKE_ARGS ${CATCH_CMAKE_ARGS}
+        LOG_DOWNLOAD 1
+        UPDATE_DISCONNECTED 1
+    )
+else()
+    # Assume catch is installed in a system directory
+    add_custom_target(catch)
+endif()
+
 # Prepare "Catch" library for other executables.
-set(CATCH_INCLUDE_DIRS ${numlib_SOURCE_DIR}/external/include)
 add_library(Catch INTERFACE)
-target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIRS})
+target_include_directories(
+    Catch INTERFACE 
+    ${CMAKE_BINARY_DIR}external/include
+)
 
 # Create the main executable for each test.
 add_library(test_catch STATIC test.cpp)
@@ -19,6 +42,8 @@ target_link_libraries(
     test_catch
     Catch
 )
+
+add_dependencies(test_catch catch)
 
 function(add_numlib_test name)
     add_executable(${name} ${name}.cpp)

@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.4.3)
 project(numlib CXX)
 
+include(ExternalProject)
+find_package(Git)
+
 # By default, numlib is install in the HOME directory.
 if(WIN32)
     set(CMAKE_INSTALL_PREFIX "C:/Users/$ENV{USERNAME}")
@@ -116,6 +119,7 @@ install(
 )
 
 add_subdirectory(lib)
+
 if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
