@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4.3)
+cmake_minimum_required(VERSION 3.7.2)
 project(numlib CXX)
 
 # By default, numlib is install in the HOME directory.
@@ -12,7 +12,7 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Enforce C++14 standard.
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 if(WIN32)
     option(BUILD_SHARED_LIBS "Compile shared libraries." OFF)
@@ -36,7 +36,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wpedantic -Wall -Wshadow -Wextra -Wno-missing-braces -Werror -Wno-error=strict-overflow")
 endif()
 if(MSVC)
-    set(CMAKE_CXX_FLAGS_RELEASE "/std:c++14 /W4 /WX /wd4100 /GR /EHsc /MT /O2")
+    set(CMAKE_CXX_FLAGS_RELEASE "/std:c++17 /W4 /WX /wd4100 /GR /EHsc /MT /O2")
 endif()
 
 # Set debugging compiler options.
@@ -47,7 +47,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wpedantic -Wall -Wshadow -Wextra -Wno-missing-braces -Werror -Wno-error=strict-overflow")
 endif()
 if(MSVC)
-    set(CMAKE_CXX_FLAGS_DEBUG "/std:c++14 /EHsc /W4 /WX /wd4100 /MT /GR /Zi /Od")
+    set(CMAKE_CXX_FLAGS_DEBUG "/std:c++17 /EHsc /W4 /WX /wd4100 /MT /GR /Zi /Od")
 endif()
 
 # Set definitions.

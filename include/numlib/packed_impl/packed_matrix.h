@@ -135,7 +135,7 @@ Packed_matrix<T, Uplo>::Packed_matrix(const Matrix<T, 2>& a)
     : elems(a.rows() * (a.rows() + 1) / 2), extents{a.rows()}
 {
     assert(a.rows() == a.cols());
-    if (Uplo == upper_triang) {
+    if constexpr (Uplo == upper_triang) {
         for (size_type i = 0; i < a.rows(); ++i) {
             for (size_type j = i; j < a.cols(); ++j) {
                 (*this)(i, j) = a(i, j);
@@ -227,11 +227,11 @@ inline T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j)
 
     assert(0 <= i && i < extents);
     assert(0 <= j && j < extents);
-    if (Uplo == upper_triang) {
+    if constexpr (Uplo == upper_triang) {
         assert(i <= j);
         return elems[index_map(i, j)];
     }
-    else if (Uplo == lower_triang) {
+    else if constexpr (Uplo == lower_triang) {
         assert(j <= i);
         return elems[index_map(i, j)];
     }
@@ -245,12 +245,12 @@ inline const T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j) const
 
     assert(0 <= i && i < extents);
     assert(0 <= j && j < extents);
-    if (Uplo == upper_triang) {
+    if constexpr (Uplo == upper_triang) {
         if (i <= j) {
             return elems[index_map(i, j)];
         }
     }
-    else if (Uplo == lower_triang) {
+    else if constexpr (Uplo == lower_triang) {
         if (j <= i) {
             return elems[index_map(i, j)];
         }
@@ -266,7 +266,7 @@ inline std::ptrdiff_t Packed_matrix<T, Uplo>::index_map(size_type i,
                   "Packed_matrix: bad storage scheme");
 
     size_type res = 0;
-    if (Uplo == upper_triang) {
+    if constexpr (Uplo == upper_triang) {
         res = j + i * (2 * extents - i - 1) / 2;
     }
     else if (Uplo == lower_triang) {
