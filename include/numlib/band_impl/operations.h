@@ -14,7 +14,7 @@
 namespace Numlib {
 
 //------------------------------------------------------------------------------
-
+//
 // Non-member functions returning properties of a band matrix:
 
 // Return band matrix size.
