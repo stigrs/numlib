@@ -33,7 +33,7 @@ endif()
 add_library(Catch INTERFACE)
 target_include_directories(
     Catch INTERFACE 
-    ${CMAKE_BINARY_DIR}external/include
+    ${CMAKE_BINARY_DIR}/external/include
 )
 
 # Create the main executable for each test.
