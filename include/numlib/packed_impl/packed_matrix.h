@@ -7,6 +7,11 @@
 #ifndef NUMLIB_PACKED_MATRIX_PACKED_MATRIX_H
 #define NUMLIB_PACKED_MATRIX_PACKED_MATRIX_H
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4127) // conditional expression is constant
+#endif
+
 #include <numlib/matrix.h>
 #include <vector>
 #include <algorithm>
@@ -67,7 +72,7 @@ public:
     // Return UPLO scheme.
     char uplo_scheme() const
     {
-        if (uplo == upper_triang) {
+        if /* constexpr */ (uplo == upper_triang) { // C++17
             return 'U';
         }
         else { // lower triangular
@@ -135,7 +140,7 @@ Packed_matrix<T, Uplo>::Packed_matrix(const Matrix<T, 2>& a)
     : elems(a.rows() * (a.rows() + 1) / 2), extents{a.rows()}
 {
     assert(a.rows() == a.cols());
-    if constexpr (Uplo == upper_triang) {
+    if /* constexpr */ (Uplo == upper_triang) { // C++17
         for (size_type i = 0; i < a.rows(); ++i) {
             for (size_type j = i; j < a.cols(); ++j) {
                 (*this)(i, j) = a(i, j);
@@ -227,11 +232,11 @@ inline T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j)
 
     assert(0 <= i && i < extents);
     assert(0 <= j && j < extents);
-    if constexpr (Uplo == upper_triang) {
+    if /* constexpr */ (Uplo == upper_triang) { // C++17
         assert(i <= j);
         return elems[index_map(i, j)];
     }
-    else if constexpr (Uplo == lower_triang) {
+    else if /* constexpr */ (Uplo == lower_triang) { // C++17
         assert(j <= i);
         return elems[index_map(i, j)];
     }
@@ -245,12 +250,12 @@ inline const T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j) const
 
     assert(0 <= i && i < extents);
     assert(0 <= j && j < extents);
-    if constexpr (Uplo == upper_triang) {
+    if /* constexpr */ (Uplo == upper_triang) { // C++17
         if (i <= j) {
             return elems[index_map(i, j)];
         }
     }
-    else if constexpr (Uplo == lower_triang) {
+    else if /* constexpr */ (Uplo == lower_triang) { // C++17
         if (j <= i) {
             return elems[index_map(i, j)];
         }
@@ -266,10 +271,10 @@ inline std::ptrdiff_t Packed_matrix<T, Uplo>::index_map(size_type i,
                   "Packed_matrix: bad storage scheme");
 
     size_type res = 0;
-    if constexpr (Uplo == upper_triang) {
+    if /* constexpr */ (Uplo == upper_triang) { // C++17
         res = j + i * (2 * extents - i - 1) / 2;
     }
-    else if (Uplo == lower_triang) {
+    else if /* constexpr */ (Uplo == lower_triang) { // C++17
         res = j + i * (i + 1) / 2;
     }
     return res;
@@ -280,5 +285,9 @@ const typename Packed_matrix<T, Uplo>::value_type Packed_matrix<T, Uplo>::zero =
     value_type{0};
 
 } // namespace Numlib
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #endif // NUMLIB_PACKED_MATRIX_PACKED_MATRIX_H
