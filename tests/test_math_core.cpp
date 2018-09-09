@@ -14,16 +14,16 @@ TEST_CASE("test_math_core")
     SECTION("even_odd")
     {
         int even_number = 4;
-        CHECK(is_even(even_number) == true);
+        CHECK(even(even_number) == true);
 
         int odd_number = -3;
-        CHECK(is_odd(odd_number) == true);
+        CHECK(odd(odd_number) == true);
 
         unsigned even_unumber = 4;
-        CHECK(is_even(even_unumber) == true);
+        CHECK(even(even_unumber) == true);
 
         unsigned odd_unumber = 3;
-        CHECK(is_odd(odd_unumber) == true);
+        CHECK(odd(odd_unumber) == true);
     }
 
     SECTION("krond")

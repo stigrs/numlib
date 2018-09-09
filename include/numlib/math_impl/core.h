@@ -18,14 +18,14 @@ namespace Numlib {
 
 // Check if integer type is even.
 template <typename T>
-inline Enable_if<Integer_type<T>(), bool> is_even(const T& n)
+inline Enable_if<Integer_type<T>(), bool> even(const T& n)
 {
     return n % 2 ? false : true;
 }
 
 // Check if integer type is odd.
 template <typename T>
-inline Enable_if<Integer_type<T>(), bool> is_odd(const T& n)
+inline Enable_if<Integer_type<T>(), bool> odd(const T& n)
 {
     return n % 2 ? true : false;
 }
