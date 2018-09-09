@@ -6,7 +6,7 @@
 
 #include <numlib/matrix.h>
 #include <numlib/packed_matrix.h>
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 
 TEST_CASE("test_packed_matrix")
 {

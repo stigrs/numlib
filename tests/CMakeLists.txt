@@ -10,13 +10,13 @@ endif()
 
 list(APPEND CATCH_CMAKE_ARGS
     "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/external"
-    "-DNO_SELFTEST=true"
+    "-DCATCH_BUILD_TESTING=OFF"
 )
 
 if(GIT_FOUND)
     # Add catch
     ExternalProject_Add(
-        catch
+        catch2
         PREFIX ${CMAKE_BINARY_DIR}/catch
         GIT_REPOSITORY https://github.com/catchorg/Catch2.git
         GIT_TAG v2.3.0
@@ -26,24 +26,24 @@ if(GIT_FOUND)
     )
 else()
     # Assume catch is installed in a system directory
-    add_custom_target(catch)
+    add_custom_target(catch2)
 endif()
 
 # Prepare "Catch" library for other executables.
-add_library(Catch INTERFACE)
+add_library(Catch2 INTERFACE)
 target_include_directories(
-    Catch INTERFACE 
+    Catch2 INTERFACE 
     ${CMAKE_BINARY_DIR}/external/include
 )
 
 # Create the main executable for each test.
-add_library(test_catch STATIC test.cpp)
+add_library(test_catch2 STATIC test.cpp)
 target_link_libraries(
-    test_catch
-    Catch
+    test_catch2
+    Catch2
 )
 
-add_dependencies(test_catch catch)
+add_dependencies(test_catch2 catch2)
 
 function(add_numlib_test name)
     add_executable(${name} ${name}.cpp)
@@ -52,9 +52,9 @@ function(add_numlib_test name)
 		numlib
 		${BLAS_LIBRARIES}
 		${LAPACK_LIBRARIES}
-		test_catch
+		test_catch2
     ) 
-    add_dependencies(${name} Catch)
+    add_dependencies(${name} Catch2)
     add_test(NAME ${name} COMMAND ${name})
 endfunction()
 

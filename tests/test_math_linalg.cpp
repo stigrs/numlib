@@ -6,7 +6,7 @@
 
 #include <numlib/math.h>
 #include <numlib/matrix.h>
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 
 TEST_CASE("test_math_linalg")
 {
