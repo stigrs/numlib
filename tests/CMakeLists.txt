@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.4.3)
 project(numlib_tests CXX)
 
-include_directories(${numlib_SOURCE_DIR}/include)
+#include_directories(${numlib_SOURCE_DIR}/include)
 include_directories(${BLAS_INCLUDE_DIRS})
 include_directories(${LAPACKE_INCLUDE_DIRS})
+#include_directories(${GSL_INCLUDE_DIRS})
 if(MKL_FOUND)
 	link_directories(${MKL_LIBRARY_DIRS})
 endif()
@@ -52,7 +53,9 @@ function(add_numlib_test name)
 		numlib
 		${BLAS_LIBRARIES}
 		${LAPACK_LIBRARIES}
-		test_catch2
+        test_catch2
+        gsl_config
+        numlib_config
     ) 
     add_dependencies(${name} Catch2)
     add_test(NAME ${name} COMMAND ${name})
