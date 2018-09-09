@@ -52,7 +52,7 @@ inline Enable_if<Matrix_type<M>(), std::ptrdiff_t> rows(const M& m)
 template <typename M>
 inline Enable_if<Matrix_type<M>(), std::ptrdiff_t> cols(const M& m)
 {
-    static_assert(0 < M::order, "");
+    static_assert(1 < M::order, "");
     return m.extent(1);
 }
 
