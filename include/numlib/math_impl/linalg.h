@@ -38,19 +38,19 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> max(const M& vec)
 
 template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
-max(const M& mat, std::ptrdiff_t dim)
+max(const M& mat, Index dim)
 {
     static_assert(M::order == 2, "bad rank for max(mat)");
-    assert(dim >= 0 && dim < static_cast<std::ptrdiff_t>(M::order));
+    assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
     if (dim == 0) { // row
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = max(mat.row(i));
         }
     }
     else { // column
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = max(mat.column(i));
         }
     }
@@ -66,19 +66,19 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> min(const M& vec)
 
 template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
-min(const M& mat, std::ptrdiff_t dim)
+min(const M& mat, Index dim)
 {
     static_assert(M::order == 2, "bad rank for min(mat)");
-    assert(dim >= 0 && dim < static_cast<std::ptrdiff_t>(M::order));
+    assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
     if (dim == 0) { // row
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = min(mat.row(i));
         }
     }
     else { // column
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = min(mat.column(i));
         }
     }
@@ -95,19 +95,19 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> sum(const M& vec)
 
 template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
-sum(const M& mat, std::ptrdiff_t dim)
+sum(const M& mat, Index dim)
 {
     static_assert(M::order == 2, "bad rank for sum(mat)");
-    assert(dim >= 0 && dim < static_cast<std::ptrdiff_t>(M::order));
+    assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
     if (dim == 0) { // row
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = sum(mat.row(i));
         }
     }
     else { // column
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = sum(mat.column(i));
         }
     }
@@ -126,19 +126,19 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> prod(const M& vec)
 
 template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
-prod(const M& mat, std::ptrdiff_t dim)
+prod(const M& mat, Index dim)
 {
     static_assert(M::order == 2, "bad rank for prod(mat)");
-    assert(dim >= 0 && dim < static_cast<std::ptrdiff_t>(M::order));
+    assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
     if (dim == 0) { // row
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = prod(mat.row(i));
         }
     }
     else { // column
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = prod(mat.column(i));
         }
     }
@@ -248,7 +248,7 @@ template <typename T>
 inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
 {
     assert(same_extents(x, y));
-    for (std::ptrdiff_t i = 0; i < x.size(); ++i) {
+    for (Index i = 0; i < x.size(); ++i) {
         y(i) = a * x(i) + y(i);
     }
 }
@@ -259,13 +259,13 @@ inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
 template <typename T>
 inline Mat<T> transpose(const Mat<T>& m)
 {
-    const std::ptrdiff_t n = m.rows();
-    const std::ptrdiff_t p = m.cols();
+    const Index n = m.rows();
+    const Index p = m.cols();
 
     Mat<T> res(p, n);
 
-    for (std::ptrdiff_t i = 0; i < p; ++i) {
-        for (std::ptrdiff_t j = 0; j < n; ++j) {
+    for (Index i = 0; i < p; ++i) {
+        for (Index j = 0; j < n; ++j) {
             res(i, j) = m.data()[i + j * p];
         }
     }
@@ -391,7 +391,7 @@ inline void linsolve(Mat<double>& a, Mat<double>& b)
 //------------------------------------------------------------------------------
 
 // Schmidt orthogonalization of n orbitals in a.
-void schmidt(Mat<double>& a, std::ptrdiff_t n);
+void schmidt(Mat<double>& a, Index n);
 
 } // namespace Numlib
 

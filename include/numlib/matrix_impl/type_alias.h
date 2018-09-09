@@ -7,8 +7,6 @@
 #ifndef NUMLIB_MATRIX_TYPE_ALIAS_H
 #define NUMLIB_MATRIX_TYPE_ALIAS_H
 
-#include <complex>
-
 namespace Numlib {
 
 // Provides convenient type aliases:
