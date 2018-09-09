@@ -53,14 +53,6 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "/std:c++14 /EHsc /W4 /WX /wd4100 /MT /GR /Zi /Od")
 endif()
 
-# Set definitions.
-set(numlib_DEFINITIONS_DEBUG)
-set(numlib_DEFINITIONS_RELEASE -DNDEBUG)
-add_compile_options(
-    "$<$<CONFIG:Debug>:${numlib_DEFINITIONS_DEBUG}>"
-    "$<$<CONFIG:Release>:${numlib_DEFINITIONS_RELEASE}>" 
-)
-
 # BLAS and LAPACK is required.
 if(DEFINED ENV{MKLROOT})
 	list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
