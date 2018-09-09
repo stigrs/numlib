@@ -13,7 +13,7 @@ double Numlib::trapz(double xlo, double xup, const Vec<double>& y)
 
     assert(!y.empty());
 
-    const double step = std::abs(xup - xlo) / static_cast<double>(y.size() - 1);
+    const double step = std::abs(xup - xlo) / (y.size() - 1);
     double ans = 0.0;
 
     for (size_type i = 1; i < y.size(); ++i) {
