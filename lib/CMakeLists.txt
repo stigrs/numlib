@@ -17,12 +17,11 @@ add_library(
     numlib 
     ${SRC_FILES}
 )
-add_dependencies(numlib gsl_config)
+add_dependencies(numlib numlib_config)
 target_link_libraries(
     numlib 
 	${BLAS_LIBRARIES}
     ${LAPACK_LIBRARIES}
-    gsl_config
     numlib_config
 ) 
 

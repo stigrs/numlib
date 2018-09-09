@@ -13,13 +13,12 @@
 #include <type_traits>
 #include <initializer_list>
 #include <utility>
-#include <gsl/gsl>
 
 //------------------------------------------------------------------------------
 
 // Define integer type used by BLAS and LAPACK.
 #ifdef MKL_ILP64
-#define BLAS_INT gsl::index
+#define BLAS_INT std::ptrdiff_t
 #else
 #define BLAS_INT int
 #endif
@@ -31,8 +30,12 @@
 // C++ Core Guidelines recommends to use a signed integer type for subscripts/
 // indices. The Guidelines Support Library (GSL) provides gsl::index as a
 // typedef to std::ptrdiff_t to avoid the ugliness of using ptrdiff_t.
+//
+// Here, a typedef to ptrdiff_t is provided in the global namespace in order to
+// avoid linking with the GSL. Hopefully, this can be replaced by std::index in
+// the future.
 
-using Index = gsl::index;
+using Index = std::ptrdiff_t;
 
 //------------------------------------------------------------------------------
 

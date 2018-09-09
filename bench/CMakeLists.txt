@@ -28,7 +28,6 @@ foreach(program ${PROGRAMS})
 		${BLAS_LIBRARIES}
 		${LAPACK_LIBRARIES}
 		${ARMADILLO_LIBRARIES} 
-		gsl_config
 		numlib_config
 	) 
 endforeach()

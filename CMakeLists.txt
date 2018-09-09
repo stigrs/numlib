@@ -90,43 +90,8 @@ else()
 	find_path(LAPACKE_INCLUDE_DIRS lapacke.h HINTS ${BLAS_DIR}/include)
 endif()
 
-list(APPEND GSL_CMAKE_ARGS
-    "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/external"
-    "-DGSL_TEST=OFF"
-)
-
-if(GIT_FOUND)
-	# Add GSL
-	ExternalProject_Add(
-		GSL 
-		PREFIX ${CMAKE_BINARY_DIR}/GSL 
-		GIT_REPOSITORY https://github.com/Microsoft/GSL.git 
-		GIT_TAG v2.0.0 
-		CMAKE_ARGS ${GSL_CMAKE_ARGS}
-		LOG_DOWNLOAD 1
-		UPDATE_DISCONNECTED 1
-	)
-else()
-	# Assume GSL is installed in a system directory
-	add_custom_target(GSL)
-endif()
-
-# Prepare GSL for interface with Numlib.
-add_library(gsl_config INTERFACE)
-target_include_directories(
-	gsl_config INTERFACE
-	${CMAKE_BINARY_DIR}/external/include 
-)
-
 # Create Numlib interface library.
 add_library(numlib_config INTERFACE)
-add_dependencies(numlib_config GSL)
-
-# Add definitions.
-target_compile_definitions(numlib_config INTERFACE
-	GSL_THROW_ON_CONTRACT_VIOLATION
-)
-
 target_include_directories(numlib_config INTERFACE
     $<BUILD_INTERFACE:
         ${CMAKE_CURRENT_SOURCE_DIR}/include
