@@ -14,9 +14,6 @@ endif()
 # Export compile commands.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Enforce C++14 standard.
-set(CMAKE_CXX_STANDARD 14)
-
 if(WIN32)
     option(BUILD_SHARED_LIBS "Compile shared libraries." OFF)
 else()
@@ -36,18 +33,15 @@ endif()
 
 # Set release compiler options.
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wpedantic -Wall -Wshadow -Wextra -Wno-missing-braces -Werror -Wno-error=strict-overflow")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_RELEASE} -std=c++14 -fno-strict-aliasing -Wall -Wcast-align -Wctor-dtor-privacy -Werror -Wextra -Wno-missing-braces -Wno-unknown-attributes -Wnon-virtual-dtor -Wold-style-cast -Woverloaded-virtual -Wpedantic -Wshadow")
 endif()
 if(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "/std:c++14 /W4 /WX /wd4100 /GR /EHsc /MT /O2")
 endif()
 
 # Set debugging compiler options.
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    set(CMAKE_CXX_FLAGS_DEBUG "-pg -Wpedantic -Wall -Wshadow -Wextra -Wno-missing-braces -Werror -Wno-error=strict-overflow")
-endif()
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wpedantic -Wall -Wshadow -Wextra -Wno-missing-braces -Werror -Wno-error=strict-overflow")
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    set(CMAKE_CXX_FLAGS_DEBUG "-std=c++14 -g -fno-strict-aliasing -Wall -Wcast-align -Wctor-dtor-privacy -Werror -Wextra -Wno-missing-braces -Wno-unknown-attributes -Wnon-virtual-dtor -Wold-style-cast -Woverloaded-virtual -Wpedantic -Wshadow")
 endif()
 if(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "/std:c++14 /EHsc /W4 /WX /wd4100 /MT /GR /Zi /Od")
