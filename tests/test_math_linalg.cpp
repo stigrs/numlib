@@ -12,6 +12,22 @@ TEST_CASE("test_math_linalg")
 {
     using namespace Numlib;
 
+    SECTION("linspace")
+    {
+        Vec<double> ans = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0};
+        auto v = linspace(0.0, 1.0, 6);
+
+        for (Index i = 0; i < v.size(); ++i) {
+            CHECK(std::abs(v(i) - ans(i)) < 1.0e-12);
+        }
+    }
+
+    SECTION("identity")
+    {
+        Mat<int> eye = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+        CHECK(identity<int>(3) == eye);
+    }
+
     SECTION("max_min_vec")
     {
         Vec<int> a = {1, 2, 3, 4};

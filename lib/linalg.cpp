@@ -7,6 +7,20 @@
 #include <numlib/math.h>
 #include <cmath>
 
+Numlib::Vec<double> Numlib::linspace(double x1, double x2, Index n)
+{
+    Vec<double> res(n);
+    Vec<double>::iterator it;
+
+    double h = (x2 - x1) / (n - 1);
+    double val = 0.0;
+
+    for (it = res.begin(), val = x1; it != res.end(); ++it, val += h) {
+        *it = val;
+    }
+    return res;
+}
+
 double Numlib::det(const Mat<double>& a)
 {
     assert(a.rows() == a.cols());

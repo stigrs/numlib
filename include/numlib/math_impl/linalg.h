@@ -17,6 +17,7 @@
 #include <numlib/traits.h>
 #include <numlib/matrix.h>
 #include <numlib/band_matrix.h>
+#include <numlib/packed_matrix.h>
 #include <algorithm>
 #include <numeric>
 #include <functional>
@@ -24,6 +25,22 @@
 #include <complex>
 
 namespace Numlib {
+
+//------------------------------------------------------------------------------
+//
+// Create special vectors and matrices:
+
+// Create linearly spaced vector.
+Vec<double> linspace(double x1, double x2, Index n);
+
+// Identity matrix.
+template <typename T>
+inline Mat<T> identity(std::ptrdiff_t n)
+{
+    Mat<T> res = zeros<Mat<T>>(n, n);
+    res.diag() = T{1};
+    return res;
+}
 
 //------------------------------------------------------------------------------
 //
