@@ -2,7 +2,7 @@
 
 Numlib provides a C++ library for linear algebra and scientific computing. 
 BLAS and LAPACK are used for fast numerical performance. Currently, OpenBLAS
-and Intel MKL is supported.
+and Intel MKL are supported.
 
 ## Features
 
