@@ -5,7 +5,6 @@
 // and conditions.
 
 #include <numlib/matrix.h>
-#include <numlib/packed_matrix.h>
 #include <catch2/catch.hpp>
 
 TEST_CASE("test_packed_matrix")
@@ -94,7 +93,5 @@ TEST_CASE("test_packed_matrix")
         CHECK(u(1, 1) == 7);
         CHECK(u(1, 2) == 5);
         CHECK(u(2, 2) == 2);
-
-        std::cout << u << std::endl;
     }
 }

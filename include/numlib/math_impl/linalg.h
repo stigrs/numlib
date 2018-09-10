@@ -16,8 +16,6 @@
 
 #include <numlib/traits.h>
 #include <numlib/matrix.h>
-#include <numlib/band_matrix.h>
-#include <numlib/packed_matrix.h>
 #include <algorithm>
 #include <numeric>
 #include <functional>

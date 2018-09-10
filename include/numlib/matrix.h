@@ -52,7 +52,7 @@ class Band_matrix;
 enum Uplo_scheme { upper_triang, lower_triang };
 
 template <typename T, Uplo_scheme Uplo = lower_triang>
-class Packed_matrix {
+class Packed_matrix;
 
 } // namespace Numlib
 
@@ -65,14 +65,15 @@ class Packed_matrix {
 // Matrix classes:
 #include <numlib/matrix_impl/matrix_ref.h>
 #include <numlib/matrix_impl/matrix.h>
+#include <numlib/band_impl/band_matrix.h>
+#include <numlib/packed_impl/packed_matrix.h>
 
 // Arithmetic operations:
 #include <numlib/matrix_impl/operations.h>
+#include <numlib/band_impl/operations.h>
+#include <numlib/packed_impl/operations.h>
 
 // Type aliases:
 #include <numlib/matrix_impl/type_alias.h>
-
-#include <numlib/packed_impl/packed_matrix.h>
-#include <numlib/packed_impl/operations.h>
 
 #endif // NUMLIB_MATRIX_H
