@@ -6,8 +6,8 @@
 // LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
 // and conditions.
 
-#ifndef NUMLIB_MATRIX_ITERATOR_H
-#define NUMLIB_MATRIX_ITERATOR_H
+#ifndef NUMLIB_DENSE_MATRIX_ITERATOR_H
+#define NUMLIB_DENSE_MATRIX_ITERATOR_H
 
 #include <iterator>
 #include <algorithm>
@@ -143,4 +143,4 @@ inline bool operator!=(const Slice_iterator<T, N>& a,
 
 } // namespace Numlib
 
-#endif // NUMLIB_MATRIX_ITERATOR_H
+#endif // NUMLIB_DENSE_MATRIX_ITERATOR_H

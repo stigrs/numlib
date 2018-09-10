@@ -6,8 +6,8 @@
 // LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
 // and conditions.
 
-#ifndef NUMLIB_MATRIX_SLICE_H
-#define NUMLIB_MATRIX_SLICE_H
+#ifndef NUMLIB_SLICE_H
+#define NUMLIB_SLICE_H
 
 #include <cstddef>
 #include <iostream>
@@ -46,4 +46,4 @@ inline std::ostream& operator<<(std::ostream& to, const slice& s)
 
 } // namespace Numlib
 
-#endif // NUMLIB_MATRIX_SLICE_H
+#endif // NUMLIB_SLICE_H

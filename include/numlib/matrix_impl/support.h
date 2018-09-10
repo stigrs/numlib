@@ -6,8 +6,8 @@
 // LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
 // and conditions.
 
-#ifndef NUMLIB_MATRIX_SUPPORT_H
-#define NUMLIB_MATRIX_SUPPORT_H
+#ifndef NUMLIB_DENSE_MATRIX_SUPPORT_H
+#define NUMLIB_DENSE_MATRIX_SUPPORT_H
 
 #include <algorithm>
 #include <array>
@@ -223,4 +223,4 @@ namespace Matrix_impl {
 
 } // namespace Numlib
 
-#endif // NUMLIB_MATRIX_SUPPORT_H
+#endif // NUMLIB_DENSE_MATRIX_SUPPORT_H

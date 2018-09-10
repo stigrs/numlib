@@ -14,12 +14,21 @@
 
 namespace Numlib {
 
-// Forward declarations:
+//------------------------------------------------------------------------------
+//
+// Slice:
 
 struct slice;
 
+//------------------------------------------------------------------------------
+//
+// Dense N-dimensional matrix class:
+
 template <std::size_t N>
 struct Matrix_slice;
+
+template <typename T, std::size_t N>
+class Matrix_ref;
 
 template <typename T, std::size_t N>
 class Matrix;
@@ -27,6 +36,23 @@ class Matrix;
 // Matrix initializer:
 template <typename T, std::size_t N>
 using Matrix_initializer = typename Matrix_impl::Matrix_init<T, N>::type;
+
+//------------------------------------------------------------------------------
+//
+// Band matrix class:
+
+template <typename T>
+class Band_matrix;
+
+//------------------------------------------------------------------------------
+//
+// Packed matrix class:
+
+// Enumeration of triangular storage schemes.
+enum Uplo_scheme { upper_triang, lower_triang };
+
+template <typename T, Uplo_scheme Uplo = lower_triang>
+class Packed_matrix {
 
 } // namespace Numlib
 
@@ -45,5 +71,8 @@ using Matrix_initializer = typename Matrix_impl::Matrix_init<T, N>::type;
 
 // Type aliases:
 #include <numlib/matrix_impl/type_alias.h>
+
+#include <numlib/packed_impl/packed_matrix.h>
+#include <numlib/packed_impl/operations.h>
 
 #endif // NUMLIB_MATRIX_H

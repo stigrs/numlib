@@ -4,8 +4,8 @@
 // LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
 // and conditions.
 
-#ifndef NUMLIB_MATRIX_TYPE_ALIAS_H
-#define NUMLIB_MATRIX_TYPE_ALIAS_H
+#ifndef NUMLIB_DENSE_MATRIX_TYPE_ALIAS_H
+#define NUMLIB_DENSE_MATRIX_TYPE_ALIAS_H
 
 namespace Numlib {
 
@@ -25,4 +25,4 @@ using Hypercube = Matrix<T, 4>;
 
 } // namespace Numlib
 
-#endif // NUMLIB_MATRIX_TYPE_ALIAS
+#endif // NUMLIB_DENSE_MATRIX_TYPE_ALIAS

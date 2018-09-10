@@ -6,8 +6,8 @@
 // LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
 // and conditions.
 
-#ifndef NUMLIB_MATRIX_OPERATIONS_H
-#define NUMLIB_MATRIX_OPERATIONS_H
+#ifndef NUMLIB_DENSE_MATRIX_OPERATIONS_H
+#define NUMLIB_DENSE_MATRIX_OPERATIONS_H
 
 #ifdef USE_MKL
 #include <mkl.h>
@@ -704,4 +704,4 @@ std::istream& operator>>(std::istream& from, Matrix<T, 2>& a)
 
 } // namespace Numlib
 
-#endif // NUMLIB_MATRIX_OPERATIONS_H
+#endif // NUMLIB_DENSE_MATRIX_OPERATIONS_H

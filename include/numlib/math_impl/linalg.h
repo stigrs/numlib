@@ -398,6 +398,11 @@ inline void eigs(Band_matrix<double>& ab, Mat<double>& evec, Vec<double>& eval)
 
 // Compute eigenvalues and eigenvectors of a real symmetric matrix held in
 // packed storage.
+//
+// Note:
+// - OpenBLAS v0.2.14.1 gives wrong results.
+//
+#ifdef USE_MKL
 template <Uplo_scheme Uplo>
 void eigs(Packed_matrix<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
 {
@@ -415,6 +420,7 @@ void eigs(Packed_matrix<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
         throw Math_error("dspevd failed");
     }
 }
+#endif
 
 //------------------------------------------------------------------------------
 

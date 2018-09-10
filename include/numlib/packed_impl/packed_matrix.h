@@ -4,8 +4,8 @@
 // LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
 // and conditions.
 
-#ifndef NUMLIB_PACKED_MATRIX_PACKED_MATRIX_H
-#define NUMLIB_PACKED_MATRIX_PACKED_MATRIX_H
+#ifndef NUMLIB_PACKED_MATRIX_H
+#define NUMLIB_PACKED_MATRIX_H
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -24,7 +24,7 @@ namespace Numlib {
 // arithmetic operations. The storage scheme can be either upper or
 // lower triangular.
 //
-template <typename T, Uplo_scheme Uplo = lower_triang>
+template <typename T, Uplo_scheme Uplo>
 class Packed_matrix {
 public:
     using value_type = T;
@@ -35,7 +35,15 @@ public:
     static constexpr Uplo_scheme uplo = Uplo;
 
     // Empty packed matrix.
-    Packed_matrix() : elems(), extents{0} {}
+    Packed_matrix() = default;
+
+    // Copy semantics:
+    Packed_matrix(const Packed_matrix&) = default;
+    Packed_matrix& operator=(const Packed_matrix&) = default;
+
+    // Move semantics:
+    Packed_matrix(Packed_matrix&&) = default;
+    Packed_matrix& operator=(Packed_matrix&&) = default;
 
     // Construct from extent.
     explicit Packed_matrix(size_type n) : elems(n * (n + 1) / 2), extents{n} {}
@@ -46,6 +54,8 @@ public:
 
     // Construct from matrix.
     Packed_matrix(const Matrix<T, 2>& a);
+
+    ~Packed_matrix() = default;
 
     // "Flat" element access:
     T* data() { return elems.data(); }
@@ -290,4 +300,4 @@ const typename Packed_matrix<T, Uplo>::value_type Packed_matrix<T, Uplo>::zero =
 #pragma warning(pop)
 #endif
 
-#endif // NUMLIB_PACKED_MATRIX_PACKED_MATRIX_H
+#endif // NUMLIB_PACKED_MATRIX_H
