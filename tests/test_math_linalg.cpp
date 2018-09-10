@@ -277,6 +277,37 @@ TEST_CASE("test_math_linalg")
         }
     }
 
+    SECTION("eigs_packed_matrix")
+    {
+        // Results from numpy:
+        Vec<double> w = {3.28792877e-06, 3.05898040e-04, 1.14074916e-02,
+                         2.08534219e-01, 1.56705069e+00};
+
+        Mat<double> v = {
+            {0.00617386, 0.04716181, -0.21421362, -0.60187148, -0.76785474},
+            {-0.11669275, -0.43266733, 0.72410213, 0.27591342, -0.44579106},
+            {0.50616366, 0.66735044, 0.12045328, 0.42487662, -0.32157829},
+            {-0.76719119, 0.23302452, -0.30957397, 0.44390304, -0.25343894},
+            {0.37624555, -0.55759995, -0.56519341, 0.42901335, -0.20982264}};
+
+        auto a = hilbert<>(5);
+        Packed_matrix<double, lower_triang> ap(a);
+
+        Mat<double> evec;
+        Vec<double> eval(5);
+
+        eigs(ap, evec, eval);
+
+        for (Index i = 0; i < eval.size(); ++i) {
+            CHECK(std::abs(eval(i) - w(i)) < 1.0e-8);
+        }
+        for (Index i = 0; i < evec.rows(); ++i) {
+            for (Index j = 0; j < evec.cols(); ++j) {
+                CHECK(std::abs(evec(i, j) - v(i, j)) < 1.0e-8);
+            }
+        }
+    }
+
     SECTION("linsolve")
     {
         Mat<double> A = {{1.0, 2.0, 3.0}, {2.0, 3.0, 4.0}, {3.0, 4.0, 1.0}};

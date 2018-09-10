@@ -34,11 +34,24 @@ namespace Numlib {
 Vec<double> linspace(double x1, double x2, Index n);
 
 // Identity matrix.
-template <typename T>
+template <typename T = double>
 inline Mat<T> identity(std::ptrdiff_t n)
 {
     Mat<T> res = zeros<Mat<T>>(n, n);
     res.diag() = T{1};
+    return res;
+}
+
+// Hilbert matrix.
+template <typename T = double>
+inline Enable_if<Real_type<T>(), Mat<T>> hilbert(std::ptrdiff_t n)
+{
+    Mat<T> res(n, n);
+    for (Index i = 0; i < n; ++i) {
+        for (Index j = 0; j < n; ++j) {
+            res(i, j) = T{1} / static_cast<T>(i + j + 1);
+        }
+    }
     return res;
 }
 
@@ -380,6 +393,26 @@ inline void eigs(Band_matrix<double>& ab, Mat<double>& evec, Vec<double>& eval)
                                   ldab, eval.data(), evec.data(), ldz);
     if (info != 0) {
         throw Math_error("dsbev failed");
+    }
+}
+
+// Compute eigenvalues and eigenvectors of a real symmetric matrix held in
+// packed storage.
+template <Uplo_scheme Uplo>
+void eigs(Packed_matrix<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
+{
+    assert(ap.size() >= eval.size() * (eval.size() + 1) / 2);
+
+    const BLAS_INT n = narrow_cast<BLAS_INT>(eval.size());
+    const BLAS_INT ldz = n;
+    char uplo = ap.uplo_scheme();
+
+    evec.resize(n, n);
+
+    BLAS_INT info = LAPACKE_dspevd(LAPACK_ROW_MAJOR, 'V', uplo, n, ap.data(),
+                                   eval.data(), evec.data(), ldz);
+    if (info != 0) {
+        throw Math_error("dspevd failed");
     }
 }
 
