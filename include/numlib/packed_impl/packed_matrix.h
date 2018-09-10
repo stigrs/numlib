@@ -35,16 +35,7 @@ public:
     static constexpr Uplo_scheme uplo = Uplo;
 
     // Empty packed matrix.
-    // Packed_matrix() : elems(), extents{0} {}
-    Packed_matrix() = default;
-
-    // Copy semantics:
-    Packed_matrix(const Packed_matrix&) = default;
-    Packed_matrix& operator=(const Packed_matrix&) = default;
-
-    // Move semantics:
-    Packed_matrix(Packed_matrix&&) = default;
-    Packed_matrix& operator=(Packed_matrix&&) = default;
+    Packed_matrix() : elems(), extents{0} {}
 
     // Construct from extent.
     explicit Packed_matrix(size_type n) : elems(n * (n + 1) / 2), extents{n} {}
@@ -55,8 +46,6 @@ public:
 
     // Construct from matrix.
     Packed_matrix(const Matrix<T, 2>& a);
-
-    ~Packed_matrix() = default;
 
     // "Flat" element access:
     T* data() { return elems.data(); }
