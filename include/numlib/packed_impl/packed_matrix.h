@@ -126,7 +126,7 @@ private:
     T& ref(size_type i, size_type j);
     const T& ref(size_type i, size_type j) const;
 
-    size_type index_map(size_type i, size_type j) const;
+    size_type offset(size_type i, size_type j) const;
 };
 
 template <typename T, Uplo_scheme Uplo>
@@ -239,11 +239,11 @@ inline T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j)
     assert(0 <= j && j < extents);
     if /* constexpr */ (Uplo == upper_triang) { // C++17
         assert(i <= j);
-        return elems[index_map(i, j)];
+        return elems[offset(i, j)];
     }
     else if /* constexpr */ (Uplo == lower_triang) { // C++17
         assert(j <= i);
-        return elems[index_map(i, j)];
+        return elems[offset(i, j)];
     }
 }
 
@@ -257,20 +257,20 @@ inline const T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j) const
     assert(0 <= j && j < extents);
     if /* constexpr */ (Uplo == upper_triang) { // C++17
         if (i <= j) {
-            return elems[index_map(i, j)];
+            return elems[offset(i, j)];
         }
     }
     else if /* constexpr */ (Uplo == lower_triang) { // C++17
         if (j <= i) {
-            return elems[index_map(i, j)];
+            return elems[offset(i, j)];
         }
     }
     return zero;
 }
 
 template <typename T, Uplo_scheme Uplo>
-inline std::ptrdiff_t Packed_matrix<T, Uplo>::index_map(size_type i,
-                                                        size_type j) const
+inline std::ptrdiff_t Packed_matrix<T, Uplo>::offset(size_type i,
+                                                     size_type j) const
 {
     static_assert(Uplo == lower_triang || Uplo == upper_triang,
                   "Packed_matrix: bad storage scheme");
