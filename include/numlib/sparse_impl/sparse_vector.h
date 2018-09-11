@@ -113,13 +113,8 @@ public:
 
     // Arithmetic operations:
 
-    Sparse_vector& operator=(const T& value); // assignment with scalar
-
-    Sparse_vector& operator+=(const T& value); // scalar addition
-    Sparse_vector& operator-=(const T& value); // scalar subtraction
     Sparse_vector& operator*=(const T& value); // scalar multiplication
     Sparse_vector& operator/=(const T& value); // scalar division
-    Sparse_vector& operator%=(const T& value); // scalar modulo
 
 private:
     std::vector<T> elems;
@@ -211,24 +206,6 @@ inline Sparse_vector<T>& Sparse_vector<T>::apply(F f)
 }
 
 template <typename T>
-inline Sparse_vector<T>& Sparse_vector<T>::operator=(const T& value)
-{
-    return apply([&](T& a) { a = value; });
-}
-
-template <typename T>
-inline Sparse_vector<T>& Sparse_vector<T>::operator+=(const T& value)
-{
-    return apply([&](T& a) { a += value; });
-}
-
-template <typename T>
-inline Sparse_vector<T>& Sparse_vector<T>::operator-=(const T& value)
-{
-    return apply([&](T& a) { a -= value; });
-}
-
-template <typename T>
 inline Sparse_vector<T>& Sparse_vector<T>::operator*=(const T& value)
 {
     return apply([&](T& a) { a *= value; });
@@ -238,12 +215,6 @@ template <typename T>
 inline Sparse_vector<T>& Sparse_vector<T>::operator/=(const T& value)
 {
     return apply([&](T& a) { a /= value; });
-}
-
-template <typename T>
-inline Sparse_vector<T>& Sparse_vector<T>::operator%=(const T& value)
-{
-    return apply([&](T& a) { a %= value; });
 }
 
 template <typename T>

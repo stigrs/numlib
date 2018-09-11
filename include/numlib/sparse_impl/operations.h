@@ -43,6 +43,52 @@ Matrix<T, 1> scatter(const Sparse_vector<T>& y)
     return res;
 }
 
+//------------------------------------------------------------------------------
+//
+// Binary arithmetic operations:
+
+// Scalar multiplication:
+
+template <typename T>
+inline Sparse_vector<T> operator*(const Sparse_vector<T>& a, const T& scalar)
+{
+    Sparse_vector<T> res(a);
+    return res *= scalar;
+}
+
+template <typename T>
+inline Sparse_vector<T> operator*(const T& scalar, const Sparse_vector<T>& a)
+{
+    Sparse_vector<T> res(a);
+    return res *= scalar;
+}
+
+// Scalar division:
+
+template <typename T>
+inline Sparse_vector<T> operator/(const Sparse_vector<T>& a, const T& scalar)
+{
+    Sparse_vector<T> res(a);
+    return res /= scalar;
+}
+
+// Vector addition:
+
+template <typename T>
+Matrix<T, 1> operator+(const Sparse_vector<T>& x, const Matrix<T, 1>& y)
+{
+    assert(x.size() == y.size());
+
+    Matrix<T, 1> res(y);
+
+    std::ptrdiff_t i = 0;
+    for (const auto& v : x) {
+        res(x.loc(i)) += v;
+        ++i;
+    }
+    return res;
+}
+
 } // namespace Numlib
 
 #endif // NUMLIB_SPARSE_OPERATIONS_H

@@ -70,20 +70,20 @@ TEST_CASE("test_sparse_vector")
     SECTION("scalar_addition")
     {
         Sparse_vector<int> spvec = {{1, 10}, {4, 20}, {9, 30}};
-        spvec += 2;
+        spvec *= 2;
 
         CHECK(spvec.num_nonzero() == 3);
         CHECK(spvec.size() == 10);
         CHECK(spvec(0) == 0);
-        CHECK(spvec(1) == 12);
+        CHECK(spvec(1) == 20);
         CHECK(spvec(2) == 0);
         CHECK(spvec(3) == 0);
-        CHECK(spvec(4) == 22);
+        CHECK(spvec(4) == 40);
         CHECK(spvec(5) == 0);
         CHECK(spvec(6) == 0);
         CHECK(spvec(7) == 0);
         CHECK(spvec(8) == 0);
-        CHECK(spvec(9) == 32);
+        CHECK(spvec(9) == 60);
     }
 
     SECTION("scatter")
@@ -121,5 +121,27 @@ TEST_CASE("test_sparse_vector")
         CHECK(spvec(7) == 0);
         CHECK(spvec(8) == 0);
         CHECK(spvec(9) == 30);
+    }
+
+    SECTION("vector_addition")
+    {
+        Vec<int> x(10);
+        x = 1;
+
+        Sparse_vector<int> spvec = {{1, 10}, {4, 20}, {9, 30}};
+
+        auto y = 2 * spvec + x;
+
+        CHECK(y.size() == 10);
+        CHECK(y(0) == 1);
+        CHECK(y(1) == 21);
+        CHECK(y(2) == 1);
+        CHECK(y(3) == 1);
+        CHECK(y(4) == 41);
+        CHECK(y(5) == 1);
+        CHECK(y(6) == 1);
+        CHECK(y(7) == 1);
+        CHECK(y(8) == 1);
+        CHECK(y(9) == 61);
     }
 }
