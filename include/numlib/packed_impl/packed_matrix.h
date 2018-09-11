@@ -290,9 +290,11 @@ inline std::ptrdiff_t Packed_matrix<T, Uplo>::index_map(size_type i,
     return res;
 }
 
+// clang-format off
 template <typename T, Uplo_scheme Uplo>
-const typename Packed_matrix<T, Uplo>::value_type Packed_matrix<T, Uplo>::zero =
-    value_type{0};
+const typename Packed_matrix<T, Uplo>::value_type 
+Packed_matrix<T, Uplo>::zero = value_type{0};
+// clang-format on
 
 } // namespace Numlib
 
