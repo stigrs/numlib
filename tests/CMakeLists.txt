@@ -70,6 +70,7 @@ set(PROGRAMS
     test_matrix3
 	test_matrix4
 	test_packed_matrix
+	test_sparse_vector
 )
 
 foreach(program ${PROGRAMS})

@@ -54,6 +54,13 @@ enum Uplo_scheme { upper_triang, lower_triang };
 template <typename T, Uplo_scheme Uplo = lower_triang>
 class Packed_matrix;
 
+//------------------------------------------------------------------------------
+//
+// Sparse vector class:
+
+template <typename T>
+class Sparse_vector;
+
 } // namespace Numlib
 
 // Support classes and algorithms:
@@ -67,6 +74,7 @@ class Packed_matrix;
 #include <numlib/matrix_impl/matrix.h>
 #include <numlib/band_impl/band_matrix.h>
 #include <numlib/packed_impl/packed_matrix.h>
+#include <numlib/sparse_impl/sparse_vector.h>
 
 // Arithmetic operations:
 #include <numlib/matrix_impl/operations.h>
