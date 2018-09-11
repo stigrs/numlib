@@ -7,6 +7,20 @@
 #include <numlib/math.h>
 #include <cmath>
 
+Numlib::Vec<double> Numlib::linspace(double x1, double x2, Index n)
+{
+    Vec<double> res(n);
+    Vec<double>::iterator it;
+
+    double h = (x2 - x1) / (n - 1);
+    double val = 0.0;
+
+    for (it = res.begin(), val = x1; it != res.end(); ++it, val += h) {
+        *it = val;
+    }
+    return res;
+}
+
 double Numlib::det(const Mat<double>& a)
 {
     assert(a.rows() == a.cols());
@@ -60,10 +74,10 @@ void Numlib::eig(Mat<double>& a,
     if (info != 0) {
         throw Math_error("dgeev failed");
     }
-    for (std::ptrdiff_t i = 0; i < vr.rows(); ++i) {
+    for (Index i = 0; i < vr.rows(); ++i) {
         std::complex<double> wii(wr(i), wi(i));
         eval(i) = wii;
-        for (std::ptrdiff_t j = 0; j < vr.cols(); j += 2) {
+        for (Index j = 0; j < vr.cols(); j += 2) {
             std::complex<double> v1 = {vr(i, j), 0.0};
             std::complex<double> v2 = {vr(i, j + 1), 0.0};
             if (wi(j) != 0.0) {
@@ -76,11 +90,11 @@ void Numlib::eig(Mat<double>& a,
     }
 }
 
-void Numlib::schmidt(Mat<double>& a, std::ptrdiff_t n)
+void Numlib::schmidt(Mat<double>& a, Index n)
 {
-    std::ptrdiff_t n_out = 0;
-    std::ptrdiff_t n_orb = n;
-    std::ptrdiff_t n_bas = a.rows();
+    Index n_out = 0;
+    Index n_orb = n;
+    Index n_bas = a.rows();
 
     Vec<double> work(n_bas);
     work = 0.0;
@@ -88,8 +102,8 @@ void Numlib::schmidt(Mat<double>& a, std::ptrdiff_t n)
     double r_min = 0.1;
 
     while (n_orb < n_bas) {
-        std::ptrdiff_t lim = n_orb + n_bas;
-        for (std::ptrdiff_t i = 0; i < lim; ++i) {
+        Index lim = n_orb + n_bas;
+        for (Index i = 0; i < lim; ++i) {
             if (n_out >= n_bas) {
                 return;
             }
@@ -102,11 +116,11 @@ void Numlib::schmidt(Mat<double>& a, std::ptrdiff_t n)
                 an = 0.0;
                 a(i - n_orb, n_out) = 1.0;
             }
-            for (std::ptrdiff_t j = 0; j < n_out; ++j) {
+            for (Index j = 0; j < n_out; ++j) {
                 auto aj = a.column(j);
                 work(j) = dot(aj, an);
             }
-            for (std::ptrdiff_t j = 0; j < n_out; ++j) {
+            for (Index j = 0; j < n_out; ++j) {
                 auto aj = a.column(j);
                 an = an - work(j) * aj;
             }

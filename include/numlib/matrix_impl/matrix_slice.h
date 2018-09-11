@@ -6,8 +6,8 @@
 // LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
 // and conditions.
 
-#ifndef NUMLIB_MATRIX_MATRIX_SLICE_H
-#define NUMLIB_MATRIX_MATRIX_SLICE_H
+#ifndef NUMLIB_DENSE_MATRIX_SLICE_H
+#define NUMLIB_DENSE_MATRIX_SLICE_H
 
 #include <algorithm>
 #include <array>
@@ -356,4 +356,4 @@ same_extents(const M1& a, const M2& b)
 
 } // namespace Numlib
 
-#endif // NUMLIB_MATRIX_MATRIX_SLICE_H
+#endif // NUMLIB_DENSE_MATRIX_SLICE_H

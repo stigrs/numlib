@@ -6,8 +6,8 @@
 // LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
 // and conditions.
 
-#ifndef NUMLIB_MATRIX_TRAITS_H
-#define NUMLIB_MATRIX_TRAITS_H
+#ifndef NUMLIB_DENSE_MATRIX_TRAITS_H
+#define NUMLIB_DENSE_MATRIX_TRAITS_H
 
 namespace Numlib {
 
@@ -60,4 +60,4 @@ constexpr bool Matrix_type()
 
 } // namespace Numlib
 
-#endif // NUMLIB_MATRIX_TRAITS_H
+#endif // NUMLIB_DENSE_MATRIX_TRAITS_H

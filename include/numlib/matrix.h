@@ -12,21 +12,23 @@
 #include <numlib/traits.h>
 #include <numlib/matrix_impl/traits.h>
 
-// Define integer type used by BLAS and LAPACK.
-#ifdef MKL_ILP64
-#define BLAS_INT std::ptrdiff_t
-#else
-#define BLAS_INT int
-#endif
-
 namespace Numlib {
 
-// Forward declarations:
+//------------------------------------------------------------------------------
+//
+// Slice:
 
 struct slice;
 
+//------------------------------------------------------------------------------
+//
+// Dense N-dimensional matrix class:
+
 template <std::size_t N>
 struct Matrix_slice;
+
+template <typename T, std::size_t N>
+class Matrix_ref;
 
 template <typename T, std::size_t N>
 class Matrix;
@@ -34,6 +36,23 @@ class Matrix;
 // Matrix initializer:
 template <typename T, std::size_t N>
 using Matrix_initializer = typename Matrix_impl::Matrix_init<T, N>::type;
+
+//------------------------------------------------------------------------------
+//
+// Band matrix class:
+
+template <typename T>
+class Band_matrix;
+
+//------------------------------------------------------------------------------
+//
+// Packed matrix class:
+
+// Enumeration of triangular storage schemes.
+enum Uplo_scheme { upper_triang, lower_triang };
+
+template <typename T, Uplo_scheme Uplo = lower_triang>
+class Packed_matrix;
 
 } // namespace Numlib
 
@@ -46,9 +65,13 @@ using Matrix_initializer = typename Matrix_impl::Matrix_init<T, N>::type;
 // Matrix classes:
 #include <numlib/matrix_impl/matrix_ref.h>
 #include <numlib/matrix_impl/matrix.h>
+#include <numlib/band_impl/band_matrix.h>
+#include <numlib/packed_impl/packed_matrix.h>
 
 // Arithmetic operations:
 #include <numlib/matrix_impl/operations.h>
+#include <numlib/band_impl/operations.h>
+#include <numlib/packed_impl/operations.h>
 
 // Type aliases:
 #include <numlib/matrix_impl/type_alias.h>

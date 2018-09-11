@@ -5,18 +5,15 @@
 // and conditions.
 
 #include <numlib/math.h>
-#include <cassert>
 
 double Numlib::trapz(double xlo, double xup, const Vec<double>& y)
 {
-    using size_type = Vec<double>::size_type;
-
     assert(!y.empty());
 
-    const double step = std::abs(xup - xlo) / static_cast<double>(y.size() - 1);
+    const double step = std::abs(xup - xlo) / (y.size() - 1);
     double ans = 0.0;
 
-    for (size_type i = 1; i < y.size(); ++i) {
+    for (Index i = 1; i < y.size(); ++i) {
         ans += 0.5 * (y(i) + y(i - 1));
     }
     return ans *= step;

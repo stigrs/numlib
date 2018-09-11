@@ -6,8 +6,8 @@
 // LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
 // and conditions.
 
-#ifndef NUMLIB_MATRIX_MATRIX_BASE_H
-#define NUMLIB_MATRIX_MATRIX_BASE_H
+#ifndef NUMLIB_DENSE_MATRIX_BASE_H
+#define NUMLIB_DENSE_MATRIX_BASE_H
 
 #include <cassert>
 
@@ -52,7 +52,7 @@ public:
     // Number of elements in the N'th dimension:
     size_type extent(size_type n) const
     {
-        assert(n >= 0 && n < static_cast<std::ptrdiff_t>(order));
+        assert(0 <= n && n < static_cast<std::ptrdiff_t>(order));
         return desc.extents[n];
     }
 
@@ -80,4 +80,4 @@ protected:
 
 } // namespace Numlib
 
-#endif // NUMLIB_MATRIX_MATRIX_BASE_H
+#endif // NUMLIB_DENSE_MATRIX_BASE_H

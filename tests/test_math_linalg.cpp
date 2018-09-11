@@ -12,6 +12,22 @@ TEST_CASE("test_math_linalg")
 {
     using namespace Numlib;
 
+    SECTION("linspace")
+    {
+        Vec<double> ans = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0};
+        auto v = linspace(0.0, 1.0, 6);
+
+        for (Index i = 0; i < v.size(); ++i) {
+            CHECK(std::abs(v(i) - ans(i)) < 1.0e-12);
+        }
+    }
+
+    SECTION("identity")
+    {
+        Mat<int> eye = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+        CHECK(identity<int>(3) == eye);
+    }
+
     SECTION("max_min_vec")
     {
         Vec<int> a = {1, 2, 3, 4};
@@ -230,6 +246,70 @@ TEST_CASE("test_math_linalg")
             }
         }
     }
+
+    SECTION("eigs_band_matrix")
+    {
+        // Example from scipy:
+        Mat<double> a = {{1.0, 5.0, 2.0, 0.0},
+                         {5.0, 2.0, 5.0, 2.0},
+                         {2.0, 5.0, 3.0, 5.0},
+                         {0.0, 2.0, 5.0, 4.0}};
+
+        Vec<double> w = {-4.26200532, -2.22987175, 3.95222349, 12.53965359};
+        Mat<double> v = {{0.54585106, -0.73403852, 0.39896071, -0.06375287},
+                         {-0.49026342, 0.04827646, 0.67105283, -0.55407514},
+                         {-0.58943537, -0.41123929, 0.15802574, 0.6771086},
+                         {0.33801529, 0.53827417, 0.60460427, 0.48006276}};
+
+        Band_matrix<double> ab(3, 3, a);
+        Mat<double> evec;
+        Vec<double> eval;
+
+        eigs(ab, evec, eval);
+
+        for (Index i = 0; i < eval.size(); ++i) {
+            CHECK(std::abs(eval(i) - w(i)) < 5.0e-9);
+        }
+        for (Index i = 0; i < evec.rows(); ++i) {
+            for (Index j = 0; j < evec.cols(); ++j) {
+                CHECK(std::abs(evec(i, j) - v(i, j)) < 1.0e-8);
+            }
+        }
+    }
+
+#ifdef USE_MKL
+    // OpenBLAS v0.2.14.1 gives wrong results.
+    SECTION("eigs_packed_matrix")
+    {
+        // Results from numpy:
+        Vec<double> w = {3.28792877e-06, 3.05898040e-04, 1.14074916e-02,
+                         2.08534219e-01, 1.56705069e+00};
+
+        Mat<double> v = {
+            {0.00617386, 0.04716181, -0.21421362, -0.60187148, -0.76785474},
+            {-0.11669275, -0.43266733, 0.72410213, 0.27591342, -0.44579106},
+            {0.50616366, 0.66735044, 0.12045328, 0.42487662, -0.32157829},
+            {-0.76719119, 0.23302452, -0.30957397, 0.44390304, -0.25343894},
+            {0.37624555, -0.55759995, -0.56519341, 0.42901335, -0.20982264}};
+
+        auto a = hilbert<>(5);
+        Packed_matrix<double, lower_triang> ap(a);
+
+        Mat<double> evec;
+        Vec<double> eval(5);
+
+        eigs(ap, evec, eval);
+
+        for (Index i = 0; i < eval.size(); ++i) {
+            CHECK(std::abs(eval(i) - w(i)) < 1.0e-8);
+        }
+        for (Index i = 0; i < evec.rows(); ++i) {
+            for (Index j = 0; j < evec.cols(); ++j) {
+                CHECK(std::abs(evec(i, j) - v(i, j)) < 1.0e-8);
+            }
+        }
+    }
+#endif
 
     SECTION("linsolve")
     {

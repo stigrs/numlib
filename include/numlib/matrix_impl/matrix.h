@@ -6,8 +6,8 @@
 // LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
 // and conditions.
 
-#ifndef NUMLIB_MATRIX_MATRIX_H
-#define NUMLIB_MATRIX_MATRIX_H
+#ifndef NUMLIB_DENSE_MATRIX_H
+#define NUMLIB_DENSE_MATRIX_H
 
 #include <numlib/matrix_impl/matrix_base.h>
 #include <initializer_list>
@@ -439,4 +439,4 @@ private:
 
 } // namespace Numlib
 
-#endif // NUMLIB_MATRIX_MATRIX_H
+#endif // NUMLIB_DENSE_MATRIX_H

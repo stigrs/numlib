@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.4.3)
 project(numlib CXX)
 
+include(ExternalProject)
+find_package(Git)
+
 # By default, numlib is install in the HOME directory.
 if(WIN32)
     set(CMAKE_INSTALL_PREFIX "C:/Users/$ENV{USERNAME}")
@@ -8,11 +11,11 @@ else()
     set(CMAKE_INSTALL_PREFIX $ENV{HOME})
 endif()
 
-# Export compile commands.
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 # Enforce C++14 standard.
 set(CMAKE_CXX_STANDARD 14)
+
+# Export compile commands.
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(WIN32)
     option(BUILD_SHARED_LIBS "Compile shared libraries." OFF)
@@ -33,30 +36,19 @@ endif()
 
 # Set release compiler options.
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wpedantic -Wall -Wshadow -Wextra -Wno-missing-braces -Werror -Wno-error=strict-overflow")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_RELEASE} -Wpedantic -Wall -Wshadow -Wextra -Wno-missing-braces -Werror -Wno-error=strict-overflow")
 endif()
 if(MSVC)
-    set(CMAKE_CXX_FLAGS_RELEASE "/std:c++14 /W4 /WX /wd4100 /GR /EHsc /MT /O2")
+    set(CMAKE_CXX_FLAGS_RELEASE "/DNDEBUG /std:c++14 /W4 /WX /wd4100 /GR /EHsc /MT /O2")
 endif()
 
 # Set debugging compiler options.
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    set(CMAKE_CXX_FLAGS_DEBUG "-pg -Wpedantic -Wall -Wshadow -Wextra -Wno-missing-braces -Werror -Wno-error=strict-overflow")
-endif()
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wpedantic -Wall -Wshadow -Wextra -Wno-missing-braces -Werror -Wno-error=strict-overflow")
 endif()
 if(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "/std:c++14 /EHsc /W4 /WX /wd4100 /MT /GR /Zi /Od")
 endif()
-
-# Set definitions.
-set(numlib_DEFINITIONS_DEBUG)
-set(numlib_DEFINITIONS_RELEASE -DNDEBUG)
-add_compile_options(
-    "$<$<CONFIG:Debug>:${numlib_DEFINITIONS_DEBUG}>"
-    "$<$<CONFIG:Release>:${numlib_DEFINITIONS_RELEASE}>" 
-)
 
 # BLAS and LAPACK is required.
 if(DEFINED ENV{MKLROOT})
@@ -101,9 +93,9 @@ else()
 	find_path(LAPACKE_INCLUDE_DIRS lapacke.h HINTS ${BLAS_DIR}/include)
 endif()
 
-add_library(numlib_h INTERFACE)
-
-target_include_directories(numlib_h INTERFACE
+# Create Numlib interface library.
+add_library(numlib_config INTERFACE)
+target_include_directories(numlib_config INTERFACE
     $<BUILD_INTERFACE:
         ${CMAKE_CURRENT_SOURCE_DIR}/include
     >
@@ -116,6 +108,7 @@ install(
 )
 
 add_subdirectory(lib)
+
 if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)

@@ -14,8 +14,8 @@
 #include <lapacke.h>
 #endif
 
-#include <numlib/matrix.h>
 #include <numlib/traits.h>
+#include <numlib/matrix.h>
 #include <algorithm>
 #include <numeric>
 #include <functional>
@@ -23,6 +23,35 @@
 #include <complex>
 
 namespace Numlib {
+
+//------------------------------------------------------------------------------
+//
+// Create special vectors and matrices:
+
+// Create linearly spaced vector.
+Vec<double> linspace(double x1, double x2, Index n);
+
+// Identity matrix.
+template <typename T = double>
+inline Mat<T> identity(std::ptrdiff_t n)
+{
+    Mat<T> res = zeros<Mat<T>>(n, n);
+    res.diag() = T{1};
+    return res;
+}
+
+// Hilbert matrix.
+template <typename T = double>
+inline Enable_if<Real_type<T>(), Mat<T>> hilbert(std::ptrdiff_t n)
+{
+    Mat<T> res(n, n);
+    for (Index i = 0; i < n; ++i) {
+        for (Index j = 0; j < n; ++j) {
+            res(i, j) = T{1} / static_cast<T>(i + j + 1);
+        }
+    }
+    return res;
+}
 
 //------------------------------------------------------------------------------
 //
@@ -37,19 +66,19 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> max(const M& vec)
 
 template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
-max(const M& mat, std::ptrdiff_t dim)
+max(const M& mat, Index dim)
 {
     static_assert(M::order == 2, "bad rank for max(mat)");
-    assert(dim >= 0 && dim < static_cast<std::ptrdiff_t>(M::order));
+    assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
     if (dim == 0) { // row
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = max(mat.row(i));
         }
     }
     else { // column
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = max(mat.column(i));
         }
     }
@@ -65,19 +94,19 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> min(const M& vec)
 
 template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
-min(const M& mat, std::ptrdiff_t dim)
+min(const M& mat, Index dim)
 {
     static_assert(M::order == 2, "bad rank for min(mat)");
-    assert(dim >= 0 && dim < static_cast<std::ptrdiff_t>(M::order));
+    assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
     if (dim == 0) { // row
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = min(mat.row(i));
         }
     }
     else { // column
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = min(mat.column(i));
         }
     }
@@ -94,19 +123,19 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> sum(const M& vec)
 
 template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
-sum(const M& mat, std::ptrdiff_t dim)
+sum(const M& mat, Index dim)
 {
     static_assert(M::order == 2, "bad rank for sum(mat)");
-    assert(dim >= 0 && dim < static_cast<std::ptrdiff_t>(M::order));
+    assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
     if (dim == 0) { // row
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = sum(mat.row(i));
         }
     }
     else { // column
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = sum(mat.column(i));
         }
     }
@@ -125,19 +154,19 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> prod(const M& vec)
 
 template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
-prod(const M& mat, std::ptrdiff_t dim)
+prod(const M& mat, Index dim)
 {
     static_assert(M::order == 2, "bad rank for prod(mat)");
-    assert(dim >= 0 && dim < static_cast<std::ptrdiff_t>(M::order));
+    assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
     if (dim == 0) { // row
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = prod(mat.row(i));
         }
     }
     else { // column
-        for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.rows(); ++i) {
             result(i) = prod(mat.column(i));
         }
     }
@@ -247,7 +276,7 @@ template <typename T>
 inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
 {
     assert(same_extents(x, y));
-    for (std::ptrdiff_t i = 0; i < x.size(); ++i) {
+    for (Index i = 0; i < x.size(); ++i) {
         y(i) = a * x(i) + y(i);
     }
 }
@@ -258,13 +287,13 @@ inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
 template <typename T>
 inline Mat<T> transpose(const Mat<T>& m)
 {
-    const std::ptrdiff_t n = m.rows();
-    const std::ptrdiff_t p = m.cols();
+    const Index n = m.rows();
+    const Index p = m.cols();
 
     Mat<T> res(p, n);
 
-    for (std::ptrdiff_t i = 0; i < p; ++i) {
-        for (std::ptrdiff_t j = 0; j < n; ++j) {
+    for (Index i = 0; i < p; ++i) {
+        for (Index j = 0; j < n; ++j) {
             res(i, j) = m.data()[i + j * p];
         }
     }
@@ -344,6 +373,53 @@ void eig(Mat<double>& a,
          Mat<std::complex<double>>& evec,
          Vec<std::complex<double>>& eval);
 
+// Compute eigenvalues and eigenvectors of a real symmetric band matrix.
+inline void eigs(Band_matrix<double>& ab, Mat<double>& evec, Vec<double>& eval)
+{
+    assert(ab.rows() == ab.cols());
+    assert(ab.upper() == ab.lower());
+
+    evec.resize(ab.rows(), ab.cols());
+    eval.resize(ab.cols());
+
+    const BLAS_INT n = narrow_cast<BLAS_INT>(ab.cols());
+    const BLAS_INT kd = narrow_cast<BLAS_INT>(ab.upper());
+    const BLAS_INT ldab = narrow_cast<BLAS_INT>(ab.leading_dim());
+    const BLAS_INT ldz = narrow_cast<BLAS_INT>(ab.cols());
+
+    BLAS_INT info = LAPACKE_dsbev(LAPACK_COL_MAJOR, 'V', 'U', n, kd, ab.data(),
+                                  ldab, eval.data(), evec.data(), ldz);
+    if (info != 0) {
+        throw Math_error("dsbev failed");
+    }
+}
+
+// Compute eigenvalues and eigenvectors of a real symmetric matrix held in
+// packed storage.
+//
+// Note:
+// - OpenBLAS v0.2.14.1 gives wrong results.
+//
+#ifdef USE_MKL
+template <Uplo_scheme Uplo>
+void eigs(Packed_matrix<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
+{
+    assert(ap.size() >= eval.size() * (eval.size() + 1) / 2);
+
+    const BLAS_INT n = narrow_cast<BLAS_INT>(eval.size());
+    const BLAS_INT ldz = n;
+    char uplo = ap.uplo_scheme();
+
+    evec.resize(n, n);
+
+    BLAS_INT info = LAPACKE_dspevd(LAPACK_ROW_MAJOR, 'V', uplo, n, ap.data(),
+                                   eval.data(), evec.data(), ldz);
+    if (info != 0) {
+        throw Math_error("dspevd failed");
+    }
+}
+#endif
+
 //------------------------------------------------------------------------------
 
 // Solve linear system of equations.
@@ -369,7 +445,7 @@ inline void linsolve(Mat<double>& a, Mat<double>& b)
 //------------------------------------------------------------------------------
 
 // Schmidt orthogonalization of n orbitals in a.
-void schmidt(Mat<double>& a, std::ptrdiff_t n);
+void schmidt(Mat<double>& a, Index n);
 
 } // namespace Numlib
 

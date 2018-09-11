@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.4.3)
 project(numlib_bench CXX)
 
-include_directories(${numlib_SOURCE_DIR}/include)
 if(WIN32)
     include_directories(${ARMADILLO_INCLUDE_DIRS})
 endif()
@@ -25,8 +24,10 @@ foreach(program ${PROGRAMS})
     add_executable(${program} ${program}.cpp)
 	target_link_libraries (
 		${program} 
+		numlib
 		${BLAS_LIBRARIES}
 		${LAPACK_LIBRARIES}
 		${ARMADILLO_LIBRARIES} 
+		numlib_config
 	) 
 endforeach()
