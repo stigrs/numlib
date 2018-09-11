@@ -10,9 +10,17 @@
 #include <algorithm>
 #include <vector>
 #include <initializer_list>
+#include <numlib/matrix.h>
 
 namespace Numlib {
 
+// Range-checked sparse vector class (zero-based indexing).
+//
+// Note:
+// - It is assumed that the sparse vector is initialized with elements indices
+//   sorted in ascending order.
+// - New elements are inserted so that the index order is preserved.
+//
 template <typename T>
 class Sparse_vector {
 public:
@@ -99,6 +107,20 @@ public:
     void swap(Sparse_vector& v);
     void insert(size_type i, const T& val);
 
+    // Apply f(x) for every element x.
+    template <typename F>
+    Sparse_vector& apply(F f);
+
+    // Arithmetic operations:
+
+    Sparse_vector& operator=(const T& value); // assignment with scalar
+
+    Sparse_vector& operator+=(const T& value); // scalar addition
+    Sparse_vector& operator-=(const T& value); // scalar subtraction
+    Sparse_vector& operator*=(const T& value); // scalar multiplication
+    Sparse_vector& operator/=(const T& value); // scalar division
+    Sparse_vector& operator%=(const T& value); // scalar modulo
+
 private:
     std::vector<T> elems;
     std::vector<size_type> indx;
@@ -167,20 +189,68 @@ inline void Sparse_vector<T>::swap(Sparse_vector<T>& v)
 template <typename T>
 inline void Sparse_vector<T>::insert(size_type i, const T& val)
 {
-    assert(val != T{0}); // zero values should not be stored
-
-    // do not replace any existing elements
-    if (std::find(indx.begin(), indx.end(), i) == indx.end()) {
-        auto pos = std::upper_bound(indx.begin(), indx.end(), i);
-        size_type offset = std::distance(indx.begin(), pos);
-        elems.insert(elems.begin() + offset, val);
-        indx.insert(pos, i);
+    if (val != T{0}) { // zero values should not be stored
+        if (std::find(indx.begin(), indx.end(), i) == indx.end()) {
+            // do not replace any existing elements
+            auto pos = std::upper_bound(indx.begin(), indx.end(), i);
+            size_type offset = std::distance(indx.begin(), pos);
+            elems.insert(elems.begin() + offset, val);
+            indx.insert(pos, i);
+        }
     }
+}
+
+template <typename T>
+template <typename F>
+inline Sparse_vector<T>& Sparse_vector<T>::apply(F f)
+{
+    for (auto& x : elems) {
+        f(x);
+    }
+    return *this;
+}
+
+template <typename T>
+inline Sparse_vector<T>& Sparse_vector<T>::operator=(const T& value)
+{
+    return apply([&](T& a) { a = value; });
+}
+
+template <typename T>
+inline Sparse_vector<T>& Sparse_vector<T>::operator+=(const T& value)
+{
+    return apply([&](T& a) { a += value; });
+}
+
+template <typename T>
+inline Sparse_vector<T>& Sparse_vector<T>::operator-=(const T& value)
+{
+    return apply([&](T& a) { a -= value; });
+}
+
+template <typename T>
+inline Sparse_vector<T>& Sparse_vector<T>::operator*=(const T& value)
+{
+    return apply([&](T& a) { a *= value; });
+}
+
+template <typename T>
+inline Sparse_vector<T>& Sparse_vector<T>::operator/=(const T& value)
+{
+    return apply([&](T& a) { a /= value; });
+}
+
+template <typename T>
+inline Sparse_vector<T>& Sparse_vector<T>::operator%=(const T& value)
+{
+    return apply([&](T& a) { a %= value; });
 }
 
 template <typename T>
 inline const T& Sparse_vector<T>::ref(size_type i) const
 {
+    assert(0 <= i && i < size());
+
     auto pos = std::find(indx.begin(), indx.end(), i);
     size_type offset = std::distance(indx.begin(), pos);
     return offset >= 0 && offset < num_nonzero() ? elems[offset] : zero;

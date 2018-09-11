@@ -80,6 +80,7 @@ class Sparse_vector;
 #include <numlib/matrix_impl/operations.h>
 #include <numlib/band_impl/operations.h>
 #include <numlib/packed_impl/operations.h>
+#include <numlib/sparse_impl/operations.h>
 
 // Type aliases:
 #include <numlib/matrix_impl/type_alias.h>
