@@ -71,12 +71,7 @@ public:
     size_type extent(size_type dim) const
     {
         assert(0 <= dim && dim < 2);
-        if (dim == 0 || dim == 1) {
-            return extents;
-        }
-        else {
-            return size_type{0};
-        }
+        return extents;
     }
 
     // Return UPLO scheme.
