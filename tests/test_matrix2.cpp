@@ -212,6 +212,16 @@ TEST_CASE("test_matrix2")
         CHECK(a3 == a1);
     }
 
+    SECTION("swap_rows")
+    {
+        Matrix<int, 2> a1 = {{-1, 0, -6}, {6, 5, 2}, {11, 12, 3}};
+        Matrix<int, 2> a2 = {{6, 5, 2}, {-1, 0, -6}, {11, 12, 3}};
+
+        a1.swap_rows(0, 1);
+
+        CHECK(a1 == a2);
+    }
+
     SECTION("mm_mul")
     {
         Matrix<int, 2> a = {{1, 2, 3}, {4, 5, 6}};
