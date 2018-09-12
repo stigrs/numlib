@@ -1,18 +1,20 @@
 # numlib [![Build Status](https://travis-ci.org/stigrs/numlib.svg?branch=master)](https://travis-ci.org/stigrs/numlib)[![Build status](https://ci.appveyor.com/api/projects/status/github/stigrs/numlib?svg=true)](https://ci.appveyor.com/project/stigrs/numlib)
 
-Numlib provides a C++ library for linear algebra and scientific computing. 
+Numlib provides a C++ library for linear algebra and scientific computing.
 BLAS and LAPACK are used for fast numerical performance. Currently, OpenBLAS
 and Intel MKL are supported.
 
 ## Features
 
-* N-dimensional dense matrices using Stroustrup's matrix design 
-  (row-major storage order) 
+* N-dimensional dense matrices using Stroustrup's matrix design
+  (row-major storage order)
 * Band matrices (column-major storage order)
+* Packed matrices (row-major storage order)
+* Sparse vectors
 * A few basic mathematical functions not provided by the STL
 * Basic numerical derivation and integration methods
 * Basic linear algebra methods
-* Mathematical constants, metric prefixes, physical constants, and 
+* Mathematical constants, metric prefixes, physical constants, and
   conversion factors
 
 ## Code of Conduct
@@ -25,22 +27,22 @@ Numlib is released under the [MIT](LICENSE) license.
 
 ## Usage of Third Party Libraries
 
-This project makes use of the [Catch2](https://github.com/catchorg/Catch2) 
-testing library and code from [origin](http://code.google.com/p/origin). 
-Please see the [ThirdPartyNotices.txt](ThirdPartyNotices.txt) file for details 
+This project makes use of the [Catch2](https://github.com/catchorg/Catch2)
+testing library and code from [origin](http://code.google.com/p/origin).
+Please see the [ThirdPartyNotices.txt](ThirdPartyNotices.txt) file for details
 regarding the licensing of Catch2 and origin.
 
-## Quick Start 
+## Quick Start
 
 ### Requirements
 
 * [CMake](https://cmake.org) 3.4.3
-* [OpenBLAS](https://www.openblas.net/) 0.2.14.1 
+* [OpenBLAS](https://www.openblas.net/) 0.2.14.1
 * [Armadillo](http://arma.sourceforge.net) 7.900.1 (for benchmarking)
 
 ### Supported Platforms
 
-The test suite that exercises Numlib has been built and passes successfully 
+The test suite that exercises Numlib has been built and passes successfully
 on the following platforms:
 * GNU/Linux using GCC 5.5.0, 6.4.0, 7.3.0
 * GNU/Linux using Clang 3.6, 3.8, 3.9, 4.0, 5.0
@@ -82,9 +84,9 @@ into a directory called `numlib`.
 
         cmake --build . --config Release --target install
 
-   All tests should pass, indicating that your platform is fully supported. 
+   All tests should pass, indicating that your platform is fully supported.
 
-6. Benchmarks can be built by setting the option BUILD_BENCH to ON. Please 
-   make sure BLAS run on the same number of threads in Armadillo and Numlib 
+6. Benchmarks can be built by setting the option BUILD_BENCH to ON. Please
+   make sure BLAS run on the same number of threads in Armadillo and Numlib
    before comparing the benchmark results. If OpenBLAS is used, this can be
    controlled by setting the OPENBLAS_NUM_THREADS environmental variable.
