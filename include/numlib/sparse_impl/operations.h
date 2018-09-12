@@ -9,6 +9,7 @@
 
 #include <numlib/matrix.h>
 #include <vector>
+#include <iostream>
 
 namespace Numlib {
 
@@ -134,6 +135,25 @@ Matrix<T, 1> operator-(const Matrix<T, 1>& y, const Sparse_vector<T>& x)
         ++i;
     }
     return res;
+}
+
+//------------------------------------------------------------------------------
+//
+// Output to stream:
+
+// Output stream operator for sparse vectors.
+template <typename T>
+std::ostream& operator<<(std::ostream& to, const Sparse_vector<T>& vec)
+{
+    std::ptrdiff_t i = 0;
+
+    to << "[number of non-zero elements: " << vec.num_nonzero() << "]\n";
+    for (const auto& x : vec) {
+        to << "(" << vec.loc(i) << ")\t" << x << '\n';
+        ++i;
+    }
+    to << '\n';
+    return to;
 }
 
 } // namespace Numlib
