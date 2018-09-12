@@ -144,4 +144,26 @@ TEST_CASE("test_sparse_vector")
         CHECK(y(8) == 1);
         CHECK(y(9) == 61);
     }
+
+    SECTION("vector_subtraction")
+    {
+        Vec<int> x(10);
+        x = 30;
+
+        Sparse_vector<int> spvec = {{1, 10}, {4, 20}, {9, 29}};
+
+        auto y = x - spvec;
+
+        CHECK(y.size() == 10);
+        CHECK(y(0) == 30);
+        CHECK(y(1) == 20);
+        CHECK(y(2) == 30);
+        CHECK(y(3) == 30);
+        CHECK(y(4) == 10);
+        CHECK(y(5) == 30);
+        CHECK(y(6) == 30);
+        CHECK(y(7) == 30);
+        CHECK(y(8) == 30);
+        CHECK(y(9) == 1);
+    }
 }
