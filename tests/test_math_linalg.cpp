@@ -85,11 +85,19 @@ TEST_CASE("test_math_linalg")
         CHECK(prod(m, 1) == prod_col);
     }
 
-    SECTION("norm")
+    SECTION("norm_vector")
     {
         Vec<double> v = {1.0, 2.0, 3.0};
         auto vn = norm(v);
         CHECK(vn * vn == 14.0);
+    }
+
+    SECTION("norm_sparse_vector")
+    {
+        const double ans = 37.416573867739416; // Numpy
+
+        Sparse_vector<double> v = {{1, 10.0}, {4, 20.0}, {9, 30.0}};
+        CHECK(std::abs(norm(v) - ans) < 1.0e-12);
     }
 
     SECTION("normalize")
@@ -108,12 +116,22 @@ TEST_CASE("test_math_linalg")
         CHECK(trace(asub) == 4);
     }
 
-    SECTION("dot")
+    SECTION("dot_dense_vector")
     {
         Vec<int> a = {1, 3, -5};
         Vec<int> b = {4, -2, -1};
 
         CHECK(dot(a, b) == 3);
+    }
+
+    SECTION("dot_sparse_vector")
+    {
+        const double ans = 420.0; // Numpy
+
+        Sparse_vector<double> x = {{1, 10.0}, {4, 20.0}, {9, 30.0}};
+        Vec<double> y = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
+
+        CHECK(std::abs(dot(y, x) - ans) < 1.0e-12);
     }
 
     SECTION("cross")

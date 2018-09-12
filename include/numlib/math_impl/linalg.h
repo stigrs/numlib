@@ -195,6 +195,7 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> trace(const M& mat)
 //
 // TODO: Only Euclidean vector norm is implemented so far.
 
+// Norm of dense vector.
 template <typename M>
 inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(),
                  typename M::value_type>
@@ -214,6 +215,20 @@ norm(const M& vec)
     return result;
 }
 
+template <typename T>
+inline T norm(const Sparse_vector<T>& vec)
+{
+    T result{0};
+    if (!vec.empty()) {
+        for (const auto& x : vec) {
+            result += x * x;
+        }
+        result = std::sqrt(result);
+    }
+    return result;
+}
+
+// Normalize dense vector.
 template <typename M>
 inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(), M>
 normalize(const M& vec)
@@ -222,6 +237,20 @@ normalize(const M& vec)
     constexpr auto zero = Value_type<M>{0};
 
     M result(vec);
+    auto n = norm(vec);
+    if (n > zero) {
+        result /= n;
+    }
+    return result;
+}
+
+// Normalize sparse vector.
+template <typename T>
+inline Sparse_vector<T> normalize(const Sparse_vector<T>& vec)
+{
+    constexpr auto zero = T{0};
+
+    Sparse_vector<T> result(vec);
     auto n = norm(vec);
     if (n > zero) {
         result /= n;
@@ -244,6 +273,37 @@ dot(const M1& x, const M2& y)
 
     constexpr auto zero = Value_type<M1>{0};
     return std::inner_product(x.begin(), x.end(), y.begin(), zero);
+}
+
+template <typename T>
+inline T dot(const Sparse_vector<T>& x, const Sparse_vector<T>& y)
+{
+    assert(x.size() == y.size());
+
+    T result{0};
+    for (Index i = 0; i < x.size(); ++i) { // inefficient for large vectors
+        result += x(i) * y(i);
+    }
+    return result;
+}
+
+template <typename T>
+inline T dot(const Sparse_vector<T>& x, const Vec<T>& y)
+{
+    T result{0};
+
+    Index i = 0;
+    for (const auto& v : x) {
+        result += v * y(x.loc(i));
+        ++i;
+    }
+    return result;
+}
+
+template <typename T>
+inline T dot(const Vec<T>& y, const Sparse_vector<T>& x)
+{
+    return dot(x, y);
 }
 
 template <typename T>
