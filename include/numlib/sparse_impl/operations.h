@@ -89,6 +89,53 @@ Matrix<T, 1> operator+(const Sparse_vector<T>& x, const Matrix<T, 1>& y)
     return res;
 }
 
+template <typename T>
+Matrix<T, 1> operator+(const Matrix<T, 1>& y, const Sparse_vector<T>& x)
+{
+    assert(x.size() == y.size());
+
+    Matrix<T, 1> res(y);
+
+    std::ptrdiff_t i = 0;
+    for (const auto& v : x) {
+        res(x.loc(i)) += v;
+        ++i;
+    }
+    return res;
+}
+
+// Vector subtraction:
+
+template <typename T>
+Matrix<T, 1> operator-(const Sparse_vector<T>& x, const Matrix<T, 1>& y)
+{
+    assert(x.size() == y.size());
+
+    Matrix<T, 1> res(y);
+
+    std::ptrdiff_t i = 0;
+    for (const auto& v : x) {
+        res(x.loc(i)) -= v;
+        ++i;
+    }
+    return res;
+}
+
+template <typename T>
+Matrix<T, 1> operator-(const Matrix<T, 1>& y, const Sparse_vector<T>& x)
+{
+    assert(x.size() == y.size());
+
+    Matrix<T, 1> res(y);
+
+    std::ptrdiff_t i = 0;
+    for (const auto& v : x) {
+        res(x.loc(i)) -= v;
+        ++i;
+    }
+    return res;
+}
+
 } // namespace Numlib
 
 #endif // NUMLIB_SPARSE_OPERATIONS_H
