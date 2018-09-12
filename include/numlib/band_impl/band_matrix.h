@@ -128,7 +128,7 @@ private:
     T& ref(size_type i, size_type j);
     const T& ref(size_type i, size_type j) const;
 
-    size_type index_map(size_type i, size_type j) const;
+    size_type offset(size_type i, size_type j) const;
 };
 
 template <typename T>
@@ -152,7 +152,7 @@ Band_matrix<T>::Band_matrix(size_type kl, size_type ku, const Matrix<T, 2>& a)
     for (size_type j = 0; j < a.cols(); ++j) {
         for (size_type i = std::max(size_type{0}, j - ku);
              i < std::min(a.rows(), j + kl + 1); ++i) {
-            elems[index_map(i, j)] = a(i, j);
+            elems[offset(i, j)] = a(i, j);
         }
     }
 }
@@ -228,7 +228,7 @@ inline T& Band_matrix<T>::ref(size_type i, size_type j)
 
     assert(std::max(size_type{0}, j - bwidth[1]) <= i &&
            i < std::min(extents[1], j + bwidth[0] + 1));
-    return elems[index_map(i, j)];
+    return elems[offset(i, j)];
 }
 
 template <typename T>
@@ -239,7 +239,7 @@ inline const T& Band_matrix<T>::ref(size_type i, size_type j) const
 
     if (std::max(size_type{0}, j - bwidth[1]) <= i &&
         i < std::min(extents[1], j + bwidth[0] + 1)) {
-        return elems[index_map(i, j)];
+        return elems[offset(i, j)];
     }
     else {
         return zero;
@@ -247,7 +247,7 @@ inline const T& Band_matrix<T>::ref(size_type i, size_type j) const
 }
 
 template <typename T>
-inline std::ptrdiff_t Band_matrix<T>::index_map(size_type i, size_type j) const
+inline std::ptrdiff_t Band_matrix<T>::offset(size_type i, size_type j) const
 {
     return bwidth[1] + i - j + j * leading_dim();
 }
