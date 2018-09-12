@@ -117,8 +117,8 @@ public:
     }
 
     // Row subscripting.
-    Matrix_ref<T, N - 1> operator[](size_type n);
-    Matrix_ref<const T, N - 1> operator[](size_type n) const;
+    Matrix_ref<T, N - 1> operator[](size_type n) { return row(n); }
+    Matrix_ref<const T, N - 1> operator[](size_type n) const { return row(n); }
 
     // Return a reference to the n'th row of the matrix.
     Matrix_ref<T, N - 1> row(size_type n);
