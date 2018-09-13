@@ -434,7 +434,7 @@ void eig(Mat<double>& a,
          Vec<std::complex<double>>& eval);
 
 // Compute eigenvalues and eigenvectors of a real symmetric band matrix.
-inline void eigs(Band_matrix<double>& ab, Mat<double>& evec, Vec<double>& eval)
+inline void eigs(Band_mat<double>& ab, Mat<double>& evec, Vec<double>& eval)
 {
     assert(ab.rows() == ab.cols());
     assert(ab.upper() == ab.lower());
@@ -454,15 +454,29 @@ inline void eigs(Band_matrix<double>& ab, Mat<double>& evec, Vec<double>& eval)
     }
 }
 
+// Compute eigenvalues and eigenvectors in the interval [emin, emax] for
+// a real band matrix.
+//
+// Note:
+// - Only Intel MKL is supported.
+//
+#ifdef USE_MKL
+void eig(double emin,
+         double emax,
+         const Band_mat<double>& ab,
+         Mat<double>& evec,
+         Vec<double>& eval);
+#endif
+
 // Compute eigenvalues and eigenvectors of a real symmetric matrix held in
 // packed storage.
 //
 // Note:
-// - OpenBLAS v0.2.14.1 gives wrong results.
+// - Only Intel MKL is supported since OpenBLAS v0.2.14.1 gives wrong results.
 //
 #ifdef USE_MKL
 template <Uplo_scheme Uplo>
-void eigs(Packed_matrix<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
+void eigs(Symm_mat<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
 {
     assert(ap.size() >= eval.size() * (eval.size() + 1) / 2);
 
@@ -478,6 +492,16 @@ void eigs(Packed_matrix<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
         throw Math_error("dspevd failed");
     }
 }
+#endif
+
+// Compute eigenvalues and eigenvectors in the interval [emin, emax] for
+// a real sparse matrix.
+#ifdef USE_MKL
+void eig(double emin,
+         double emax,
+         const Sp_mat<double>& a,
+         Mat<double>& evec,
+         Vec<double>& eval);
 #endif
 
 //------------------------------------------------------------------------------

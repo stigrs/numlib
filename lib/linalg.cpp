@@ -90,6 +90,97 @@ void Numlib::eig(Mat<double>& a,
     }
 }
 
+#ifdef USE_MKL
+void Numlib::eig(double emin,
+                 double emax,
+                 const Numlib::Band_mat<double>& ab,
+                 Numlib::Mat<double>& evec,
+                 Numlib::Vec<double>& eval)
+{
+    // Intitialize FEAST:
+
+    MKL_INT fpm[128];
+    feastinit((MKL_INT*) fpm);
+#ifndef NDEBUG
+    fpm[0] = 1; // print runtime status
+#endif
+
+    // Solve eigenvalue problem:
+
+    MKL_INT n = narrow_cast<MKL_INT>(ab.cols());
+    MKL_INT kla = narrow_cast<MKL_INT>(ab.upper());
+    MKL_INT lda = narrow_cast<MKL_INT>(ab.leading_dim());
+    MKL_INT m0 = n;
+    MKL_INT loop = 0;
+    MKL_INT m = m0;
+    MKL_INT info = 0;
+
+    double epsout = 0.0; // relative error on the trace (not returned)
+    Vec<double> res(m0); // residual vector (not returned)
+
+    evec.resize(n, m0);
+    eval.resize(m0);
+
+    dfeast_sbev("F", &n, &kla, ab.data(), &lda, (MKL_INT*) fpm, &epsout, &loop,
+                &emin, &emax, &m0, eval.data(), evec.data(), &m, res.data(),
+                &info);
+    if (info != 0) {
+        throw Math_error("dfeast_sbev failed");
+    }
+
+    // Return the m first eigenvalues and eigenvectors:
+
+    eval = eval(slice{0, m});
+    evec = evec(slice{0, n}, slice{0, m});
+}
+#endif
+
+#ifdef USE_MKL
+void Numlib::eig(double emin,
+                 double emax,
+                 const Numlib::Sp_mat<double>& a,
+                 Numlib::Mat<double>& evec,
+                 Numlib::Vec<double>& eval)
+{
+    // Initialize FEAST:
+
+    MKL_INT fpm[128];
+    feastinit((MKL_INT*) fpm);
+#ifndef NDEBUG
+    fpm[0] = 1; // print runtime status
+#endif
+
+    // Solve eigenvalue problem:
+
+    MKL_INT n = narrow_cast<MKL_INT>(a.cols());
+    MKL_INT m0 = n;
+    MKL_INT loop = 0;
+    MKL_INT m = m0;
+    MKL_INT info = 0;
+
+    auto ia = a.row_index_one_based(); // FEAST only support one-based indexing
+    auto ja = a.columns_one_based();
+
+    double epsout = 0.0; // relative error on the trace (not returned)
+    Vec<double> res(m0); // residual vector (not returned)
+
+    evec.resize(n, m0);
+    eval.resize(m0);
+
+    dfeast_scsrev("F", &n, a.data(), ia.data(), ja.data(), (MKL_INT*) fpm,
+                  &epsout, &loop, &emin, &emax, &m0, eval.data(), evec.data(),
+                  &m, res.data(), &info);
+    if (info != 0) {
+        throw Math_error("dfeast_scsrev failed");
+    }
+
+    // Return the m first eigenvalues and eigenvectors:
+
+    eval = eval(slice{0, m});
+    evec = evec(slice{0, n}, slice{0, m});
+}
+#endif
+
 void Numlib::schmidt(Mat<double>& a, Index n)
 {
     Index n_out = 0;

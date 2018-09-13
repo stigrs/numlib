@@ -193,7 +193,7 @@ TEST_CASE("test_math_linalg")
         }
     }
 
-    SECTION("eigs")
+    SECTION("eigs_dense")
     {
         // Numpy:
         Vec<double> eval = {3.28792877e-06, 3.05898040e-04, 1.14074916e-02,
@@ -223,7 +223,7 @@ TEST_CASE("test_math_linalg")
         }
     }
 
-    SECTION("eig")
+    SECTION("eig_dense")
     {
         // Numpy:
         Vec<double> eval_re = {-3.17360337, -3.17360337, 2.84219813,
@@ -296,6 +296,41 @@ TEST_CASE("test_math_linalg")
     }
 
 #ifdef USE_MKL
+    SECTION("eig_band_matrix")
+    {
+        // Example from Intel MKL:
+
+        double A[77] = {0.0, 0.0, 0.0, 5.0, 2.0, 1.0, 1.0, 0.0, 0.0, 2.0, 6.0,
+                        3.0, 1.0, 1.0, 0.0, 1.0, 3.0, 6.0, 3.0, 1.0, 1.0, 1.0,
+                        1.0, 3.0, 6.0, 3.0, 1.0, 1.0, 1.0, 1.0, 3.0, 6.0, 3.0,
+                        1.0, 1.0, 1.0, 1.0, 3.0, 6.0, 3.0, 1.0, 1.0, 1.0, 1.0,
+                        3.0, 6.0, 3.0, 1.0, 1.0, 1.0, 1.0, 3.0, 6.0, 3.0, 1.0,
+                        1.0, 1.0, 1.0, 3.0, 6.0, 3.0, 1.0, 0.0, 1.0, 1.0, 3.0,
+                        6.0, 2.0, 0.0, 0.0, 1.0, 1.0, 2.0, 5.0, 0.0, 0.0, 0.0};
+
+        double eval_ans[6];
+        eval_ans[0] = 3.1715728752538100;
+        eval_ans[1] = 4.0000000000000000;
+        eval_ans[2] = 4.0000000000000000;
+        eval_ans[3] = 4.1292484841890931;
+        eval_ans[4] = 4.4066499006731521;
+        eval_ans[5] = 6.0000000000000000;
+
+        Band_mat<double> ab(11, 11, 3, 3, A);
+        Mat<double> evec(ab.rows(), ab.cols());
+        Vec<double> eval(ab.cols());
+
+        double emin = 3.0;
+        double emax = 7.0;
+
+        eig(emin, emax, ab, evec, eval);
+        for (int i = 0; i < 6; ++i) {
+            CHECK(std::abs(eval(i) - eval_ans[i]) < 1.0e-12);
+        }
+    }
+#endif
+
+#ifdef USE_MKL
     // OpenBLAS v0.2.14.1 gives wrong results.
     SECTION("eigs_packed_matrix")
     {
@@ -311,7 +346,7 @@ TEST_CASE("test_math_linalg")
             {0.37624555, -0.55759995, -0.56519341, 0.42901335, -0.20982264}};
 
         auto a = hilbert<>(5);
-        Packed_matrix<double, lower_triang> ap(a);
+        Symm_mat<double, lower_triang> ap(a);
 
         Mat<double> evec;
         Vec<double> eval(5);
@@ -325,6 +360,62 @@ TEST_CASE("test_math_linalg")
             for (Index j = 0; j < evec.cols(); ++j) {
                 CHECK(std::abs(evec(i, j) - v(i, j)) < 1.0e-8);
             }
+        }
+    }
+#endif
+
+#ifdef USE_MKL
+    SECTION("eig_sparse_matrix")
+    {
+        // Example from Intel MKL:
+
+        // clang-format off
+        std::ptrdiff_t rows[12] = {0, 4, 9, 15, 22, 29, 36, 43, 50, 56, 61, 65};
+        std::ptrdiff_t cols[65] = {0,   1,   2,   3,
+                                   0,   1,   2,   3,   4,
+                                   0,   1,   2,   3,   4,   5,
+                                   0,   1,   2,   3,   4,   5,   6,
+                                        1,   2,   3,   4,   5,   6,   7,
+                                             2,   3,   4,   5,   6,   7,   8,
+                                                  3,   4,   5,   6,   7,   8,  9,
+                                                       4,   5,   6,   7,   8,  9,  10,
+                                                            5,   6,   7,   8,  9,  10,
+                                                                 6,   7,   8,  9,  10,
+                                                                      7,   8,  9,  10
+        };
+        double val[65] = {5.0, 2.0, 1.0, 1.0,
+                          2.0, 6.0, 3.0, 1.0, 1.0,
+                          1.0, 3.0, 6.0, 3.0, 1.0, 1.0,
+                          1.0, 1.0, 3.0, 6.0, 3.0, 1.0, 1.0,
+                               1.0, 1.0, 3.0, 6.0, 3.0, 1.0, 1.0,
+                                    1.0, 1.0, 3.0, 6.0, 3.0, 1.0, 1.0,
+                                         1.0, 1.0, 3.0, 6.0, 3.0, 1.0, 1.0,
+                                              1.0, 1.0, 3.0, 6.0, 3.0, 1.0, 1.0,
+                                                   1.0, 1.0, 3.0, 6.0, 3.0, 1.0,
+                                                        1.0, 1.0, 3.0, 6.0, 2.0,
+                                                             1.0, 1.0, 2.0, 5.0
+        };
+        // clang-format on
+
+        double eig_ans[6];
+        eig_ans[0] = 3.1715728752538100;
+        eig_ans[1] = 4.0000000000000000;
+        eig_ans[2] = 4.0000000000000000;
+        eig_ans[3] = 4.1292484841890931;
+        eig_ans[4] = 4.4066499006731521;
+        eig_ans[5] = 6.0000000000000000;
+
+        Sp_mat<double> a(11, 11, val, cols, rows);
+        Mat<double> evec(a.rows(), a.cols());
+        Vec<double> eval(a.cols());
+
+        double emin = 3.0;
+        double emax = 7.0;
+
+        eig(emin, emax, a, evec, eval);
+
+        for (int i = 0; i < 6; ++i) {
+            CHECK(std::abs(eval(i) - eig_ans[i]) < 1.0e-12);
         }
     }
 #endif
