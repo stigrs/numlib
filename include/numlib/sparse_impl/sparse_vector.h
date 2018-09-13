@@ -40,9 +40,6 @@ public:
     Sparse_vector(Sparse_vector&&) = default;
     Sparse_vector& operator=(Sparse_vector&&) = default;
 
-    // Construct from extents.
-    explicit Sparse_vector(size_type n) : elems(n), indx(n) {}
-
     // Construct from values and indexes:
 
     Sparse_vector(const std::vector<T>& val, const std::vector<size_type>& loc)
@@ -53,9 +50,10 @@ public:
     template <std::ptrdiff_t n>
     Sparse_vector(const T (&val)[n], const std::ptrdiff_t (&loc)[n]);
 
+    // Construct from initializer list.
     Sparse_vector(std::initializer_list<std::pair<size_type, T>> list);
 
-    // Assign from values and indexes:
+    // Assign from values and indexes.
     Sparse_vector&
     operator=(std::initializer_list<std::pair<size_type, T>> list);
 
