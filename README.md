@@ -17,8 +17,8 @@ and Intel MKL are supported.
 * Mathematical constants, metric prefixes, physical constants, and
   conversion factors
 
-  *Note: Some linear algebra methods are only available when linking with 
-  Intel MKL.*
+_Note: Some linear algebra methods are only available when linking with 
+Intel MKL._
 
 ## Code of Conduct
 
