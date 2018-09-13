@@ -11,9 +11,15 @@ namespace Numlib {
 
 // Provides convenient type aliases:
 
+// Symmetric matrix held in packed storage format.
+template <typename T, Uplo_scheme Uplo>
+using Symm_mat = Packed_matrix<T, Uplo>;
+
+// Packed matrix held in upper triangular format.
 template <typename T>
 using Upper_triang_mat = Packed_matrix<T, upper_triang>;
 
+// Packed matrix held in lower triangular format.
 template <typename T>
 using Lower_triang_mat = Packed_matrix<T, lower_triang>;
 
