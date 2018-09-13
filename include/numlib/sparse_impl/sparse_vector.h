@@ -14,11 +14,15 @@
 
 namespace Numlib {
 
-// Range-checked sparse vector class (zero-based indexing).
+// Range-checked sparse vector class.
+//
+// This class provides a basic framework for implementing sparse vector
+// methods that utilize the Intel Math Kernel Library.
 //
 // Note:
 // - It is assumed that the sparse vector is initialized with elements indices
 //   sorted in ascending order.
+// - Zero and one-based indexing are supported.
 // - New elements are inserted so that the index order is preserved.
 //
 template <typename T>
