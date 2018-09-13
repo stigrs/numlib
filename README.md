@@ -10,12 +10,15 @@ and Intel MKL are supported.
   (row-major storage order)
 * Band matrices (column-major storage order)
 * Packed matrices (row-major storage order)
-* Sparse vectors
+* Sparse vectors and matrices (CSR3 storage format)
 * A few basic mathematical functions not provided by the STL
 * Basic numerical derivation and integration methods
 * Basic linear algebra methods
 * Mathematical constants, metric prefixes, physical constants, and
   conversion factors
+
+  *Note: Some linear algebra methods are only available when linking with 
+  Intel MKL.*
 
 ## Code of Conduct
 
@@ -37,7 +40,7 @@ regarding the licensing of Catch2 and origin.
 ### Requirements
 
 * [CMake](https://cmake.org) 3.4.3
-* [OpenBLAS](https://www.openblas.net/) 0.2.14.1
+* [OpenBLAS](https://www.openblas.net/) 0.2.14.1 (Intel MKL is recommended)
 * [Armadillo](http://arma.sourceforge.net) 7.900.1 (for benchmarking)
 
 ### Supported Platforms
