@@ -18,7 +18,7 @@ TEST_CASE("test_packed_matrix")
         // | 0 0 1 |
 
         int upper[6] = {1, 4, 1, 6, 4, 1};
-        Packed_matrix<int, upper_triang> u(3, upper);
+        Upper_triang_mat<int> u(3, upper);
 
         CHECK(u.uplo_scheme() == 'U');
 
@@ -37,7 +37,7 @@ TEST_CASE("test_packed_matrix")
         // | 4 9 7 |
 
         Mat<int> lower = {{1, 0, 0}, {2, 8, 0}, {4, 9, 7}};
-        Packed_matrix<int> l(lower);
+        Lower_triang_mat<int> l(lower);
 
         CHECK(l.uplo_scheme() == 'L');
 
@@ -83,7 +83,7 @@ TEST_CASE("test_packed_matrix")
 
         Mat<int> a = {{1, 4, 1}, {0, 6, 4}, {0, 0, 1}};
 
-        Packed_matrix<int, upper_triang> u(a);
+        Upper_triang_mat<int> u(a);
 
         u += 1;
 
