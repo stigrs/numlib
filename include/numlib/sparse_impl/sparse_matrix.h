@@ -32,7 +32,7 @@ template <typename T>
 class Sparse_matrix {
 public:
     using value_type = T;
-    using size_type = std::ptrdiff_t;
+    using size_type = Index;
     using iterator = typename std::vector<T>::iterator;
     using const_iterator = typename std::vector<T>::const_iterator;
 
@@ -59,12 +59,12 @@ public:
         assert(row_ptr.size() == narrow_cast<std::size_t>(nr + 1));
     }
 
-    template <std::ptrdiff_t n, std::ptrdiff_t nnz>
+    template <Index n, Index nnz>
     Sparse_matrix(size_type nr,
                   size_type nc,
                   const T (&val)[n],
-                  const std::ptrdiff_t (&col)[n],
-                  const std::ptrdiff_t (&row)[nnz]);
+                  const Index (&col)[n],
+                  const Index (&row)[nnz]);
 
     ~Sparse_matrix() = default;
 
@@ -137,12 +137,12 @@ private:
 };
 
 template <typename T>
-template <std::ptrdiff_t n, std::ptrdiff_t nnz>
+template <Index n, Index nnz>
 Sparse_matrix<T>::Sparse_matrix(size_type nr,
                                 size_type nc,
                                 const T (&val)[n],
-                                const std::ptrdiff_t (&col)[n],
-                                const std::ptrdiff_t (&row)[nnz])
+                                const Index (&col)[n],
+                                const Index (&row)[nnz])
     : elems(n), col_indx(n), row_ptr(nnz), extents{nr, nc}
 {
     assert(row_ptr.size() == narrow_cast<std::size_t>(nr + 1));

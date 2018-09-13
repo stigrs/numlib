@@ -30,7 +30,7 @@ template <typename T>
 class Band_matrix {
 public:
     using value_type = T;
-    using size_type = std::ptrdiff_t;
+    using size_type = Index;
     using iterator = typename std::vector<T>::iterator;
     using const_iterator = typename std::vector<T>::const_iterator;
 
@@ -52,7 +52,7 @@ public:
     }
 
     // Construct from C array.
-    template <std::ptrdiff_t nb>
+    template <Index nb>
     Band_matrix(size_type m,
                 size_type n,
                 size_type kl,
@@ -132,7 +132,7 @@ private:
 };
 
 template <typename T>
-template <std::ptrdiff_t nb>
+template <Index nb>
 Band_matrix<T>::Band_matrix(
     size_type m, size_type n, size_type kl, size_type ku, const T (&ab)[nb])
     : elems(nb), extents{m, n}, bwidth{kl, ku}
@@ -247,7 +247,7 @@ inline const T& Band_matrix<T>::ref(size_type i, size_type j) const
 }
 
 template <typename T>
-inline std::ptrdiff_t Band_matrix<T>::offset(size_type i, size_type j) const
+inline Index Band_matrix<T>::offset(size_type i, size_type j) const
 {
     return bwidth[1] + i - j + j * leading_dim();
 }

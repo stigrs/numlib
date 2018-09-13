@@ -22,9 +22,9 @@ template <typename T>
 Sparse_vector<T> gather(const Matrix<T, 1>& y)
 {
     std::vector<T> val;
-    std::vector<std::ptrdiff_t> loc;
+    std::vector<Index> loc;
 
-    for (std::ptrdiff_t i = 0; i < y.size(); ++i) {
+    for (Index i = 0; i < y.size(); ++i) {
         if (y(i) != T{0}) {
             val.push_back(y(i));
             loc.push_back(i);
@@ -38,13 +38,13 @@ template <typename T>
 Sparse_matrix<T> gather(const Matrix<T, 2>& m)
 {
     std::vector<T> values;
-    std::vector<std::ptrdiff_t> columns;
-    std::vector<std::ptrdiff_t> row_index(m.rows() + 1);
+    std::vector<Index> columns;
+    std::vector<Index> row_index(m.rows() + 1);
 
-    std::ptrdiff_t nnz = 0;
-    for (std::ptrdiff_t i = 0; i < m.rows(); ++i) {
-        std::ptrdiff_t inz = 0;
-        for (std::ptrdiff_t j = 0; j < m.cols(); ++j) {
+    Index nnz = 0;
+    for (Index i = 0; i < m.rows(); ++i) {
+        Index inz = 0;
+        for (Index j = 0; j < m.cols(); ++j) {
             if (m(i, j) != T{0}) {
                 values.push_back(m(i, j));
                 columns.push_back(j);
@@ -63,7 +63,7 @@ template <typename T>
 Matrix<T, 1> scatter(const Sparse_vector<T>& y)
 {
     Matrix<T, 1> res(y.size());
-    for (std::ptrdiff_t i = 0; i < res.size(); ++i) {
+    for (Index i = 0; i < res.size(); ++i) {
         res(i) = y(i);
     }
     return res;
@@ -75,8 +75,8 @@ Matrix<T, 2> scatter(const Sparse_matrix<T>& m)
 {
     Matrix<T, 2> res(m.rows(), m.cols());
 
-    for (std::ptrdiff_t i = 0; i < res.rows(); ++i) {
-        for (std::ptrdiff_t j = 0; j < res.cols(); ++j) {
+    for (Index i = 0; i < res.rows(); ++i) {
+        for (Index j = 0; j < res.cols(); ++j) {
             res(i, j) = m(i, j);
         }
     }
@@ -142,7 +142,7 @@ Matrix<T, 1> operator+(const Sparse_vector<T>& x, const Matrix<T, 1>& y)
 
     Matrix<T, 1> res(y);
 
-    std::ptrdiff_t i = 0;
+    Index i = 0;
     for (const auto& v : x) {
         res(x.loc(i)) += v;
         ++i;
@@ -157,7 +157,7 @@ Matrix<T, 1> operator+(const Matrix<T, 1>& y, const Sparse_vector<T>& x)
 
     Matrix<T, 1> res(y);
 
-    std::ptrdiff_t i = 0;
+    Index i = 0;
     for (const auto& v : x) {
         res(x.loc(i)) += v;
         ++i;
@@ -174,7 +174,7 @@ Matrix<T, 1> operator-(const Sparse_vector<T>& x, const Matrix<T, 1>& y)
 
     Matrix<T, 1> res(y);
 
-    std::ptrdiff_t i = 0;
+    Index i = 0;
     for (const auto& v : x) {
         res(x.loc(i)) -= v;
         ++i;
@@ -189,7 +189,7 @@ Matrix<T, 1> operator-(const Matrix<T, 1>& y, const Sparse_vector<T>& x)
 
     Matrix<T, 1> res(y);
 
-    std::ptrdiff_t i = 0;
+    Index i = 0;
     for (const auto& v : x) {
         res(x.loc(i)) -= v;
         ++i;
@@ -237,7 +237,7 @@ inline Matrix<T, 1> operator*(const Sparse_matrix<T>& a, const Matrix<T, 1>& x)
 template <typename T>
 std::ostream& operator<<(std::ostream& to, const Sparse_vector<T>& vec)
 {
-    std::ptrdiff_t i = 0;
+    Index i = 0;
 
     to << "[number of non-zero elements: " << vec.num_nonzero() << "]\n";
     for (const auto& x : vec) {
@@ -249,13 +249,13 @@ std::ostream& operator<<(std::ostream& to, const Sparse_vector<T>& vec)
 }
 
 // Output stream operator for sparse matrices.
-template <class T>
+template <typename T>
 std::ostream& operator<<(std::ostream& to, const Sparse_matrix<T>& mat)
 {
     to << "[matrix size: " << mat.rows() << " x " << mat.cols()
        << "; number of non-zero elements: " << mat.num_nonzero() << "]\n\n";
-    for (std::ptrdiff_t i = 0; i < mat.rows(); ++i) {
-        for (std::ptrdiff_t j = 0; j < mat.cols(); ++j) {
+    for (Index i = 0; i < mat.rows(); ++i) {
+        for (Index j = 0; j < mat.cols(); ++j) {
             if (mat(i, j) != T{0}) {
                 to << "(" << i << ", " << j << ")\t" << mat(i, j) << '\n';
             }

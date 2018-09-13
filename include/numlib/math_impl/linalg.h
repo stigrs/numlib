@@ -33,7 +33,7 @@ Vec<double> linspace(double x1, double x2, Index n);
 
 // Identity matrix.
 template <typename T = double>
-inline Mat<T> identity(std::ptrdiff_t n)
+inline Mat<T> identity(Index n)
 {
     Mat<T> res = zeros<Mat<T>>(n, n);
     res.diag() = T{1};
@@ -42,7 +42,7 @@ inline Mat<T> identity(std::ptrdiff_t n)
 
 // Hilbert matrix.
 template <typename T = double>
-inline Enable_if<Real_type<T>(), Mat<T>> hilbert(std::ptrdiff_t n)
+inline Enable_if<Real_type<T>(), Mat<T>> hilbert(Index n)
 {
     Mat<T> res(n, n);
     for (Index i = 0; i < n; ++i) {

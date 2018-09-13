@@ -21,7 +21,7 @@ public:
     static constexpr std::size_t order = N;
 
     using value_type = T;
-    using size_type = std::ptrdiff_t;
+    using size_type = Index;
 
     Matrix_base() = default;
 
@@ -52,7 +52,7 @@ public:
     // Number of elements in the N'th dimension:
     size_type extent(size_type n) const
     {
-        assert(0 <= n && n < static_cast<std::ptrdiff_t>(order));
+        assert(0 <= n && n < static_cast<Index>(order));
         return desc.extents[n];
     }
 

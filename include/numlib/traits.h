@@ -17,8 +17,9 @@
 //------------------------------------------------------------------------------
 
 // Define integer type used by BLAS and LAPACK.
-#ifdef MKL_ILP64
-#define BLAS_INT std::ptrdiff_t
+#ifdef USE_MKL
+#include <mkl.h>
+#define BLAS_INT MKL_INT
 #else
 #define BLAS_INT int
 #endif
@@ -31,11 +32,10 @@
 // indices. The Guidelines Support Library (GSL) provides gsl::index as a
 // typedef to std::ptrdiff_t to avoid the ugliness of using ptrdiff_t.
 //
-// Here, a typedef to ptrdiff_t is provided in the global namespace in order to
-// avoid linking with the GSL. Hopefully, this can be replaced by std::index in
-// the future.
+// Here, a typedef to BLAS_INT is provided in the global namespace in order to
+// avoid problems with linking with BLAS and LAPACK.
 
-using Index = std::ptrdiff_t;
+using Index = BLAS_INT;
 
 //------------------------------------------------------------------------------
 
