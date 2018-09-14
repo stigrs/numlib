@@ -24,7 +24,10 @@ else()
 endif()
 
 option(BUILD_TESTS "Build tests." ON)
-option(BUILD_BENCH "Build benchmarks." ON)
+option(BUILD_BENCH "Build benchmarks." OFF)
+if(WIN32)
+	set(BUILD_BENCH ON)
+endif()
 
 # Set default MSVC compiler options to avoid D9025 error.
 if(MSVC)
