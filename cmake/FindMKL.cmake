@@ -4,7 +4,9 @@
 # LICENSE.txt or http://www.opensource.org/licenses/mit-license.php for terms
 # and conditions.
 
-# Find the Math Kernel Library from Intel
+# Find the Intel Math Kernel Library.
+#
+# The following variables are defined if MKL is found:
 #
 # MKL_FOUND        - System has MKL
 # MKL_INCLUDE_DIRS - MKL include file directory
@@ -21,6 +23,10 @@
 #	  link_directories(${MKL_LIBRARY_DIRS})
 #     target_link_libraries(TARGET ${MKL_LIBRARIES})
 # endif()
+#
+# Note: 
+# - Currently, only the Intel LP64 interface layer is used for Intel(R) 64
+#   architecture.
 
 if(WIN32)
 	if(${CMAKE_CL_64} EQUAL 1)

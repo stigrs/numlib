@@ -68,7 +68,7 @@ public:
 
     bool empty() const { return elems.empty(); }
 
-    size_type size() const { return narrow_cast<size_type>(elems.size()); }
+    size_type size() const { return elems.size(); }
     size_type rows() const { return extents[0]; }
     size_type cols() const { return extents[1]; }
     size_type extent(size_type dim) const

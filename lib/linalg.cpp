@@ -26,7 +26,7 @@ double Numlib::det(const Mat<double>& a)
     assert(a.rows() == a.cols());
 
     double ddet = 0.0;
-    const Index n = a.rows();
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
 
     if (n == 1) {
         ddet = a(0, 0);
@@ -36,12 +36,12 @@ double Numlib::det(const Mat<double>& a)
     }
     else { // use LU decomposition
         Mat<double> tmp(a);
-        Vec<Index> ipiv;
+        Vec<BLAS_INT> ipiv;
 
         lu(tmp, ipiv);
 
-        Index permut = 0;
-        for (Index i = 1; i <= n; ++i) {
+        BLAS_INT permut = 0;
+        for (BLAS_INT i = 1; i <= n; ++i) {
             if (i != ipiv(i - 1)) { // Fortran uses base 1
                 permut++;
             }
@@ -58,7 +58,7 @@ void Numlib::eig(Mat<double>& a,
 {
     assert(a.rows() == a.cols());
 
-    const Index n = a.cols();
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
 
     evec.resize(n, n);
     eval.resize(n);
@@ -68,7 +68,7 @@ void Numlib::eig(Mat<double>& a,
     Mat<double> vr(n, n);
     Mat<double> vl(n, n);
 
-    Index info =
+    BLAS_INT info =
         LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'V', n, a.data(), n, wr.data(),
                       wi.data(), vl.data(), n, vr.data(), n);
     if (info != 0) {
@@ -99,21 +99,21 @@ void Numlib::eig(double emin,
 {
     // Intitialize FEAST:
 
-    Index fpm[128];
-    feastinit((Index*) fpm);
+    BLAS_INT fpm[128];
+    feastinit((BLAS_INT*) fpm);
 #ifndef NDEBUG
     fpm[0] = 1; // print runtime status
 #endif
 
     // Solve eigenvalue problem:
 
-    Index n = ab.cols();
-    Index kla = ab.upper();
-    Index lda = ab.leading_dim();
-    Index m0 = n;
-    Index loop = 0;
-    Index m = m0;
-    Index info = 0;
+    BLAS_INT n = narrow_cast<BLAS_INT>(ab.cols());
+    BLAS_INT kla = narrow_cast<BLAS_INT>(ab.upper());
+    BLAS_INT lda = narrow_cast<BLAS_INT>(ab.leading_dim());
+    BLAS_INT m0 = n;
+    BLAS_INT loop = 0;
+    BLAS_INT m = m0;
+    BLAS_INT info = 0;
 
     double epsout = 0.0; // relative error on the trace (not returned)
     Vec<double> res(m0); // residual vector (not returned)
@@ -121,7 +121,7 @@ void Numlib::eig(double emin,
     evec.resize(n, m0);
     eval.resize(m0);
 
-    dfeast_sbev("F", &n, &kla, ab.data(), &lda, (Index*) fpm, &epsout, &loop,
+    dfeast_sbev("F", &n, &kla, ab.data(), &lda, (BLAS_INT*) fpm, &epsout, &loop,
                 &emin, &emax, &m0, eval.data(), evec.data(), &m, res.data(),
                 &info);
     if (info != 0) {
@@ -144,19 +144,19 @@ void Numlib::eig(double emin,
 {
     // Initialize FEAST:
 
-    Index fpm[128];
-    feastinit((Index*) fpm);
+    BLAS_INT fpm[128];
+    feastinit((BLAS_INT*) fpm);
 #ifndef NDEBUG
     fpm[0] = 1; // print runtime status
 #endif
 
     // Solve eigenvalue problem:
 
-    Index n = a.cols();
-    Index m0 = n;
-    Index loop = 0;
-    Index m = m0;
-    Index info = 0;
+    BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+    BLAS_INT m0 = n;
+    BLAS_INT loop = 0;
+    BLAS_INT m = m0;
+    BLAS_INT info = 0;
 
     auto ia = a.row_index_one_based(); // FEAST only support one-based indexing
     auto ja = a.columns_one_based();
@@ -167,7 +167,7 @@ void Numlib::eig(double emin,
     evec.resize(n, m0);
     eval.resize(m0);
 
-    dfeast_scsrev("F", &n, a.data(), ia.data(), ja.data(), (Index*) fpm,
+    dfeast_scsrev("F", &n, a.data(), ia.data(), ja.data(), (BLAS_INT*) fpm,
                   &epsout, &loop, &emin, &emax, &m0, eval.data(), evec.data(),
                   &m, res.data(), &info);
     if (info != 0) {

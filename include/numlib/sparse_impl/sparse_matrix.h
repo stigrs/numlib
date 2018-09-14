@@ -27,12 +27,13 @@ namespace Numlib {
 // - It is assumed that the sparse matrix is initialized with element indices
 //   sorted in ascending order.
 // - New elements are inserted so that the index order is preserved.
+// - Size type is BLAS_INT to allow linking with Intel MKL.
 //
 template <typename T>
 class Sparse_matrix {
 public:
     using value_type = T;
-    using size_type = Index;
+    using size_type = BLAS_INT;
     using iterator = typename std::vector<T>::iterator;
     using const_iterator = typename std::vector<T>::const_iterator;
 
@@ -59,12 +60,12 @@ public:
         assert(row_ptr.size() == narrow_cast<std::size_t>(nr + 1));
     }
 
-    template <Index n, Index nnz>
+    template <BLAS_INT n, BLAS_INT nnz>
     Sparse_matrix(size_type nr,
                   size_type nc,
                   const T (&val)[n],
-                  const Index (&col)[n],
-                  const Index (&row)[nnz]);
+                  const BLAS_INT (&col)[n],
+                  const BLAS_INT (&row)[nnz]);
 
     ~Sparse_matrix() = default;
 
@@ -137,12 +138,12 @@ private:
 };
 
 template <typename T>
-template <Index n, Index nnz>
+template <BLAS_INT n, BLAS_INT nnz>
 Sparse_matrix<T>::Sparse_matrix(size_type nr,
                                 size_type nc,
                                 const T (&val)[n],
-                                const Index (&col)[n],
-                                const Index (&row)[nnz])
+                                const BLAS_INT (&col)[n],
+                                const BLAS_INT (&row)[nnz])
     : elems(n), col_indx(n), row_ptr(nnz), extents{nr, nc}
 {
     assert(row_ptr.size() == narrow_cast<std::size_t>(nr + 1));
@@ -192,7 +193,7 @@ void Sparse_matrix<T>::insert(size_type i, size_type j, const T& value)
         auto pos = std::upper_bound(col_indx.begin() + row_ptr[i],
                                     col_indx.begin() + row_ptr[i + 1], j);
         size_type offset =
-            narrow_cast<Index>(std::distance(col_indx.begin(), pos));
+            narrow_cast<BLAS_INT>(std::distance(col_indx.begin(), pos));
         elems.insert(elems.begin() + offset, value);
         col_indx.insert(pos, j);
         for (std::size_t k = i + 1; k < row_ptr.size(); ++k) {

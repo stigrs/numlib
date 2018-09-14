@@ -37,14 +37,19 @@ Sparse_vector<T> gather(const Matrix<T, 1>& y)
 template <typename T>
 Sparse_matrix<T> gather(const Matrix<T, 2>& m)
 {
-    std::vector<T> values;
-    std::vector<Index> columns;
-    std::vector<Index> row_index(m.rows() + 1);
+    using size_type = typename Sparse_matrix<T>::size_type;
 
-    Index nnz = 0;
-    for (Index i = 0; i < m.rows(); ++i) {
-        Index inz = 0;
-        for (Index j = 0; j < m.cols(); ++j) {
+    std::vector<T> values;
+    std::vector<size_type> columns;
+    std::vector<size_type> row_index(m.rows() + 1);
+
+    size_type nrows = narrow_cast<size_type>(m.rows());
+    size_type ncols = narrow_cast<size_type>(m.cols());
+
+    size_type nnz = 0;
+    for (size_type i = 0; i < nrows; ++i) {
+        size_type inz = 0;
+        for (size_type j = 0; j < ncols; ++j) {
             if (m(i, j) != T{0}) {
                 values.push_back(m(i, j));
                 columns.push_back(j);
@@ -55,15 +60,17 @@ Sparse_matrix<T> gather(const Matrix<T, 2>& m)
         row_index[i] = nnz - inz;
     }
     row_index[row_index.size() - 1] = nnz;
-    return {m.rows(), m.cols(), values, columns, row_index};
+    return {nrows, ncols, values, columns, row_index};
 }
 
 // Scatter a sparse vector into full storage form.
 template <typename T>
 Matrix<T, 1> scatter(const Sparse_vector<T>& y)
 {
+    using size_type = typename Sparse_vector<T>::size_type;
+
     Matrix<T, 1> res(y.size());
-    for (Index i = 0; i < res.size(); ++i) {
+    for (size_type i = 0; i < y.size(); ++i) {
         res(i) = y(i);
     }
     return res;
@@ -73,10 +80,12 @@ Matrix<T, 1> scatter(const Sparse_vector<T>& y)
 template <typename T>
 Matrix<T, 2> scatter(const Sparse_matrix<T>& m)
 {
+    using size_type = typename Sparse_matrix<T>::size_type;
+
     Matrix<T, 2> res(m.rows(), m.cols());
 
-    for (Index i = 0; i < res.rows(); ++i) {
-        for (Index j = 0; j < res.cols(); ++j) {
+    for (size_type i = 0; i < m.rows(); ++i) {
+        for (size_type j = 0; j < m.cols(); ++j) {
             res(i, j) = m(i, j);
         }
     }
