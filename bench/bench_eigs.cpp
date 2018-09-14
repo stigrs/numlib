@@ -22,12 +22,12 @@ void print(int n, const Timer& t_arma, const Timer& t_eigs)
 
 void benchmark(int n)
 {
-    // arma::mat a1 = arma::randu<arma::mat>(n, n);
-    // arma::mat a2 = a1.t() * a1;
-    // arma::mat eigvec(n, n);
-    // arma::vec eigval(n);
+    arma::mat a1 = arma::randu<arma::mat>(n, n);
+    arma::mat a2 = a1.t() * a1;
+    arma::mat eigvec(n, n);
+    arma::vec eigval(n);
     auto t1 = std::chrono::high_resolution_clock::now();
-    // arma::eig_sym(eigval, eigvec, a2);
+    arma::eig_sym(eigval, eigvec, a2);
     auto t2 = std::chrono::high_resolution_clock::now();
     Timer t_arma = t2 - t1;
 

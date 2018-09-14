@@ -30,8 +30,8 @@ void benchmark(int n)
     arma::vec ab(n);
     aa.fill(1.0);
     ab.fill(2.0);
-    double dot_arma;
     auto t1 = std::chrono::high_resolution_clock::now();
+    double dot_arma;
     for (int it = 0; it < 10; ++it) {
         dot_arma = arma::dot(aa, ab);
     }
@@ -43,8 +43,8 @@ void benchmark(int n)
     Numlib::Vec<double> nb(n);
     na = 1.0;
     nb = 2.0;
-    double num;
     t1 = std::chrono::high_resolution_clock::now();
+    double num;
     for (int it = 0; it < 10; ++it) {
         num = Numlib::dot(na, nb);
     }
@@ -53,9 +53,8 @@ void benchmark(int n)
 
     std::valarray<double> va(1.0, n);
     std::valarray<double> vb(2.0, n);
-
-    double val;
     t1 = std::chrono::high_resolution_clock::now();
+    double val;
     for (int it = 0; it < 10; ++it) {
         val = std::inner_product(std::begin(va), std::end(va), std::begin(vb),
                                  0.0);

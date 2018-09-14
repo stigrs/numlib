@@ -24,12 +24,12 @@ void benchmark(int n, int m)
 {
     using namespace Numlib;
 
-    // arma::mat a1 = arma::ones<arma::mat>(n, m);
-    // arma::mat a2 = arma::ones<arma::mat>(m);
+    arma::mat a1 = arma::ones<arma::mat>(n, m);
+    arma::mat a2 = arma::ones<arma::mat>(m);
     auto t1 = std::chrono::high_resolution_clock::now();
-    // for (int it = 0; it < 10; ++it) {
-    //    arma::vec a3 = a1 * a2;
-    //}
+    for (int it = 0; it < 10; ++it) {
+       arma::vec a3 = a1 * a2;
+    }
     auto t2 = std::chrono::high_resolution_clock::now();
     Timer t_arma = t2 - t1;
 
