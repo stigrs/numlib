@@ -365,15 +365,15 @@ inline Mat<T> transpose(const Mat<T>& m)
 // Matrix decomposition:
 
 // LU factorization.
-inline void lu(Mat<double>& a, Vec<BLAS_INT>& ipiv)
+inline void lu(Mat<double>& a, Vec<Index>& ipiv)
 {
-    const BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
-    const BLAS_INT lda = n;
+    const Index m = a.rows();
+    const Index n = a.cols();
+    const Index lda = n;
 
     ipiv.resize(std::min(m, n));
 
-    BLAS_INT info =
+    Index info =
         LAPACKE_dgetrf(LAPACK_ROW_MAJOR, m, n, a.data(), lda, ipiv.data());
     if (info < 0) {
         throw Math_error("dgetrf: illegal input parameter");
@@ -396,13 +396,13 @@ inline void inv(Mat<double>& a)
     if (det(a) == 0.0) {
         throw Math_error("inv: matrix not invertible");
     }
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
-    const BLAS_INT lda = n;
+    const Index n = a.rows();
+    const Index lda = n;
 
-    Vec<BLAS_INT> ipiv(n);
+    Vec<Index> ipiv(n);
     lu(a, ipiv); // perform LU factorization
 
-    BLAS_INT info =
+    Index info =
         LAPACKE_dgetri(LAPACK_ROW_MAJOR, n, a.data(), lda, ipiv.data());
     if (info != 0) {
         throw Math_error("dgetri: matrix inversion failed");
@@ -418,10 +418,10 @@ inline void eigs(Mat<double>& a, Vec<double>& w)
 {
     assert(a.rows() == a.cols());
 
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
+    const Index n = a.rows();
     w.resize(n);
 
-    BLAS_INT info =
+    Index info =
         LAPACKE_dsyevd(LAPACK_ROW_MAJOR, 'V', 'U', n, a.data(), n, w.data());
     if (info != 0) {
         throw Math_error("dsyevd failed");
@@ -442,13 +442,13 @@ inline void eigs(Band_mat<double>& ab, Mat<double>& evec, Vec<double>& eval)
     evec.resize(ab.rows(), ab.cols());
     eval.resize(ab.cols());
 
-    const BLAS_INT n = narrow_cast<BLAS_INT>(ab.cols());
-    const BLAS_INT kd = narrow_cast<BLAS_INT>(ab.upper());
-    const BLAS_INT ldab = narrow_cast<BLAS_INT>(ab.leading_dim());
-    const BLAS_INT ldz = narrow_cast<BLAS_INT>(ab.cols());
+    const Index n = ab.cols();
+    const Index kd = ab.upper();
+    const Index ldab = ab.leading_dim();
+    const Index ldz = ab.cols();
 
-    BLAS_INT info = LAPACKE_dsbev(LAPACK_COL_MAJOR, 'V', 'U', n, kd, ab.data(),
-                                  ldab, eval.data(), evec.data(), ldz);
+    Index info = LAPACKE_dsbev(LAPACK_COL_MAJOR, 'V', 'U', n, kd, ab.data(),
+                               ldab, eval.data(), evec.data(), ldz);
     if (info != 0) {
         throw Math_error("dsbev failed");
     }
@@ -480,14 +480,14 @@ void eigs(Symm_mat<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
 {
     assert(ap.size() >= eval.size() * (eval.size() + 1) / 2);
 
-    const BLAS_INT n = narrow_cast<BLAS_INT>(eval.size());
-    const BLAS_INT ldz = n;
+    const Index n = eval.size();
+    const Index ldz = n;
     char uplo = ap.uplo_scheme();
 
     evec.resize(n, n);
 
-    BLAS_INT info = LAPACKE_dspevd(LAPACK_ROW_MAJOR, 'V', uplo, n, ap.data(),
-                                   eval.data(), evec.data(), ldz);
+    Index info = LAPACKE_dspevd(LAPACK_ROW_MAJOR, 'V', uplo, n, ap.data(),
+                                eval.data(), evec.data(), ldz);
     if (info != 0) {
         throw Math_error("dspevd failed");
     }
@@ -512,15 +512,15 @@ inline void linsolve(Mat<double>& a, Mat<double>& b)
     assert(a.rows() == a.cols());
     assert(b.rows() == a.cols());
 
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
-    const BLAS_INT nrhs = narrow_cast<BLAS_INT>(b.cols());
-    const BLAS_INT lda = n;
-    const BLAS_INT ldb = nrhs;
+    const Index n = a.cols();
+    const Index nrhs = b.cols();
+    const Index lda = n;
+    const Index ldb = nrhs;
 
-    Vec<BLAS_INT> ipiv(n);
+    Vec<Index> ipiv(n);
 
-    BLAS_INT info = LAPACKE_dgesv(LAPACK_ROW_MAJOR, n, nrhs, a.data(), lda,
-                                  ipiv.data(), b.data(), ldb);
+    Index info = LAPACKE_dgesv(LAPACK_ROW_MAJOR, n, nrhs, a.data(), lda,
+                               ipiv.data(), b.data(), ldb);
     if (info != 0) {
         throw Math_error("dgesv: factor U is singular");
     }

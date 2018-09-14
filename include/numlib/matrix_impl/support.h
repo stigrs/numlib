@@ -53,7 +53,7 @@ namespace Matrix_impl {
     template <std::size_t N, typename I, typename List>
     inline Enable_if<(N == 1), void> add_extents(I& first, const List& list)
     {
-        *first++ = list.size();
+        *first++ = narrow_cast<Index>(list.size()); 
     }
 
     // Recursion through nested std::initializer_list.
@@ -61,7 +61,7 @@ namespace Matrix_impl {
     inline Enable_if<(N > 1), void> add_extents(I& first, const List& list)
     {
         assert(check_non_jagged<N>(list));
-        *first++ = list.size(); // store this size (extent)
+        *first++ = narrow_cast<Index>(list.size()); // store this size (extent) 
         add_extents<N - 1>(first, *list.begin());
     }
 

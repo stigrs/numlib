@@ -191,7 +191,8 @@ void Sparse_matrix<T>::insert(size_type i, size_type j, const T& value)
     if (ref(i, j) == zero) {
         auto pos = std::upper_bound(col_indx.begin() + row_ptr[i],
                                     col_indx.begin() + row_ptr[i + 1], j);
-        size_type offset = std::distance(col_indx.begin(), pos);
+        size_type offset =
+            narrow_cast<Index>(std::distance(col_indx.begin(), pos));
         elems.insert(elems.begin() + offset, value);
         col_indx.insert(pos, j);
         for (std::size_t k = i + 1; k < row_ptr.size(); ++k) {

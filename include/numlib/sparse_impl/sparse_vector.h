@@ -80,7 +80,7 @@ public:
 
     bool empty() const { return elems.empty(); }
 
-    size_type num_nonzero() const { return elems.size(); }
+    size_type num_nonzero() const { return narrow_cast<Index>(elems.size()); }
     size_type size() const
     {
         return *std::max_element(indx.begin(), indx.end()) + 1;
@@ -189,7 +189,8 @@ inline void Sparse_vector<T>::insert(size_type i, const T& val)
         if (std::find(indx.begin(), indx.end(), i) == indx.end()) {
             // do not replace any existing elements
             auto pos = std::upper_bound(indx.begin(), indx.end(), i);
-            size_type offset = std::distance(indx.begin(), pos);
+            size_type offset =
+                narrow_cast<Index>(std::distance(indx.begin(), pos));
             elems.insert(elems.begin() + offset, val);
             indx.insert(pos, i);
         }
@@ -224,7 +225,7 @@ inline const T& Sparse_vector<T>::ref(size_type i) const
     assert(0 <= i && i < size());
 
     auto pos = std::find(indx.begin(), indx.end(), i);
-    size_type offset = std::distance(indx.begin(), pos);
+    size_type offset = narrow_cast<Index>(std::distance(indx.begin(), pos));
     return offset >= 0 && offset < num_nonzero() ? elems[offset] : zero;
 }
 
