@@ -19,29 +19,28 @@ namespace Numlib {
 
 // Return size.
 template <typename T, Uplo_scheme Uplo>
-inline std::ptrdiff_t size(const Packed_matrix<T, Uplo>& ap)
+inline Index size(const Packed_matrix<T, Uplo>& ap)
 {
     return ap.size();
 }
 
 // Return number of rows.
 template <typename T, Uplo_scheme Uplo>
-inline std::ptrdiff_t rows(const Packed_matrix<T, Uplo>& ap)
+inline Index rows(const Packed_matrix<T, Uplo>& ap)
 {
     return ap.rows();
 }
 
 // Return number of columns.
 template <typename T, Uplo_scheme Uplo>
-inline std::ptrdiff_t cols(const Packed_matrix<T, Uplo>& ap)
+inline Index cols(const Packed_matrix<T, Uplo>& ap)
 {
     return ap.cols();
 }
 
 // Return extent for a given dimension.
 template <typename T, Uplo_scheme Uplo>
-inline std::ptrdiff_t extent(const Packed_matrix<T, Uplo>& ap,
-                             std::ptrdiff_t dim)
+inline Index extent(const Packed_matrix<T, Uplo>& ap, Index dim)
 {
     assert(0 <= dim && dim < 2);
     return ap.extent(dim);
@@ -154,8 +153,8 @@ template <typename T, Uplo_scheme Uplo>
 std::ostream& operator<<(std::ostream& to, const Packed_matrix<T, Uplo>& ap)
 {
     to << ap.rows() << " x " << ap.cols() << "\n[";
-    for (std::ptrdiff_t i = 0; i < ap.rows(); ++i) {
-        for (std::ptrdiff_t j = 0; j < ap.cols(); ++j) {
+    for (Index i = 0; i < ap.rows(); ++i) {
+        for (Index j = 0; j < ap.cols(); ++j) {
             to << std::setw(9) << ap(i, j) << " ";
         }
         if (i != ap.rows() - 1) {

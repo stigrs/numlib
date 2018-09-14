@@ -19,28 +19,28 @@ namespace Numlib {
 
 // Return band matrix size.
 template <typename T>
-inline std::ptrdiff_t size(const Band_matrix<T>& ab)
+inline Index size(const Band_matrix<T>& ab)
 {
     return ab.size();
 }
 
 // Return number of rows.
 template <typename T>
-inline std::ptrdiff_t rows(const Band_matrix<T>& ab)
+inline Index rows(const Band_matrix<T>& ab)
 {
     return ab.rows();
 }
 
 // Return number of columns.
 template <typename T>
-inline std::ptrdiff_t cols(const Band_matrix<T>& ab)
+inline Index cols(const Band_matrix<T>& ab)
 {
     return ab.cols();
 }
 
 // Return extent for a given dimension.
 template <typename T>
-inline std::ptrdiff_t extent(const Band_matrix<T>& ab, std::ptrdiff_t dim)
+inline Index extent(const Band_matrix<T>& ab, Index dim)
 {
     assert(0 <= dim && dim < 2);
     return ab.extent(dim);
@@ -48,7 +48,7 @@ inline std::ptrdiff_t extent(const Band_matrix<T>& ab, std::ptrdiff_t dim)
 
 // Return bandwidth.
 template <typename T>
-inline std::ptrdiff_t bwidth(const Band_matrix<T>& ab, std::ptrdiff_t uplo)
+inline Index bwidth(const Band_matrix<T>& ab, Index uplo)
 {
     assert(0 <= uplo && uplo < 2);
     if (uplo == 0) {
@@ -149,8 +149,8 @@ template <typename T>
 std::ostream& operator<<(std::ostream& to, const Band_matrix<T>& ab)
 {
     to << ab.rows() << " x " << ab.cols() << "\n[";
-    for (std::ptrdiff_t i = 0; i < ab.rows(); ++i) {
-        for (std::ptrdiff_t j = 0; j < ab.cols(); ++j) {
+    for (Index i = 0; i < ab.rows(); ++i) {
+        for (Index j = 0; j < ab.cols(); ++j) {
             to << std::setw(9) << ab(i, j) << " ";
         }
         if (i != ab.rows() - 1) {

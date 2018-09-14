@@ -29,14 +29,14 @@ namespace Matrix_impl {
     template <typename... Args>
     constexpr bool Requesting_element()
     {
-        return All(Convertible<Args, std::ptrdiff_t>()...);
+        return All(Convertible<Args, Index>()...);
     }
 
     template <typename... Args>
     constexpr bool Requesting_slice()
     {
         // clang-format off
-        return All((Convertible<Args, std::ptrdiff_t>() || Same<Args, slice>())...) 
+        return All((Convertible<Args, Index>() || Same<Args, slice>())...) 
 					&& Some(Same<Args, slice>()...);
         // clang-format on
     }
@@ -71,9 +71,9 @@ namespace Matrix_impl {
     //   + Sets the extent of each row
     //
     template <std::size_t N, typename List>
-    inline std::array<std::ptrdiff_t, N> derive_extents(const List& list)
+    inline std::array<Index, N> derive_extents(const List& list)
     {
-        std::array<std::ptrdiff_t, N> a;
+        std::array<Index, N> a;
         auto f = a.begin();
         add_extents<N>(f, list); // add sizes (extents) to a
         return a;
@@ -128,8 +128,8 @@ namespace Matrix_impl {
     template <std::size_t N>
     inline void compute_strides(Matrix_slice<N>& ms)
     {
-        std::ptrdiff_t st = 1; // last stride is 1
-        for (std::ptrdiff_t i = N - 1; i >= 0; --i) {
+        Index st = 1; // last stride is 1
+        for (Index i = N - 1; i >= 0; --i) {
             ms.strides[i] = st;
             st *= ms.extents[i];
         }
@@ -138,12 +138,11 @@ namespace Matrix_impl {
 
     // Compute total number of elements given the extents.
     template <std::size_t N>
-    inline std::ptrdiff_t
-    compute_size(const std::array<std::ptrdiff_t, N>& exts)
+    inline Index compute_size(const std::array<Index, N>& exts)
     {
-        constexpr std::ptrdiff_t one = 1;
+        constexpr Index one = 1;
         return std::accumulate(exts.begin(), exts.end(), one,
-                               std::multiplies<std::ptrdiff_t>{});
+                               std::multiplies<Index>{});
     }
 
     // Return true if each element in range is within the bounds of the
@@ -151,14 +150,14 @@ namespace Matrix_impl {
     template <std::size_t N, typename... Dims>
     inline bool check_bounds(const Matrix_slice<N>& slice, Dims... dims)
     {
-        std::ptrdiff_t indexes[N]{std::ptrdiff_t(dims)...};
+        Index indexes[N]{Index(dims)...};
         return std::equal(indexes, indexes + N, slice.extents.begin(),
-                          std::less<std::ptrdiff_t>{});
+                          std::less<Index>{});
     }
 
     // Return Matrix_slice describing n'th row.
-    template <std::ptrdiff_t D, std::size_t N>
-    Matrix_slice<N - 1> slice_dim(const Matrix_slice<N>& ms, std::ptrdiff_t n)
+    template <Index D, std::size_t N>
+    Matrix_slice<N - 1> slice_dim(const Matrix_slice<N>& ms, Index n)
     {
         static_assert(N >= 1 && D <= N, "get_row: bad dimension");
 
@@ -177,45 +176,41 @@ namespace Matrix_impl {
 
     // Return starting offset given a slice:
 
-    template <std::ptrdiff_t D, std::size_t N>
-    std::ptrdiff_t do_slice_dim(const Matrix_slice<N>& os,
-                                Matrix_slice<N>& ns,
-                                std::ptrdiff_t s)
+    template <Index D, std::size_t N>
+    Index do_slice_dim(const Matrix_slice<N>& os, Matrix_slice<N>& ns, Index s)
     {
-        std::ptrdiff_t i = N - D;
+        Index i = N - D;
         ns.strides[i] = os.strides[i];
         ns.extents[i] = 1;
         return s * ns.strides[i];
     }
 
-    template <std::ptrdiff_t D, std::size_t N>
-    std::ptrdiff_t
-    do_slice_dim(const Matrix_slice<N>& os, Matrix_slice<N>& ns, slice s)
+    template <Index D, std::size_t N>
+    Index do_slice_dim(const Matrix_slice<N>& os, Matrix_slice<N>& ns, slice s)
     {
-        std::ptrdiff_t i = N - D;
+        Index i = N - D;
         ns.strides[i] = s.stride * os.strides[i];
         ns.extents[i] =
-            (s.length == std::ptrdiff_t(-1))
+            (s.length == Index(-1))
                 ? (os.extents[i] - s.start + s.stride - 1) / s.stride
                 : s.length;
         return s.start * os.strides[i];
     }
 
     template <std::size_t N>
-    std::ptrdiff_t do_slice(const Matrix_slice<N>& /* os */,
-                            Matrix_slice<N>& /* ns */)
+    Index do_slice(const Matrix_slice<N>& /* os */, Matrix_slice<N>& /* ns */)
     {
         return 0;
     }
 
     template <std::size_t N, typename T, typename... Args>
-    std::ptrdiff_t do_slice(const Matrix_slice<N>& os,
-                            Matrix_slice<N>& ns,
-                            const T& s,
-                            const Args&... args)
+    Index do_slice(const Matrix_slice<N>& os,
+                   Matrix_slice<N>& ns,
+                   const T& s,
+                   const Args&... args)
     {
-        std::ptrdiff_t m = do_slice_dim<sizeof...(Args) + 1>(os, ns, s);
-        std::ptrdiff_t n = do_slice(os, ns, args...);
+        Index m = do_slice_dim<sizeof...(Args) + 1>(os, ns, s);
+        Index n = do_slice(os, ns, args...);
         return m + n;
     }
 

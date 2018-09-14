@@ -35,14 +35,14 @@ inline Enable_if<Matrix_type<M>(), std::size_t> rank(const M& m)
 
 // Return matrix size.
 template <typename M>
-inline Enable_if<Matrix_type<M>(), std::ptrdiff_t> size(const M& m)
+inline Enable_if<Matrix_type<M>(), Index> size(const M& m)
 {
     return m.size();
 }
 
 // Return number of rows.
 template <typename M>
-inline Enable_if<Matrix_type<M>(), std::ptrdiff_t> rows(const M& m)
+inline Enable_if<Matrix_type<M>(), Index> rows(const M& m)
 {
     static_assert(0 < M::order, "");
     return m.extent(0);
@@ -50,7 +50,7 @@ inline Enable_if<Matrix_type<M>(), std::ptrdiff_t> rows(const M& m)
 
 // Return number of columns.
 template <typename M>
-inline Enable_if<Matrix_type<M>(), std::ptrdiff_t> cols(const M& m)
+inline Enable_if<Matrix_type<M>(), Index> cols(const M& m)
 {
     static_assert(1 < M::order, "");
     return m.extent(1);
@@ -58,10 +58,9 @@ inline Enable_if<Matrix_type<M>(), std::ptrdiff_t> cols(const M& m)
 
 // Return extent.
 template <typename M>
-inline Enable_if<Matrix_type<M>(), std::ptrdiff_t> extent(const M& m,
-                                                          std::ptrdiff_t dim)
+inline Enable_if<Matrix_type<M>(), Index> extent(const M& m, Index dim)
 {
-    assert(dim < static_cast<std::ptrdiff_t>(m.rank()));
+    assert(dim < static_cast<Index>(m.rank()));
     return m.extent(dim);
 }
 
@@ -425,17 +424,17 @@ mm_mul(const M1& a, const M2& b, M3& res)
 
     using value_type = typename M1::value_type;
 
-    const std::ptrdiff_t n = a.extent(0);
-    const std::ptrdiff_t m = a.extent(1);
-    const std::ptrdiff_t p = b.extent(1);
+    const Index n = a.extent(0);
+    const Index m = a.extent(1);
+    const Index p = b.extent(1);
     assert(m == b.extent(0));
 
     res.resize(n, p);
 
-    for (std::ptrdiff_t i = 0; i != n; ++i) {
-        for (std::ptrdiff_t j = 0; j != p; ++j) {
+    for (Index i = 0; i != n; ++i) {
+        for (Index j = 0; j != p; ++j) {
             res(i, j) = value_type{0};
-            for (std::ptrdiff_t k = 0; k != m; ++k) {
+            for (Index k = 0; k != m; ++k) {
                 res(i, j) += a(i, k) * b(k, j);
             }
         }
@@ -515,9 +514,9 @@ mv_mul(const M1& a, const M2& x, M3& y)
 
     y.resize(a.rows());
 
-    for (std::ptrdiff_t i = 0; i != a.rows(); ++i) {
+    for (Index i = 0; i != a.rows(); ++i) {
         y(i) = value_type{0};
-        for (std::ptrdiff_t j = 0; j != a.cols(); ++j) {
+        for (Index j = 0; j != a.cols(); ++j) {
             y(i) += a(i, j) * x(j);
         }
     }
@@ -608,7 +607,7 @@ template <typename T>
 std::ostream& operator<<(std::ostream& to, const Matrix<T, 1>& a)
 {
     to << a.size() << '\n' << "[ ";
-    for (std::ptrdiff_t i = 0; i < a.size(); ++i) {
+    for (Index i = 0; i < a.size(); ++i) {
         to << std::setw(9) << a(i) << " ";
         if (!((i + 1) % 7) && (i != (a.size() - 1))) {
             to << "\n  ";
@@ -622,7 +621,7 @@ template <typename T>
 std::ostream& operator<<(std::ostream& to, const Matrix_ref<T, 1>& a)
 {
     to << a.size() << '\n' << "[ ";
-    for (std::ptrdiff_t i = 0; i < a.size(); ++i) {
+    for (Index i = 0; i < a.size(); ++i) {
         to << std::setw(9) << a(i) << " ";
         if (!((i + 1) % 7) && (i != (a.size() - 1))) {
             to << "\n  ";
@@ -636,13 +635,13 @@ std::ostream& operator<<(std::ostream& to, const Matrix_ref<T, 1>& a)
 template <typename T>
 std::istream& operator>>(std::istream& from, Matrix<T, 1>& a)
 {
-    std::ptrdiff_t n;
+    Index n;
     from >> n;
     a.resize(n);
 
     char ch;
     from >> ch; // [
-    for (std::ptrdiff_t i = 0; i < n; ++i) {
+    for (Index i = 0; i < n; ++i) {
         from >> a(i);
     }
     from >> ch; // ]
@@ -653,8 +652,8 @@ template <typename T>
 std::ostream& operator<<(std::ostream& to, const Matrix<T, 2>& a)
 {
     to << a.rows() << " x " << a.cols() << "\n[";
-    for (std::ptrdiff_t i = 0; i < a.rows(); ++i) {
-        for (std::ptrdiff_t j = 0; j < a.cols(); ++j) {
+    for (Index i = 0; i < a.rows(); ++i) {
+        for (Index j = 0; j < a.cols(); ++j) {
             to << std::setw(9) << a(i, j) << " ";
         }
         if (i != (a.rows() - 1)) {
@@ -669,8 +668,8 @@ template <typename T>
 std::ostream& operator<<(std::ostream& to, const Matrix_ref<T, 2>& a)
 {
     to << a.rows() << " x " << a.cols() << "\n[";
-    for (std::ptrdiff_t i = 0; i < a.rows(); ++i) {
-        for (std::ptrdiff_t j = 0; j < a.cols(); ++j) {
+    for (Index i = 0; i < a.rows(); ++i) {
+        for (Index j = 0; j < a.cols(); ++j) {
             to << std::setw(9) << a(i, j) << " ";
         }
         if (i != (a.rows() - 1)) {
@@ -685,16 +684,16 @@ std::ostream& operator<<(std::ostream& to, const Matrix_ref<T, 2>& a)
 template <typename T>
 std::istream& operator>>(std::istream& from, Matrix<T, 2>& a)
 {
-    std::ptrdiff_t m;
-    std::ptrdiff_t n;
+    Index m;
+    Index n;
     char ch;
 
     from >> m >> ch >> n; // m x n
     a.resize(m, n);
 
     from >> ch; // [
-    for (std::ptrdiff_t i = 0; i < m; ++i) {
-        for (std::ptrdiff_t j = 0; j < n; ++j) {
+    for (Index i = 0; i < m; ++i) {
+        for (Index j = 0; j < n; ++j) {
             from >> a(i, j);
         }
     }

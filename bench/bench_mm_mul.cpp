@@ -28,7 +28,7 @@ void benchmark(int n, int m)
     arma::mat a2 = arma::ones<arma::mat>(m, n);
     auto t1 = std::chrono::high_resolution_clock::now();
     for (int it = 0; it < 10; ++it) {
-        arma::mat a3 = a1 * a2;
+       arma::mat a3 = a1 * a2;
     }
     auto t2 = std::chrono::high_resolution_clock::now();
     Timer t_arma = t2 - t1;

@@ -21,7 +21,7 @@ TEST_CASE("test_band_matrix")
                       { 0,  0, 53, 54, 55}};
         // clang-format on
 
-        Band_matrix<int> ab(2, 1, a);
+        Band_mat<int> ab(2, 1, a);
 #
         CHECK(ab(0, 0) == 11);
         CHECK(ab(0, 1) == 12);

@@ -16,9 +16,12 @@
 
 //------------------------------------------------------------------------------
 
-// Define integer type used by BLAS and LAPACK.
-#ifdef MKL_ILP64
-#define BLAS_INT std::ptrdiff_t
+// Define integer type for use with BLAS, LAPACK and Intel MKL.
+// Note: 32-bit integers are used for all architectures.
+
+#ifdef USE_MKL
+#include <mkl.h>
+#define BLAS_INT MKL_INT
 #else
 #define BLAS_INT int
 #endif

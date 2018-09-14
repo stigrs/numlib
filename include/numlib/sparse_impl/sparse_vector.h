@@ -14,18 +14,22 @@
 
 namespace Numlib {
 
-// Range-checked sparse vector class (zero-based indexing).
+// Range-checked sparse vector class.
+//
+// This class provides a basic framework for implementing sparse vector
+// methods that utilize the Intel Math Kernel Library.
 //
 // Note:
 // - It is assumed that the sparse vector is initialized with elements indices
 //   sorted in ascending order.
+// - Zero and one-based indexing are supported.
 // - New elements are inserted so that the index order is preserved.
 //
 template <typename T>
 class Sparse_vector {
 public:
     using value_type = T;
-    using size_type = std::ptrdiff_t;
+    using size_type = Index;
     using iterator = typename std::vector<T>::iterator;
     using const_iterator = typename std::vector<T>::const_iterator;
 
@@ -47,8 +51,8 @@ public:
     {
     }
 
-    template <std::ptrdiff_t n>
-    Sparse_vector(const T (&val)[n], const std::ptrdiff_t (&loc)[n]);
+    template <Index n>
+    Sparse_vector(const T (&val)[n], const Index (&loc)[n]);
 
     // Construct from initializer list.
     Sparse_vector(std::initializer_list<std::pair<size_type, T>> list);
@@ -123,9 +127,8 @@ private:
 };
 
 template <typename T>
-template <std::ptrdiff_t n>
-Sparse_vector<T>::Sparse_vector(const T (&val)[n],
-                                const std::ptrdiff_t (&loc)[n])
+template <Index n>
+Sparse_vector<T>::Sparse_vector(const T (&val)[n], const Index (&loc)[n])
     : elems(n), indx(n)
 {
     for (size_type i = 0; i < n; ++i) {

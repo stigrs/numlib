@@ -21,21 +21,15 @@ namespace Numlib {
 struct slice {
     slice() : start(-1), length(-1), stride(1) {}
 
-    explicit slice(std::ptrdiff_t s) : start(s), length(-1), stride(1) {}
+    explicit slice(Index s) : start(s), length(-1), stride(1) {}
 
-    slice(std::ptrdiff_t s, std::ptrdiff_t l, std::ptrdiff_t n = 1)
-        : start(s), length(l), stride(n)
-    {
-    }
+    slice(Index s, Index l, Index n = 1) : start(s), length(l), stride(n) {}
 
-    std::ptrdiff_t operator()(std::ptrdiff_t i) const
-    {
-        return start + i * stride;
-    }
+    Index operator()(Index i) const { return start + i * stride; }
 
-    std::ptrdiff_t start;
-    std::ptrdiff_t length;
-    std::ptrdiff_t stride;
+    Index start;
+    Index length;
+    Index stride;
 };
 
 inline std::ostream& operator<<(std::ostream& to, const slice& s)

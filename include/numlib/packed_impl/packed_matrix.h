@@ -29,7 +29,7 @@ template <typename T, Uplo_scheme Uplo>
 class Packed_matrix {
 public:
     using value_type = T;
-    using size_type = std::ptrdiff_t;
+    using size_type = Index;
     using iterator = typename std::vector<T>::iterator;
     using const_iterator = typename std::vector<T>::const_iterator;
 
@@ -52,7 +52,7 @@ public:
     }
 
     // Construct from C array.
-    template <std::ptrdiff_t np>
+    template <Index np>
     Packed_matrix(size_type n, const T (&ap)[np]);
 
     // Construct from matrix.
@@ -133,7 +133,7 @@ private:
 };
 
 template <typename T, Uplo_scheme Uplo>
-template <std::ptrdiff_t np>
+template <Index np>
 Packed_matrix<T, Uplo>::Packed_matrix(size_type n, const T (&ap)[np])
     : elems(np), extents{n, n}
 {
@@ -272,8 +272,7 @@ inline const T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j) const
 }
 
 template <typename T, Uplo_scheme Uplo>
-inline std::ptrdiff_t Packed_matrix<T, Uplo>::offset(size_type i,
-                                                     size_type j) const
+inline Index Packed_matrix<T, Uplo>::offset(size_type i, size_type j) const
 {
     static_assert(Uplo == lower_triang || Uplo == upper_triang,
                   "Packed_matrix: bad storage scheme");

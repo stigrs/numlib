@@ -10,12 +10,9 @@
 #include <chrono>
 #include <iostream>
 
-
 using Timer = std::chrono::duration<double, std::milli>;
 
-void print(int n,
-           const Timer& t_arma,
-           const Timer& t_eigs)
+void print(int n, const Timer& t_arma, const Timer& t_eigs)
 {
     std::cout << "Eigenvalues for symmetric matrix:\n"
               << "---------------------------------\n"
@@ -31,15 +28,15 @@ void benchmark(int n)
     arma::vec eigval(n);
     auto t1 = std::chrono::high_resolution_clock::now();
     arma::eig_sym(eigval, eigvec, a2);
-    auto t2      = std::chrono::high_resolution_clock::now();
+    auto t2 = std::chrono::high_resolution_clock::now();
     Timer t_arma = t2 - t1;
 
-    Numlib::Mat<double> b1 = Numlib::randu(n, n);
+    Numlib::Mat<double> b1 = Numlib::randu<Numlib::Mat<double>>(n, n);
     Numlib::Mat<double> b2 = Numlib::transpose(b1) * b1;
     Numlib::Vec<double> wr(n);
     t1 = std::chrono::high_resolution_clock::now();
     Numlib::eigs(b2, wr);
-    t2           = std::chrono::high_resolution_clock::now();
+    t2 = std::chrono::high_resolution_clock::now();
     Timer t_eigs = t2 - t1;
 
     print(n, t_arma, t_eigs);

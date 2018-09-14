@@ -56,10 +56,13 @@ class Packed_matrix;
 
 //------------------------------------------------------------------------------
 //
-// Sparse vector class:
+// Sparse vector and matrix classes:
 
 template <typename T>
 class Sparse_vector;
+
+template <typename T>
+class Sparse_matrix;
 
 } // namespace Numlib
 
@@ -75,6 +78,7 @@ class Sparse_vector;
 #include <numlib/band_impl/band_matrix.h>
 #include <numlib/packed_impl/packed_matrix.h>
 #include <numlib/sparse_impl/sparse_vector.h>
+#include <numlib/sparse_impl/sparse_matrix.h>
 
 // Arithmetic operations:
 #include <numlib/matrix_impl/operations.h>
@@ -84,5 +88,8 @@ class Sparse_vector;
 
 // Type aliases:
 #include <numlib/matrix_impl/type_alias.h>
+#include <numlib/band_impl/type_alias.h>
+#include <numlib/packed_impl/type_alias.h>
+#include <numlib/sparse_impl/type_alias.h>
 
 #endif // NUMLIB_MATRIX_H
