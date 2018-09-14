@@ -25,7 +25,7 @@
 # endif()
 #
 # Note: 
-# - Currently, only the Intel LP64 interface layer is used for Intel(R) 64
+# - Currently, the Intel LP64 interface layer is used for Intel(R) 64
 #   architecture.
 
 if(WIN32)
