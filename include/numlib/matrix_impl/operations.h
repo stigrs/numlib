@@ -449,13 +449,13 @@ inline void mm_mul(const Matrix<double, 2>& a,
     constexpr double alpha = 1.0;
     constexpr double beta = 0.0;
 
-    const BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
-    const BLAS_INT n = narrow_cast<BLAS_INT>(b.cols());
-    const BLAS_INT k = narrow_cast<BLAS_INT>(a.cols());
+    const Index m = a.rows();
+    const Index n = b.cols();
+    const Index k = a.cols();
 
-    const BLAS_INT lda = k;
-    const BLAS_INT ldb = n;
-    const BLAS_INT ldc = n;
+    const Index lda = k;
+    const Index ldb = n;
+    const Index ldc = n;
 
     res.resize(ldc, m);
 
@@ -532,14 +532,14 @@ inline void mv_mul(const Matrix<double, 2>& a,
 
     assert(x.size() == a.cols());
 
-    const BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+    const Index m = a.rows();
+    const Index n = a.cols();
 
     y.resize(m);
 
-    const BLAS_INT lda = n;
-    const BLAS_INT incx = narrow_cast<BLAS_INT>(x.descriptor().strides[0]);
-    const BLAS_INT incy = narrow_cast<BLAS_INT>(y.descriptor().strides[0]);
+    const Index lda = n;
+    const Index incx = x.descriptor().strides[0];
+    const Index incy = y.descriptor().strides[0];
 
     cblas_dgemv(CblasRowMajor, CblasNoTrans, m, n, alpha, a.data(), lda,
                 x.data(), incx, beta, y.data(), incy);
