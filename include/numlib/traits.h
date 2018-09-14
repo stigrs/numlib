@@ -19,7 +19,11 @@
 // Define integer type used by BLAS and LAPACK.
 #ifdef USE_MKL
 #include <mkl.h>
+#ifdef MKL_ILP64
+#define BLAS_INT MKL_INT64
+#else
 #define BLAS_INT MKL_INT
+#endif
 #else
 #define BLAS_INT int
 #endif
