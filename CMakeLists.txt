@@ -25,10 +25,6 @@ endif()
 
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_BENCH "Build benchmarks." ON)
-if(BUILD_BENCH)
-# Only OpenBLAS is used for benchmarking.
-	unset(ENV{MKLROOT})
-endif()
 
 # Set default MSVC compiler options to avoid D9025 error.
 if(MSVC)
