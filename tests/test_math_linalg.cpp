@@ -100,6 +100,16 @@ TEST_CASE("test_math_linalg")
         CHECK(std::abs(norm(v) - ans) < 1.0e-12);
     }
 
+    SECTION("norm_matrix")
+    {
+		// Numpy:
+        Mat<double> a = {{-4.0, -3.0, -2.0}, {-1.0, 0.0, 1.0}, {2.0, 3.0, 4.0}};
+
+		CHECK(std::abs(norm(a, 'F') - 7.745966692414834) < 1.0e-12);
+		CHECK(std::abs(norm(a, 'I') - 9.0) < 1.0e-12);
+		CHECK(std::abs(norm(a, '1') - 7.0) < 1.0e-12);
+    }
+
     SECTION("normalize")
     {
         Vec<double> v = {1.0, 2.0, 3.0};
@@ -195,7 +205,7 @@ TEST_CASE("test_math_linalg")
 
     SECTION("qr")
     {
-		// Numpy:
+        // Numpy:
         Mat<double> rans = {
             {-14., -21., 14.}, {0.0, -175.0, 70.0}, {0.0, 0.0, -35.0}};
         Mat<double> qans = {{-0.85714286, 0.39428571, 0.33142857},
@@ -220,7 +230,7 @@ TEST_CASE("test_math_linalg")
             }
         }
 
-		Mat<double> qr = q * r;
+        Mat<double> qr = q * r;
 
         for (Index i = 0; i < a.rows(); ++i) {
             for (Index j = 0; j < a.cols(); ++j) {

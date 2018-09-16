@@ -191,11 +191,9 @@ inline Enable_if<Matrix_type<M>(), typename M::value_type> trace(const M& mat)
 
 //------------------------------------------------------------------------------
 //
-// Vector norm:
-//
-// TODO: Only Euclidean vector norm is implemented so far.
+// Vector and matrix norms:
 
-// Norm of dense vector.
+// Euclidean norm of dense vector.
 template <typename M>
 inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(),
                  typename M::value_type>
@@ -215,6 +213,7 @@ norm(const M& vec)
     return result;
 }
 
+// Euclidean norm of sparse vector.
 template <typename T>
 inline T norm(const Sparse_vector<T>& vec)
 {
@@ -256,6 +255,27 @@ inline Sparse_vector<T> normalize(const Sparse_vector<T>& vec)
         result /= n;
     }
     return result;
+}
+
+// Matrix norm of a general rectangular matrix:
+//
+// Types of matrix norms:
+// - M, m:       largest absolute value of the matrix
+// - 1, O, o:    1-norm of the matrix (maximum column sum)
+// - I, i:       infinity norm of the matrix (maximum row sum)
+// - F, f, E, e: Frobenius norm of the matrix (square root of sum of squares)
+//
+inline double norm(const Mat<double>& a, char norm)
+{
+    assert(norm == 'M' || norm == 'm' || norm == '1' || norm == 'O' ||
+           norm == 'o' || norm == 'I' || norm == 'i' || norm == 'F' ||
+           norm == 'f' || norm == 'E' || norm == 'e');
+
+	BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+	BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+	BLAS_INT lda = n;
+
+	return LAPACKE_dlange(LAPACK_ROW_MAJOR, norm, m, n, a.data(), lda);
 }
 
 //------------------------------------------------------------------------------
@@ -395,7 +415,7 @@ inline void qr(const Mat<double>& a, Mat<double>& q, Mat<double>& r)
     Vec<double> tau(std::min(m, n));
 
     q.resize(m, n);
-	q = a;
+    q = a;
 
     BLAS_INT info =
         LAPACKE_dgeqrf(LAPACK_ROW_MAJOR, m, n, q.data(), lda, tau.data());
@@ -405,16 +425,15 @@ inline void qr(const Mat<double>& a, Mat<double>& q, Mat<double>& r)
 
     // Compute Q:
 
-    info =
-        LAPACKE_dorgqr(LAPACK_ROW_MAJOR, m, n, n, q.data(), lda, tau.data());
+    info = LAPACKE_dorgqr(LAPACK_ROW_MAJOR, m, n, n, q.data(), lda, tau.data());
     if (info != 0) {
         throw Math_error("dorgqr failed");
     }
 
-	// Compute R:
+    // Compute R:
 
-	r.resize(m, n);
-	mm_mul(transpose(q), a, r);
+    r.resize(m, n);
+    mm_mul(transpose(q), a, r);
 }
 
 // Singular value decomposition.
