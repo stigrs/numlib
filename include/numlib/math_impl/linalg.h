@@ -279,6 +279,36 @@ inline double norm(const Mat<double>& a, char norm)
 }
 
 //------------------------------------------------------------------------------
+
+// Determinant of square matrix.
+double det(const Mat<double>& a);
+
+// Matrix inversion.
+inline void inv(Mat<double>& a)
+{
+    assert(a.rows() == a.cols());
+
+    if (det(a) == 0.0) {
+        throw Math_error("inv: matrix not invertible");
+    }
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
+    const BLAS_INT lda = n;
+
+    Vec<BLAS_INT> ipiv(n);
+    lu(a, ipiv); // perform LU factorization
+
+    BLAS_INT info =
+        LAPACKE_dgetri(LAPACK_ROW_MAJOR, n, a.data(), lda, ipiv.data());
+    if (info != 0) {
+        throw Math_error("dgetri: matrix inversion failed");
+    }
+}
+
+//------------------------------------------------------------------------------
+//
+// Matrix condition numbers:
+
+//------------------------------------------------------------------------------
 //
 // Vector dot and cross products:
 
@@ -456,32 +486,6 @@ inline void svd(Mat<double>& a, Vec<double>& s, Mat<double>& u, Mat<double>& vt)
                        s.data(), u.data(), ldu, vt.data(), ldvt, superb.data());
     if (info != 0) {
         throw Math_error("dgesvd failed");
-    }
-}
-
-//------------------------------------------------------------------------------
-
-// Determinant of square matrix.
-double det(const Mat<double>& a);
-
-// Matrix inversion.
-inline void inv(Mat<double>& a)
-{
-    assert(a.rows() == a.cols());
-
-    if (det(a) == 0.0) {
-        throw Math_error("inv: matrix not invertible");
-    }
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
-    const BLAS_INT lda = n;
-
-    Vec<BLAS_INT> ipiv(n);
-    lu(a, ipiv); // perform LU factorization
-
-    BLAS_INT info =
-        LAPACKE_dgetri(LAPACK_ROW_MAJOR, n, a.data(), lda, ipiv.data());
-    if (info != 0) {
-        throw Math_error("dgetri: matrix inversion failed");
     }
 }
 
