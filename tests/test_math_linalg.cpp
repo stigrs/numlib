@@ -193,6 +193,50 @@ TEST_CASE("test_math_linalg")
         }
     }
 
+    SECTION("svd")
+    {
+        // Example from Intel MKL:
+        Vec<double> sans = {27.47, 22.64, 8.56, 5.99, 2.01};
+        Mat<double> uans = {{-0.59, 0.26, 0.36, 0.31, 0.23},
+                            {-0.40, 0.24, -0.22, -0.75, -0.36},
+                            {-0.03, -0.60, -0.45, 0.23, -0.31},
+                            {-0.43, 0.24, -0.69, 0.33, 0.16},
+                            {-0.47, -0.35, 0.39, 0.16, -0.52},
+                            {0.29, 0.58, -0.02, 0.38, -0.65}};
+        Mat<double> vtans = {{-0.25, -0.40, -0.69, -0.37, -0.41},
+                             {0.81, 0.36, -0.25, -0.37, -0.10},
+                             {-0.26, 0.70, -0.22, 0.39, -0.49},
+                             {0.40, -0.45, 0.25, 0.43, -0.62},
+                             {-0.22, 0.14, 0.59, -0.63, -0.44}};
+
+        Mat<double> a = {{8.79, 9.93, 9.83, 5.45, 3.16},
+                         {6.11, 6.91, 5.04, -0.27, 7.98},
+                         {-9.15, -7.93, 4.86, 4.85, 3.01},
+                         {9.57, 1.64, 8.83, 0.74, 5.8},
+                         {-3.49, 4.02, 9.80, 10.00, 4.27},
+                         {9.84, 0.15, -8.99, -6.02, -5.31}};
+
+        Vec<double> s;
+        Mat<double> u;
+        Mat<double> vt;
+
+        svd(a, s, u, vt);
+
+        for (Index i = 0; i < sans.size(); ++i) {
+            CHECK(std::abs(s(i) - sans(i)) < 5.0e-3);
+        }
+        for (Index i = 0; i < uans.rows(); ++i) {
+            for (Index j = 0; j < uans.cols(); ++j) {
+                CHECK(std::abs(u(i, j) - uans(i, j)) < 5.0e-3);
+            }
+        }
+        for (Index i = 0; i < vtans.rows(); ++i) {
+            for (Index j = 0; j < vtans.cols(); ++j) {
+                CHECK(std::abs(vt(i, j) - vtans(i, j)) < 5.0e-3);
+            }
+        }
+    }
+
     SECTION("eigs_dense")
     {
         // Numpy:
@@ -433,9 +477,10 @@ TEST_CASE("test_math_linalg")
         }
     }
 
+#ifdef USE_MKL
     SECTION("sparse_linsolve")
     {
-		// Example from Matlab:
+        // Example from Matlab:
         Vec<double> xans = {1.0, 2.0, 3.0, 4.0, 5.0};
 
         Mat<double> A = {{0.0, 2.0, 0.0, 1.0, 0.0},
@@ -455,4 +500,5 @@ TEST_CASE("test_math_linalg")
             CHECK(std::abs(x(i, 0) - xans(i)) < 1.0e-12);
         }
     }
+#endif
 }

@@ -383,6 +383,29 @@ inline void lu(Mat<double>& a, Vec<BLAS_INT>& ipiv)
     }
 }
 
+// Singular value decomposition.
+inline void svd(Mat<double>& a, Vec<double>& s, Mat<double>& u, Mat<double>& vt)
+{
+    BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+    BLAS_INT lda = n;
+    BLAS_INT ldu = m;
+    BLAS_INT ldvt = n;
+
+	s.resize(n);
+    u.resize(m, ldu);
+    vt.resize(n, ldvt);
+
+    Vec<double> superb(std::min(m, n) - 1);
+
+    BLAS_INT info =
+        LAPACKE_dgesvd(LAPACK_ROW_MAJOR, 'A', 'A', m, n, a.data(), lda,
+                       s.data(), u.data(), ldu, vt.data(), ldvt, superb.data());
+	if (info != 0) {
+		throw Math_error("dgesvd failed");
+	}
+}
+
 //------------------------------------------------------------------------------
 
 // Determinant of square matrix.
