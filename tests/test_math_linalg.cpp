@@ -193,6 +193,42 @@ TEST_CASE("test_math_linalg")
         }
     }
 
+    SECTION("qr")
+    {
+		// Numpy:
+        Mat<double> rans = {
+            {-14., -21., 14.}, {0.0, -175.0, 70.0}, {0.0, 0.0, -35.0}};
+        Mat<double> qans = {{-0.85714286, 0.39428571, 0.33142857},
+                            {-0.42857143, -0.90285714, -0.03428571},
+                            {0.28571429, -0.17142857, 0.94285714}};
+        Mat<double> a = {
+            {12.0, -51.0, 4.0}, {6.0, 167.0, -68.0}, {-4.0, 24.0, -41.0}};
+
+        Mat<double> q;
+        Mat<double> r;
+
+        qr(a, q, r);
+
+        for (Index i = 0; i < q.rows(); ++i) {
+            for (Index j = 0; j < q.cols(); ++j) {
+                CHECK(std::abs(q(i, j) - qans(i, j)) < 1.0e-8);
+            }
+        }
+        for (Index i = 0; i < r.rows(); ++i) {
+            for (Index j = 0; j < r.cols(); ++j) {
+                CHECK(std::abs(r(i, j) - rans(i, j)) < 1.0e-12);
+            }
+        }
+
+		Mat<double> qr = q * r;
+
+        for (Index i = 0; i < a.rows(); ++i) {
+            for (Index j = 0; j < a.cols(); ++j) {
+                CHECK(std::abs(a(i, j) - qr(i, j)) < 1.0e-12);
+            }
+        }
+    }
+
     SECTION("svd")
     {
         // Example from Intel MKL:

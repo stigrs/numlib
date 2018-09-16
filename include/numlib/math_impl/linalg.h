@@ -383,6 +383,40 @@ inline void lu(Mat<double>& a, Vec<BLAS_INT>& ipiv)
     }
 }
 
+// QR factorization.
+inline void qr(const Mat<double>& a, Mat<double>& q, Mat<double>& r)
+{
+    // Compute QR factorization:
+
+    const BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+    const BLAS_INT lda = n;
+
+    Vec<double> tau(std::min(m, n));
+
+    q.resize(m, n);
+	q = a;
+
+    BLAS_INT info =
+        LAPACKE_dgeqrf(LAPACK_ROW_MAJOR, m, n, q.data(), lda, tau.data());
+    if (info != 0) {
+        throw Math_error("dgeqrf failed");
+    }
+
+    // Compute Q:
+
+    info =
+        LAPACKE_dorgqr(LAPACK_ROW_MAJOR, m, n, n, q.data(), lda, tau.data());
+    if (info != 0) {
+        throw Math_error("dorgqr failed");
+    }
+
+	// Compute R:
+
+	r.resize(m, n);
+	mm_mul(transpose(q), a, r);
+}
+
 // Singular value decomposition.
 inline void svd(Mat<double>& a, Vec<double>& s, Mat<double>& u, Mat<double>& vt)
 {
@@ -392,7 +426,7 @@ inline void svd(Mat<double>& a, Vec<double>& s, Mat<double>& u, Mat<double>& vt)
     BLAS_INT ldu = m;
     BLAS_INT ldvt = n;
 
-	s.resize(n);
+    s.resize(n);
     u.resize(m, ldu);
     vt.resize(n, ldvt);
 
@@ -401,9 +435,9 @@ inline void svd(Mat<double>& a, Vec<double>& s, Mat<double>& u, Mat<double>& vt)
     BLAS_INT info =
         LAPACKE_dgesvd(LAPACK_ROW_MAJOR, 'A', 'A', m, n, a.data(), lda,
                        s.data(), u.data(), ldu, vt.data(), ldvt, superb.data());
-	if (info != 0) {
-		throw Math_error("dgesvd failed");
-	}
+    if (info != 0) {
+        throw Math_error("dgesvd failed");
+    }
 }
 
 //------------------------------------------------------------------------------
