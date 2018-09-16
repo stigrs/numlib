@@ -99,21 +99,21 @@ void Numlib::eig(double emin,
 {
     // Intitialize FEAST:
 
-    BLAS_INT fpm[128];
-    feastinit((BLAS_INT*) fpm);
+    MKL_INT fpm[128];
+    feastinit((MKL_INT*) fpm);
 #ifndef NDEBUG
     fpm[0] = 1; // print runtime status
 #endif
 
     // Solve eigenvalue problem:
 
-    BLAS_INT n = narrow_cast<BLAS_INT>(ab.cols());
-    BLAS_INT kla = narrow_cast<BLAS_INT>(ab.upper());
-    BLAS_INT lda = narrow_cast<BLAS_INT>(ab.leading_dim());
-    BLAS_INT m0 = n;
-    BLAS_INT loop = 0;
-    BLAS_INT m = m0;
-    BLAS_INT info = 0;
+    MKL_INT n = narrow_cast<MKL_INT>(ab.cols());
+    MKL_INT kla = narrow_cast<MKL_INT>(ab.upper());
+    MKL_INT lda = narrow_cast<MKL_INT>(ab.leading_dim());
+    MKL_INT m0 = n;
+    MKL_INT loop = 0;
+    MKL_INT m = m0;
+    MKL_INT info = 0;
 
     double epsout = 0.0; // relative error on the trace (not returned)
     Vec<double> res(m0); // residual vector (not returned)
@@ -121,7 +121,7 @@ void Numlib::eig(double emin,
     evec.resize(n, m0);
     eval.resize(m0);
 
-    dfeast_sbev("F", &n, &kla, ab.data(), &lda, (BLAS_INT*) fpm, &epsout, &loop,
+    dfeast_sbev("F", &n, &kla, ab.data(), &lda, (MKL_INT*) fpm, &epsout, &loop,
                 &emin, &emax, &m0, eval.data(), evec.data(), &m, res.data(),
                 &info);
     if (info != 0) {
@@ -144,19 +144,19 @@ void Numlib::eig(double emin,
 {
     // Initialize FEAST:
 
-    BLAS_INT fpm[128];
-    feastinit((BLAS_INT*) fpm);
+    MKL_INT fpm[128];
+    feastinit((MKL_INT*) fpm);
 #ifndef NDEBUG
     fpm[0] = 1; // print runtime status
 #endif
 
     // Solve eigenvalue problem:
 
-    BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
-    BLAS_INT m0 = n;
-    BLAS_INT loop = 0;
-    BLAS_INT m = m0;
-    BLAS_INT info = 0;
+    MKL_INT n = narrow_cast<MKL_INT>(a.cols());
+    MKL_INT m0 = n;
+    MKL_INT loop = 0;
+    MKL_INT m = m0;
+    MKL_INT info = 0;
 
     auto ia = a.row_index_one_based(); // FEAST only support one-based indexing
     auto ja = a.columns_one_based();
@@ -167,7 +167,7 @@ void Numlib::eig(double emin,
     evec.resize(n, m0);
     eval.resize(m0);
 
-    dfeast_scsrev("F", &n, a.data(), ia.data(), ja.data(), (BLAS_INT*) fpm,
+    dfeast_scsrev("F", &n, a.data(), ia.data(), ja.data(), (MKL_INT*) fpm,
                   &epsout, &loop, &emin, &emax, &m0, eval.data(), evec.data(),
                   &m, res.data(), &info);
     if (info != 0) {
@@ -178,6 +178,45 @@ void Numlib::eig(double emin,
 
     eval = eval(slice{0, m});
     evec = evec(slice{0, n}, slice{0, m});
+}
+#endif
+
+#ifdef USE_MKL
+void Numlib::linsolve(const Numlib::Sp_mat<double>& a,
+                      Numlib::Mat<double>& b,
+                      Numlib::Mat<double>& x)
+{
+    assert(b.rows() == a.rows());
+    x.resize(b.rows(), b.cols());
+
+    MKL_INT n = narrow_cast<MKL_INT>(b.rows());
+    MKL_INT nrhs = narrow_cast<MKL_INT>(b.cols());
+
+    // Initialize PARDISO:
+
+    void* pt[64];       // internal solver memory pointer
+    MKL_INT iparm[64];  // PARDISO control parameters
+    MKL_INT mtype = 11; // real and nonsymmetric matrix
+    MKL_INT maxfct = 1; // max factors kept in memory
+    MKL_INT mnum = 1;   // which matrix to factorize
+    MKL_INT phase = 13; // analysis, numerical factorization, solve
+    MKL_INT msglvl = 0; // no print of statistical information
+    MKL_INT error = 0;  // initialize error flag
+
+    pardisoinit((void*) pt, &mtype, (MKL_INT*) iparm); // set default values
+    iparm[34] = 1;                                     // zero-based indexing
+
+    // Solve linear system of equations:
+
+    Numlib::Vec<MKL_INT> perm(n);
+
+    pardiso((void*) pt, &maxfct, &mnum, &mtype, &phase, &n, a.data(),
+            a.row_index().data(), a.columns().data(), perm.data(), &nrhs,
+            (MKL_INT*) iparm, &msglvl, b.data(), x.data(), &error);
+
+    if (error != 0) {
+        throw Math_error("could not solve sparse linear system of equations");
+    }
 }
 #endif
 

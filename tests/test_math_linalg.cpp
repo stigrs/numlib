@@ -432,4 +432,27 @@ TEST_CASE("test_math_linalg")
             CHECK(std::abs(B(i, 0) - x(i)) < 1.0e-12);
         }
     }
+
+    SECTION("sparse_linsolve")
+    {
+		// Example from Matlab:
+        Vec<double> xans = {1.0, 2.0, 3.0, 4.0, 5.0};
+
+        Mat<double> A = {{0.0, 2.0, 0.0, 1.0, 0.0},
+                         {4.0, -1.0, -1.0, 0.0, 0.0},
+                         {0.0, 0.0, 0.0, 3.0, -6.0},
+                         {-2.0, 0.0, 0.0, 0.0, 2.0},
+                         {0.0, 0.0, 4.0, 2.0, 0.0}};
+
+        Sp_mat<double> SA = gather(A);
+
+        Mat<double> B = {{8.0}, {-1.0}, {-18.0}, {8.0}, {20.0}};
+        Mat<double> x;
+
+        linsolve(SA, B, x);
+
+        for (Index i = 0; i < xans.size(); ++i) {
+            CHECK(std::abs(x(i, 0) - xans(i)) < 1.0e-12);
+        }
+    }
 }

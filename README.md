@@ -11,9 +11,9 @@ and Intel MKL are supported.
 * Band matrices (column-major storage order)
 * Packed matrices (row-major storage order)
 * Sparse vectors and matrices (CSR3 storage format)
-* A few basic mathematical functions not provided by the STL
-* Basic numerical derivation and integration methods
-* Basic linear algebra methods
+* Selected mathematical functions not provided by the STL
+* Numerical derivation and integration methods
+* Linear algebra methods
 * Mathematical constants, metric prefixes, physical constants, and
   conversion factors
 

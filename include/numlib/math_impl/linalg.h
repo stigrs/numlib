@@ -526,6 +526,11 @@ inline void linsolve(Mat<double>& a, Mat<double>& b)
     }
 }
 
+// Solve linear system of equations for a real, nonsymmetric sparse matrix.
+#ifdef USE_MKL
+void linsolve(const Sp_mat<double>& a, Mat<double>& b, Mat<double>& x);
+#endif
+
 //------------------------------------------------------------------------------
 
 // Schmidt orthogonalization of n orbitals in a.
