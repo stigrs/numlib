@@ -175,6 +175,93 @@ prod(const M& mat, Index dim)
 
 //------------------------------------------------------------------------------
 //
+// Matrix and vector products:
+
+// Dot product of dense vectors.
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(),
+                 typename M1::value_type>
+dot(const M1& x, const M2& y)
+{
+    static_assert(M1::order == 1, "bad rank for dot product");
+    static_assert(M2::order == 1, "bad rank for dot product");
+    assert(same_extents(x, y));
+
+    constexpr auto zero = Value_type<M1>{0};
+    return std::inner_product(x.begin(), x.end(), y.begin(), zero);
+}
+
+// Dot product of sparse vectors.
+template <typename T>
+inline T dot(const Sparse_vector<T>& x, const Sparse_vector<T>& y)
+{
+    assert(x.size() == y.size());
+
+    T result{0};
+    for (Index i = 0; i < x.size(); ++i) { // inefficient for large vectors
+        result += x(i) * y(i);
+    }
+    return result;
+}
+
+// Dot product of a sparse and a dense vector.
+template <typename T>
+inline T dot(const Sparse_vector<T>& x, const Vec<T>& y)
+{
+    T result{0};
+
+    Index i = 0;
+    for (const auto& v : x) {
+        result += v * y(x.loc(i));
+        ++i;
+    }
+    return result;
+}
+
+// Dot product of a dense and a sparse vector.
+template <typename T>
+inline T dot(const Vec<T>& y, const Sparse_vector<T>& x)
+{
+    return dot(x, y);
+}
+
+// Cross product.
+template <typename T>
+inline void cross(const Vec<T>& x, const Vec<T>& y, Vec<T>& res)
+{
+    assert(x.size() == 3 && x.size() == y.size());
+    res.resize(3);
+    res(0) = x(1) * y(2) - x(2) * y(1);
+    res(1) = x(2) * y(0) - x(0) * y(2);
+    res(2) = x(0) * y(1) - x(1) * y(0);
+}
+
+// Cross product.
+template <typename M1, typename M2>
+inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(),
+                 Vec<typename M1::value_type>>
+cross(const M1& x, const M2& y)
+{
+    static_assert(Same<Value_type<M1>(), Value_type<M2>()>(),
+                  "cross: different value types");
+
+    Vec<typename M1::value_type> res;
+    cross(x, y, res);
+    return res;
+}
+
+// Compute vector-scalar product and add the result to a vector.
+template <typename T>
+inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
+{
+    assert(same_extents(x, y));
+    for (Index i = 0; i < x.size(); ++i) {
+        y(i) = a * x(i) + y(i);
+    }
+}
+
+//------------------------------------------------------------------------------
+//
 // Compute trace of a square matrix:
 
 template <typename M>
@@ -309,89 +396,6 @@ inline void inv(Mat<double>& a)
 // Matrix condition numbers:
 
 //------------------------------------------------------------------------------
-//
-// Vector dot and cross products:
-
-template <typename M1, typename M2>
-inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(),
-                 typename M1::value_type>
-dot(const M1& x, const M2& y)
-{
-    static_assert(M1::order == 1, "bad rank for dot product");
-    static_assert(M2::order == 1, "bad rank for dot product");
-    assert(same_extents(x, y));
-
-    constexpr auto zero = Value_type<M1>{0};
-    return std::inner_product(x.begin(), x.end(), y.begin(), zero);
-}
-
-template <typename T>
-inline T dot(const Sparse_vector<T>& x, const Sparse_vector<T>& y)
-{
-    assert(x.size() == y.size());
-
-    T result{0};
-    for (Index i = 0; i < x.size(); ++i) { // inefficient for large vectors
-        result += x(i) * y(i);
-    }
-    return result;
-}
-
-template <typename T>
-inline T dot(const Sparse_vector<T>& x, const Vec<T>& y)
-{
-    T result{0};
-
-    Index i = 0;
-    for (const auto& v : x) {
-        result += v * y(x.loc(i));
-        ++i;
-    }
-    return result;
-}
-
-template <typename T>
-inline T dot(const Vec<T>& y, const Sparse_vector<T>& x)
-{
-    return dot(x, y);
-}
-
-template <typename T>
-inline void cross(const Vec<T>& x, const Vec<T>& y, Vec<T>& res)
-{
-    assert(x.size() == 3 && x.size() == y.size());
-    res.resize(3);
-    res(0) = x(1) * y(2) - x(2) * y(1);
-    res(1) = x(2) * y(0) - x(0) * y(2);
-    res(2) = x(0) * y(1) - x(1) * y(0);
-}
-
-template <typename M1, typename M2>
-inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(),
-                 Vec<typename M1::value_type>>
-cross(const M1& x, const M2& y)
-{
-    static_assert(Same<Value_type<M1>(), Value_type<M2>()>(),
-                  "cross: different value types");
-
-    Vec<typename M1::value_type> res;
-    cross(x, y, res);
-    return res;
-}
-
-//------------------------------------------------------------------------------
-
-// Compute vector-scalar product and add the result to a vector.
-template <typename T>
-inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
-{
-    assert(same_extents(x, y));
-    for (Index i = 0; i < x.size(); ++i) {
-        y(i) = a * x(i) + y(i);
-    }
-}
-
-//------------------------------------------------------------------------------
 
 // Transpose.
 template <typename T>
@@ -412,7 +416,7 @@ inline Mat<T> transpose(const Mat<T>& m)
 
 //------------------------------------------------------------------------------
 //
-// Matrix decomposition:
+// Matrix decompositions:
 
 // LU factorization.
 inline void lu(Mat<double>& a, Vec<BLAS_INT>& ipiv)
