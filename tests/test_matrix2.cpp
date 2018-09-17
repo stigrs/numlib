@@ -13,7 +13,7 @@ TEST_CASE("test_matrix2")
 
     Matrix<int, 2> m2 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
 
-    SECTION("rank") { CHECK(m2.rank() == 2); }
+    SECTION("order") { CHECK(m2.order == 2); }
     SECTION("size") { CHECK(m2.size() == 12); }
 
     SECTION("extents")
@@ -90,18 +90,18 @@ TEST_CASE("test_matrix2")
         auto m31 = m3(slice{1, 2}, 1);
         auto m32 = m3(slice{1, 2}, 0);
 
-        CHECK(m30.rank() == 2);
+        CHECK(m30.order == 2);
         CHECK(m30.size() == 4);
         CHECK(m30(0, 0) == 01);
         CHECK(m30(1, 0) == 11);
         CHECK(m30(0, 1) == 02);
         CHECK(m30(1, 1) == 12);
 
-        CHECK(m31.rank() == 2);
+        CHECK(m31.order == 2);
         CHECK(m31(0, 0) == 12);
         CHECK(m31(1, 0) == 22);
 
-        CHECK(m32.rank() == 2);
+        CHECK(m32.order == 2);
         CHECK(m32(0, 0) == 11);
         CHECK(m32(1, 0) == 21);
 

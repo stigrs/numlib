@@ -21,7 +21,7 @@ namespace Numlib {
 //
 // Template parameters:
 //   T - The underlying value type of the matrix, possibly const
-//   N - The rank of the matrix
+//   N - The order of the matrix
 //
 template <typename T, std::size_t N>
 class Matrix_ref : public Matrix_base<T, N> {
@@ -125,7 +125,7 @@ public:
     Matrix_ref<T, N - 1> column(size_type n);
     Matrix_ref<const T, N - 1> column(size_type n) const;
 
-    // Return a reference to the diagonal of a square Matrix_ref of rank 2.
+    // Return a reference to the diagonal of a square Matrix_ref of order 2.
     Matrix_ref<T, N - 1> diag();
     Matrix_ref<const T, N - 1> diag() const;
 
@@ -269,7 +269,7 @@ inline Matrix_ref<const T, N - 1> Matrix_ref<T, N>::column(size_type n) const
 template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix_ref<T, N>::diag()
 {
-    static_assert(N == 2, "diag: only defined for Matrix_ref of rank 2");
+    static_assert(N == 2, "diag: only defined for Matrix_ref of order 2");
     assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;
@@ -284,7 +284,7 @@ inline Matrix_ref<T, N - 1> Matrix_ref<T, N>::diag()
 template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix_ref<T, N>::diag() const
 {
-    static_assert(N == 2, "diag: only defined for Matrix_ref of rank 2");
+    static_assert(N == 2, "diag: only defined for Matrix_ref of order 2");
     assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;

@@ -21,35 +21,49 @@ Numlib::Vec<double> Numlib::linspace(double x1, double x2, Index n)
     return res;
 }
 
-double Numlib::det(const Mat<double>& a)
+void Numlib::schmidt(Mat<double>& a, Index n)
 {
-    assert(a.rows() == a.cols());
+    Index n_out = 0;
+    Index n_orb = n;
+    Index n_bas = a.rows();
 
-    double ddet = 0.0;
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
+    Vec<double> work(n_bas);
+    work = 0.0;
 
-    if (n == 1) {
-        ddet = a(0, 0);
-    }
-    else if (n == 2) {
-        ddet = a(0, 0) * a(1, 1) - a(1, 0) * a(0, 1);
-    }
-    else { // use LU decomposition
-        Mat<double> tmp(a);
-        Vec<BLAS_INT> ipiv;
+    double r_min = 0.1;
 
-        lu(tmp, ipiv);
-
-        BLAS_INT permut = 0;
-        for (BLAS_INT i = 1; i <= n; ++i) {
-            if (i != ipiv(i - 1)) { // Fortran uses base 1
-                permut++;
+    while (n_orb < n_bas) {
+        Index lim = n_orb + n_bas;
+        for (Index i = 0; i < lim; ++i) {
+            if (n_out >= n_bas) {
+                return;
+            }
+            auto an = a.column(n_out);
+            if (i < n_orb) {
+                auto ai = a.column(i);
+                an = ai;
+            }
+            else {
+                an = 0.0;
+                a(i - n_orb, n_out) = 1.0;
+            }
+            for (Index j = 0; j < n_out; ++j) {
+                auto aj = a.column(j);
+                work(j) = dot(aj, an);
+            }
+            for (Index j = 0; j < n_out; ++j) {
+                auto aj = a.column(j);
+                an = an - work(j) * aj;
+            }
+            double r = std::sqrt(dot(an, an));
+            if (r >= r_min) {
+                ++n_out;
+                an /= r;
             }
         }
-        ddet = prod(tmp.diag());
-        ddet *= std::pow(-1.0, narrow_cast<double>(permut));
+        r_min /= 10.0;
+        n_orb = n_out;
     }
-    return ddet;
 }
 
 void Numlib::eig(Mat<double>& a,
@@ -181,6 +195,37 @@ void Numlib::eig(double emin,
 }
 #endif
 
+double Numlib::det(const Mat<double>& a)
+{
+    assert(a.rows() == a.cols());
+
+    double ddet = 0.0;
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
+
+    if (n == 1) {
+        ddet = a(0, 0);
+    }
+    else if (n == 2) {
+        ddet = a(0, 0) * a(1, 1) - a(1, 0) * a(0, 1);
+    }
+    else { // use LU decomposition
+        Mat<double> tmp(a);
+        Vec<BLAS_INT> ipiv;
+
+        lu(tmp, ipiv);
+
+        BLAS_INT permut = 0;
+        for (BLAS_INT i = 1; i <= n; ++i) {
+            if (i != ipiv(i - 1)) { // Fortran uses base 1
+                permut++;
+            }
+        }
+        ddet = prod(tmp.diag());
+        ddet *= std::pow(-1.0, narrow_cast<double>(permut));
+    }
+    return ddet;
+}
+
 #ifdef USE_MKL
 void Numlib::linsolve(const Numlib::Sp_mat<double>& a,
                       Numlib::Mat<double>& b,
@@ -219,48 +264,3 @@ void Numlib::linsolve(const Numlib::Sp_mat<double>& a,
     }
 }
 #endif
-
-void Numlib::schmidt(Mat<double>& a, Index n)
-{
-    Index n_out = 0;
-    Index n_orb = n;
-    Index n_bas = a.rows();
-
-    Vec<double> work(n_bas);
-    work = 0.0;
-
-    double r_min = 0.1;
-
-    while (n_orb < n_bas) {
-        Index lim = n_orb + n_bas;
-        for (Index i = 0; i < lim; ++i) {
-            if (n_out >= n_bas) {
-                return;
-            }
-            auto an = a.column(n_out);
-            if (i < n_orb) {
-                auto ai = a.column(i);
-                an = ai;
-            }
-            else {
-                an = 0.0;
-                a(i - n_orb, n_out) = 1.0;
-            }
-            for (Index j = 0; j < n_out; ++j) {
-                auto aj = a.column(j);
-                work(j) = dot(aj, an);
-            }
-            for (Index j = 0; j < n_out; ++j) {
-                auto aj = a.column(j);
-                an = an - work(j) * aj;
-            }
-            double r = std::sqrt(dot(an, an));
-            if (r >= r_min) {
-                ++n_out;
-                an /= r;
-            }
-        }
-        r_min /= 10.0;
-        n_orb = n_out;
-    }
-}

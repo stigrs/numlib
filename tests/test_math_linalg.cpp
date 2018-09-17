@@ -102,12 +102,12 @@ TEST_CASE("test_math_linalg")
 
     SECTION("norm_matrix")
     {
-		// Numpy:
+        // Numpy:
         Mat<double> a = {{-4.0, -3.0, -2.0}, {-1.0, 0.0, 1.0}, {2.0, 3.0, 4.0}};
 
-		CHECK(std::abs(norm(a, 'F') - 7.745966692414834) < 1.0e-12);
-		CHECK(std::abs(norm(a, 'I') - 9.0) < 1.0e-12);
-		CHECK(std::abs(norm(a, '1') - 7.0) < 1.0e-12);
+        CHECK(std::abs(norm(a, 'F') - 7.745966692414834) < 1.0e-12);
+        CHECK(std::abs(norm(a, 'I') - 9.0) < 1.0e-12);
+        CHECK(std::abs(norm(a, '1') - 7.0) < 1.0e-12);
     }
 
     SECTION("normalize")
@@ -547,4 +547,61 @@ TEST_CASE("test_math_linalg")
         }
     }
 #endif
+
+    SECTION("rcond")
+    {
+        Mat<double> A = hilbert(10);
+        Mat<double> B = identity(5) * 0.01;
+
+        CHECK(std::abs(rcond(A) - 2.8286e-14) < 1.0e-12);
+        CHECK(std::abs(rcond(B) - 1.0) < 1.0e-12);
+    }
+
+    SECTION("kron")
+    {
+        Mat<int> ans = {{1, 1, 0, 0}, {1, 1, 0, 0}, {0, 0, 1, 1}, {0, 0, 1, 1}};
+        Mat<int> res;
+        kron(identity<int>(2), ones<Mat<int>>(2, 2), res);
+
+        CHECK(res == ans);
+    }
+
+    SECTION("lstsq")
+    {
+        // Example from Intel MKL:
+        Mat<double> xans = {{-0.69, -0.24, 0.06},
+                            {-0.80, -0.08, 0.21},
+                            {0.38, 0.12, -0.65},
+                            {0.29, -0.24, 0.42},
+                            {0.29, 0.35, -0.30}};
+
+        Mat<double> a = {{0.12, -8.19, 7.69, -2.26, -4.71},
+                         {-6.91, 2.22, -5.12, -9.08, 9.96},
+                         {-3.33, -8.94, -6.72, -4.40, -9.98},
+                         {3.97, 3.33, -2.74, -7.92, -3.20}};
+
+        Mat<double> b = {{7.30, 0.47, -6.28},
+                         {1.33, 6.58, -3.42},
+                         {2.68, -1.71, 3.46},
+                         {-9.62, -0.79, 0.41},
+                         {0.00, 0.00, 0.00}};
+
+        lstsq(a, b);
+
+        for (Index i = 0; i < b.rows(); ++i) {
+            for (Index j = 0; j < b.cols(); ++j) {
+                CHECK(std::abs(b(i, j) - xans(i, j)) < 5.0e-3);
+            }
+        }
+
+        // Example from Numpy:
+
+        Mat<double> an = {{0.0, 1.0}, {1.0, 1.0}, {2.0, 1.0}, {3.0, 1.0}};
+        Mat<double> y = {{-1.0}, {0.2}, {0.9}, {2.1}};
+
+        lstsq(an, y);
+
+        CHECK(std::abs(y(0, 0) - 1.0) < 1.0e-12);
+        CHECK(std::abs(y(1, 0) + 0.95) < 1.0e-12);
+    }
 }

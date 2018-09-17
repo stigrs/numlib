@@ -13,7 +13,7 @@ TEST_CASE("test_matrix4")
 
     auto m4 = zeros<Hypercube<int>>(2, 3, 4, 5);
 
-    SECTION("rank") { CHECK(m4.rank() == 4); }
+    SECTION("order") { CHECK(m4.order == 4); }
     SECTION("size") { CHECK(m4.size() == 120); }
 
     SECTION("extents")

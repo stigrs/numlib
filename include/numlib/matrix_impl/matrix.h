@@ -23,7 +23,7 @@ namespace Numlib {
 //
 // Template parameters:
 //   T - The element type stored by the matrix
-//   N - The matrix rank
+//   N - The matrix order
 //
 template <typename T, std::size_t N>
 class Matrix : public Matrix_base<T, N> {
@@ -262,7 +262,7 @@ inline Matrix_ref<const T, N - 1> Matrix<T, N>::column(size_type n) const
 template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix<T, N>::diag()
 {
-    static_assert(N == 2, "diag: only defined for Matrix of rank 2");
+    static_assert(N == 2, "diag: only defined for Matrix of order 2");
     assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;
@@ -277,7 +277,7 @@ inline Matrix_ref<T, N - 1> Matrix<T, N>::diag()
 template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix<T, N>::diag() const
 {
-    static_assert(N == 2, "diag: only defined for Matrix of rank 2");
+    static_assert(N == 2, "diag: only defined for Matrix of order 2");
     assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;
@@ -315,7 +315,7 @@ template <typename T, std::size_t N>
 template <typename... Exts>
 inline void Matrix<T, N>::resize(Exts... exts)
 {
-    assert(sizeof...(Exts) == this->rank());
+    assert(sizeof...(Exts) == this->order);
     Matrix_slice<N> d{static_cast<size_type>(exts)...}; // avoid C2398 error
     this->desc = d;
     elems.resize(this->size());

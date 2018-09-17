@@ -60,7 +60,7 @@ inline Enable_if<Real_type<T>(), Mat<T>> hilbert(Index n)
 template <typename M>
 inline Enable_if<Matrix_type<M>(), typename M::value_type> max(const M& vec)
 {
-    static_assert(M::order == 1, "bad rank for max(vec)");
+    static_assert(M::order == 1, "bad order for max(vec)");
     return *std::max_element(vec.begin(), vec.end());
 }
 
@@ -68,7 +68,7 @@ template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
 max(const M& mat, Index dim)
 {
-    static_assert(M::order == 2, "bad rank for max(mat)");
+    static_assert(M::order == 2, "bad order for max(mat)");
     assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
@@ -88,7 +88,7 @@ max(const M& mat, Index dim)
 template <typename M>
 inline Enable_if<Matrix_type<M>(), typename M::value_type> min(const M& vec)
 {
-    static_assert(M::order == 1, "bad rank for min(vec)");
+    static_assert(M::order == 1, "bad order for min(vec)");
     return *std::min_element(vec.begin(), vec.end());
 }
 
@@ -96,7 +96,7 @@ template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
 min(const M& mat, Index dim)
 {
-    static_assert(M::order == 2, "bad rank for min(mat)");
+    static_assert(M::order == 2, "bad order for min(mat)");
     assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
@@ -116,7 +116,7 @@ min(const M& mat, Index dim)
 template <typename M>
 inline Enable_if<Matrix_type<M>(), typename M::value_type> sum(const M& vec)
 {
-    static_assert(M::order == 1, "bad rank for sum(vec)");
+    static_assert(M::order == 1, "bad order for sum(vec)");
     constexpr auto zero = Value_type<M>{0};
     return std::accumulate(vec.begin(), vec.end(), zero);
 }
@@ -125,7 +125,7 @@ template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
 sum(const M& mat, Index dim)
 {
-    static_assert(M::order == 2, "bad rank for sum(mat)");
+    static_assert(M::order == 2, "bad order for sum(mat)");
     assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
@@ -145,7 +145,7 @@ sum(const M& mat, Index dim)
 template <typename M>
 inline Enable_if<Matrix_type<M>(), typename M::value_type> prod(const M& vec)
 {
-    static_assert(M::order == 1, "bad rank for prod(vec)");
+    static_assert(M::order == 1, "bad order for prod(vec)");
 
     using T = typename M::value_type;
     constexpr auto one = T{1};
@@ -156,7 +156,7 @@ template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
 prod(const M& mat, Index dim)
 {
-    static_assert(M::order == 2, "bad rank for prod(mat)");
+    static_assert(M::order == 2, "bad order for prod(mat)");
     assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
@@ -183,8 +183,8 @@ inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(),
                  typename M1::value_type>
 dot(const M1& x, const M2& y)
 {
-    static_assert(M1::order == 1, "bad rank for dot product");
-    static_assert(M2::order == 1, "bad rank for dot product");
+    static_assert(M1::order == 1, "bad order for dot product");
+    static_assert(M2::order == 1, "bad order for dot product");
     assert(same_extents(x, y));
 
     constexpr auto zero = Value_type<M1>{0};
@@ -260,158 +260,40 @@ inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
     }
 }
 
-//------------------------------------------------------------------------------
-//
-// Compute trace of a square matrix:
-
-template <typename M>
-inline Enable_if<Matrix_type<M>(), typename M::value_type> trace(const M& mat)
+// Matrix-matrix multiplication.
+inline void matmul(const Mat<double>& a, const Mat<double>& b, Mat<double>& res)
 {
-    static_assert(M::order == 2, "trace: bad matrix rank");
-    assert(mat.rows() == mat.cols());
-
-    constexpr auto zero = Value_type<M>{0};
-
-    const auto d = mat.diag();
-    return std::accumulate(d.begin(), d.end(), zero);
+    mm_mul(a, b, res);
 }
 
-//------------------------------------------------------------------------------
-//
-// Vector and matrix norms:
-
-// Euclidean norm of dense vector.
-template <typename M>
-inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(),
-                 typename M::value_type>
-norm(const M& vec)
+// Matrix-vector multiplication.
+inline void matmul(const Mat<double>& a, const Vec<double>& x, Vec<double>& y)
 {
-    static_assert(M::order == 1, "norm: bad matrix rank");
-
-    using T = typename M::value_type;
-
-    T result = T{0};
-    if (!vec.empty()) {
-        for (const auto& x : vec) {
-            result += x * x;
-        }
-        result = std::sqrt(result);
-    }
-    return result;
+    mv_mul(a, x, y);
 }
 
-// Euclidean norm of sparse vector.
+// Kronecker product.
 template <typename T>
-inline T norm(const Sparse_vector<T>& vec)
+void kron(const Mat<T>& a, const Mat<T>& b, Mat<T>& res)
 {
-    T result{0};
-    if (!vec.empty()) {
-        for (const auto& x : vec) {
-            result += x * x;
-        }
-        result = std::sqrt(result);
-    }
-    return result;
-}
+    const Index m = a.rows();
+    const Index n = a.cols();
+    const Index p = b.rows();
+    const Index q = b.cols();
 
-// Normalize dense vector.
-template <typename M>
-inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(), M>
-normalize(const M& vec)
-{
-    static_assert(M::order == 1, "normalize: bad matrix rank");
-    constexpr auto zero = Value_type<M>{0};
+    res.resize(m * p, n * q);
 
-    M result(vec);
-    auto n = norm(vec);
-    if (n > zero) {
-        result /= n;
-    }
-    return result;
-}
-
-// Normalize sparse vector.
-template <typename T>
-inline Sparse_vector<T> normalize(const Sparse_vector<T>& vec)
-{
-    constexpr auto zero = T{0};
-
-    Sparse_vector<T> result(vec);
-    auto n = norm(vec);
-    if (n > zero) {
-        result /= n;
-    }
-    return result;
-}
-
-// Matrix norm of a general rectangular matrix:
-//
-// Types of matrix norms:
-// - M, m:       largest absolute value of the matrix
-// - 1, O, o:    1-norm of the matrix (maximum column sum)
-// - I, i:       infinity norm of the matrix (maximum row sum)
-// - F, f, E, e: Frobenius norm of the matrix (square root of sum of squares)
-//
-inline double norm(const Mat<double>& a, char norm)
-{
-    assert(norm == 'M' || norm == 'm' || norm == '1' || norm == 'O' ||
-           norm == 'o' || norm == 'I' || norm == 'i' || norm == 'F' ||
-           norm == 'f' || norm == 'E' || norm == 'e');
-
-	BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
-	BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
-	BLAS_INT lda = n;
-
-	return LAPACKE_dlange(LAPACK_ROW_MAJOR, norm, m, n, a.data(), lda);
-}
-
-//------------------------------------------------------------------------------
-
-// Determinant of square matrix.
-double det(const Mat<double>& a);
-
-// Matrix inversion.
-inline void inv(Mat<double>& a)
-{
-    assert(a.rows() == a.cols());
-
-    if (det(a) == 0.0) {
-        throw Math_error("inv: matrix not invertible");
-    }
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
-    const BLAS_INT lda = n;
-
-    Vec<BLAS_INT> ipiv(n);
-    lu(a, ipiv); // perform LU factorization
-
-    BLAS_INT info =
-        LAPACKE_dgetri(LAPACK_ROW_MAJOR, n, a.data(), lda, ipiv.data());
-    if (info != 0) {
-        throw Math_error("dgetri: matrix inversion failed");
-    }
-}
-
-//------------------------------------------------------------------------------
-//
-// Matrix condition numbers:
-
-//------------------------------------------------------------------------------
-
-// Transpose.
-template <typename T>
-inline Mat<T> transpose(const Mat<T>& m)
-{
-    const Index n = m.rows();
-    const Index p = m.cols();
-
-    Mat<T> res(p, n);
-
-    for (Index i = 0; i < p; ++i) {
+    for (Index i = 0; i < m; ++i) {
         for (Index j = 0; j < n; ++j) {
-            res(i, j) = m.data()[i + j * p];
+            Index i0 = i * p;
+            Index j0 = j * q;
+            for (Index k = 0; k < p; ++k) {
+                for (Index l = 0; l < q; ++l) {
+                    res(i0 + k, j0 + l) = a(i, j) * b(k, l);
+                }
+            }
         }
     }
-    return res;
 }
 
 //------------------------------------------------------------------------------
@@ -493,9 +375,12 @@ inline void svd(Mat<double>& a, Vec<double>& s, Mat<double>& u, Mat<double>& vt)
     }
 }
 
+// Schmidt orthogonalization of n orbitals in a.
+void schmidt(Mat<double>& a, Index n);
+
 //------------------------------------------------------------------------------
 //
-// Eigensolvers:
+// Matrix eigenvalues:
 
 // Compute eigenvalues and eigenvectors of a real symmetric matrix.
 inline void eigs(Mat<double>& a, Vec<double>& w)
@@ -589,6 +474,138 @@ void eig(double emin,
 #endif
 
 //------------------------------------------------------------------------------
+//
+// Norms and other numbers:
+
+// Euclidean norm of dense vector.
+template <typename M>
+inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(),
+                 typename M::value_type>
+norm(const M& vec)
+{
+    static_assert(M::order == 1, "norm: bad matrix order");
+
+    using T = typename M::value_type;
+
+    T result = T{0};
+    if (!vec.empty()) {
+        for (const auto& x : vec) {
+            result += x * x;
+        }
+        result = std::sqrt(result);
+    }
+    return result;
+}
+
+// Euclidean norm of sparse vector.
+template <typename T>
+inline T norm(const Sparse_vector<T>& vec)
+{
+    T result{0};
+    if (!vec.empty()) {
+        for (const auto& x : vec) {
+            result += x * x;
+        }
+        result = std::sqrt(result);
+    }
+    return result;
+}
+
+// Normalize dense vector.
+template <typename M>
+inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(), M>
+normalize(const M& vec)
+{
+    static_assert(M::order == 1, "normalize: bad matrix order");
+    constexpr auto zero = Value_type<M>{0};
+
+    M result(vec);
+    auto n = norm(vec);
+    if (n > zero) {
+        result /= n;
+    }
+    return result;
+}
+
+// Normalize sparse vector.
+template <typename T>
+inline Sparse_vector<T> normalize(const Sparse_vector<T>& vec)
+{
+    constexpr auto zero = T{0};
+
+    Sparse_vector<T> result(vec);
+    auto n = norm(vec);
+    if (n > zero) {
+        result /= n;
+    }
+    return result;
+}
+
+// Matrix norm of a general rectangular matrix:
+//
+// Types of matrix norms:
+// - M, m:       largest absolute value of the matrix
+// - 1, O, o:    1-norm of the matrix (maximum column sum)
+// - I, i:       infinity norm of the matrix (maximum row sum)
+// - F, f, E, e: Frobenius norm of the matrix (square root of sum of squares)
+//
+inline double norm(const Mat<double>& a, char norm)
+{
+    assert(norm == 'M' || norm == 'm' || norm == '1' || norm == 'O' ||
+           norm == 'o' || norm == 'I' || norm == 'i' || norm == 'F' ||
+           norm == 'f' || norm == 'E' || norm == 'e');
+
+    BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+    BLAS_INT lda = n;
+
+    return LAPACKE_dlange(LAPACK_ROW_MAJOR, norm, m, n, a.data(), lda);
+}
+
+// Trace of a square matrix.
+template <typename M>
+inline Enable_if<Matrix_type<M>(), typename M::value_type> trace(const M& mat)
+{
+    static_assert(M::order == 2, "trace: bad matrix order");
+    assert(mat.rows() == mat.cols());
+
+    constexpr auto zero = Value_type<M>{0};
+
+    const auto d = mat.diag();
+    return std::accumulate(d.begin(), d.end(), zero);
+}
+
+// Determinant of square matrix.
+double det(const Mat<double>& a);
+
+// Reciprocal condition number of a matrix.
+inline double rcond(const Mat<double>& a)
+{
+    char nrm = '1';
+    double anorm = norm(a, nrm);
+
+    Mat<double> tmp(a);
+    Vec<BLAS_INT> ipiv;
+    lu(tmp, ipiv);
+
+    BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    BLAS_INT lda = narrow_cast<BLAS_INT>(a.cols());
+
+    double res;
+    BLAS_INT info =
+        LAPACKE_dgecon(LAPACK_ROW_MAJOR, nrm, m, tmp.data(), lda, anorm, &res);
+    if (info != 0) {
+        throw Math_error("dgecon failed");
+    }
+    return res;
+}
+
+// Condition number of a matrix.
+inline double cond(const Mat<double>& a) { return 1.0 / rcond(a); }
+
+//------------------------------------------------------------------------------
+//
+// Solving equations and inverting matrices:
 
 // Solve linear system of equations.
 inline void linsolve(Mat<double>& a, Mat<double>& b)
@@ -615,10 +632,46 @@ inline void linsolve(Mat<double>& a, Mat<double>& b)
 void linsolve(const Sp_mat<double>& a, Mat<double>& b, Mat<double>& x);
 #endif
 
-//------------------------------------------------------------------------------
+// Matrix inversion.
+inline void inv(Mat<double>& a)
+{
+    assert(a.rows() == a.cols());
 
-// Schmidt orthogonalization of n orbitals in a.
-void schmidt(Mat<double>& a, Index n);
+    if (det(a) == 0.0) {
+        throw Math_error("inv: matrix not invertible");
+    }
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
+    const BLAS_INT lda = n;
+
+    Vec<BLAS_INT> ipiv(n);
+    lu(a, ipiv); // perform LU factorization
+
+    BLAS_INT info =
+        LAPACKE_dgetri(LAPACK_ROW_MAJOR, n, a.data(), lda, ipiv.data());
+    if (info != 0) {
+        throw Math_error("dgetri: matrix inversion failed");
+    }
+}
+
+// Compute the minimum norm-solution to a real linear least squares problem.
+inline void lstsq(Mat<double>& a, Mat<double>& b)
+{
+    BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+    BLAS_INT nrhs = narrow_cast<BLAS_INT>(b.cols());
+    BLAS_INT lda = n;
+    BLAS_INT ldb = nrhs;
+    BLAS_INT rank;
+
+    double rcond = -1.0;           // use machine epsilon
+    Vec<double> s(std::min(m, n)); // singular values of a
+
+    BLAS_INT info = LAPACKE_dgelsd(LAPACK_ROW_MAJOR, m, n, nrhs, a.data(), lda,
+                                   b.data(), ldb, s.data(), rcond, &rank);
+    if (info != 0) {
+        throw Math_error("dgelsd failed");
+    }
+}
 
 } // namespace Numlib
 

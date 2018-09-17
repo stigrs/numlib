@@ -13,6 +13,6 @@ TEST_CASE("test_matrix0")
 
     Matrix<int, 0> m0 = {1};
 
-    SECTION("rank") { CHECK(m0.rank() == 0); }
+    SECTION("order") { CHECK(m0.order == 0); }
     SECTION("subscripting") { CHECK(m0() == 1); }
 }
