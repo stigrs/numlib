@@ -14,7 +14,7 @@ TEST_CASE("test_matrix3")
     Matrix<int, 3> m3 = {
         {{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}, {{9, 10}, {11, 12}}};
 
-    SECTION("order") { CHECK(m3.order == 3); }
+    SECTION("order") { CHECK(m3.rank() == 3); }
     SECTION("size") { CHECK(m3.size() == 12); }
 
     SECTION("extents")
@@ -41,16 +41,16 @@ TEST_CASE("test_matrix3")
         auto r = m3.row(1);
         auto rr = r.row(1);
         auto rc = rr.row(1);
-        CHECK(r.order == 2);
-        CHECK(rr.order == 1);
-        CHECK(rc.order == 0);
+        CHECK(r.rank() == 2);
+        CHECK(rr.rank() == 1);
+        CHECK(rc.rank() == 0);
         CHECK(rc() == 8);
     }
 
     SECTION("resize")
     {
         m3.resize(2, 4, 5);
-        CHECK(m3.order == 3);
+        CHECK(m3.rank() == 3);
         CHECK(m3.size() == 40);
         CHECK(m3.extent(0) == 2);
         CHECK(m3.extent(1) == 4);

@@ -60,7 +60,7 @@ inline Enable_if<Real_type<T>(), Mat<T>> hilbert(Index n)
 template <typename M>
 inline Enable_if<Matrix_type<M>(), typename M::value_type> max(const M& vec)
 {
-    static_assert(M::order == 1, "bad order for max(vec)");
+    static_assert(M::order == 1, "bad rank for max(vec)");
     return *std::max_element(vec.begin(), vec.end());
 }
 
@@ -68,7 +68,7 @@ template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
 max(const M& mat, Index dim)
 {
-    static_assert(M::order == 2, "bad order for max(mat)");
+    static_assert(M::order == 2, "bad rank for max(mat)");
     assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
@@ -88,7 +88,7 @@ max(const M& mat, Index dim)
 template <typename M>
 inline Enable_if<Matrix_type<M>(), typename M::value_type> min(const M& vec)
 {
-    static_assert(M::order == 1, "bad order for min(vec)");
+    static_assert(M::order == 1, "bad rank for min(vec)");
     return *std::min_element(vec.begin(), vec.end());
 }
 
@@ -96,7 +96,7 @@ template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
 min(const M& mat, Index dim)
 {
-    static_assert(M::order == 2, "bad order for min(mat)");
+    static_assert(M::order == 2, "bad rank for min(mat)");
     assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
@@ -116,7 +116,7 @@ min(const M& mat, Index dim)
 template <typename M>
 inline Enable_if<Matrix_type<M>(), typename M::value_type> sum(const M& vec)
 {
-    static_assert(M::order == 1, "bad order for sum(vec)");
+    static_assert(M::order == 1, "bad rank for sum(vec)");
     constexpr auto zero = Value_type<M>{0};
     return std::accumulate(vec.begin(), vec.end(), zero);
 }
@@ -125,7 +125,7 @@ template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
 sum(const M& mat, Index dim)
 {
-    static_assert(M::order == 2, "bad order for sum(mat)");
+    static_assert(M::order == 2, "bad rank for sum(mat)");
     assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
@@ -145,7 +145,7 @@ sum(const M& mat, Index dim)
 template <typename M>
 inline Enable_if<Matrix_type<M>(), typename M::value_type> prod(const M& vec)
 {
-    static_assert(M::order == 1, "bad order for prod(vec)");
+    static_assert(M::order == 1, "bad rank for prod(vec)");
 
     using T = typename M::value_type;
     constexpr auto one = T{1};
@@ -156,7 +156,7 @@ template <typename M>
 inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
 prod(const M& mat, Index dim)
 {
-    static_assert(M::order == 2, "bad order for prod(mat)");
+    static_assert(M::order == 2, "bad rank for prod(mat)");
     assert(dim >= 0 && dim < static_cast<Index>(M::order));
 
     Vec<Value_type<M>> result(mat.extent(dim));
@@ -183,8 +183,8 @@ inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(),
                  typename M1::value_type>
 dot(const M1& x, const M2& y)
 {
-    static_assert(M1::order == 1, "bad order for dot product");
-    static_assert(M2::order == 1, "bad order for dot product");
+    static_assert(M1::order == 1, "bad rank for dot product");
+    static_assert(M2::order == 1, "bad rank for dot product");
     assert(same_extents(x, y));
 
     constexpr auto zero = Value_type<M1>{0};
@@ -483,7 +483,7 @@ inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(),
                  typename M::value_type>
 norm(const M& vec)
 {
-    static_assert(M::order == 1, "norm: bad matrix order");
+    static_assert(M::order == 1, "norm: bad matrix rank");
 
     using T = typename M::value_type;
 
@@ -516,7 +516,7 @@ template <typename M>
 inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(), M>
 normalize(const M& vec)
 {
-    static_assert(M::order == 1, "normalize: bad matrix order");
+    static_assert(M::order == 1, "normalize: bad matrix rank");
     constexpr auto zero = Value_type<M>{0};
 
     M result(vec);
@@ -566,7 +566,7 @@ inline double norm(const Mat<double>& a, char norm)
 template <typename M>
 inline Enable_if<Matrix_type<M>(), typename M::value_type> trace(const M& mat)
 {
-    static_assert(M::order == 2, "trace: bad matrix order");
+    static_assert(M::order == 2, "trace: bad matrix rank");
     assert(mat.rows() == mat.cols());
 
     constexpr auto zero = Value_type<M>{0};

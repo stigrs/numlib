@@ -262,7 +262,7 @@ inline Matrix_ref<const T, N - 1> Matrix<T, N>::column(size_type n) const
 template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix<T, N>::diag()
 {
-    static_assert(N == 2, "diag: only defined for Matrix of order 2");
+    static_assert(N == 2, "diag: only defined for Matrix of rank 2");
     assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;
@@ -277,7 +277,7 @@ inline Matrix_ref<T, N - 1> Matrix<T, N>::diag()
 template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix<T, N>::diag() const
 {
-    static_assert(N == 2, "diag: only defined for Matrix of order 2");
+    static_assert(N == 2, "diag: only defined for Matrix of rank 2");
     assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;

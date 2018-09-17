@@ -13,7 +13,7 @@ TEST_CASE("test_matrix1")
 
     Matrix<int, 1> m1 = {1, 2, 3, 4};
 
-    SECTION("order") { CHECK(m1.order == 1); }
+    SECTION("order") { CHECK(m1.rank() == 1); }
     SECTION("size") { CHECK(m1.size() == 4); }
 
     SECTION("subscripting")
@@ -37,7 +37,7 @@ TEST_CASE("test_matrix1")
 
         s = 0;
 
-        CHECK(s.order == 1);
+        CHECK(s.rank() == 1);
         CHECK(s.size() == 3);
         CHECK(s(0) == 0);
         CHECK(s(1) == 0);

@@ -43,6 +43,9 @@ public:
 
     ~Matrix_base() = default;
 
+    // Matrix rank (number of dimensions).
+    std::size_t rank() const { return N; }
+
     // Total number of elements:
     size_type size() const { return desc.size; }
 

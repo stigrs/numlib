@@ -28,9 +28,9 @@ namespace Numlib {
 
 // Return matrix order.
 template <typename M>
-inline Enable_if<Matrix_type<M>(), std::size_t> order(const M& m)
+inline Enable_if<Matrix_type<M>(), std::size_t> rank(const M& m)
 {
-    return m.order;
+    return m.rank();
 }
 
 // Return matrix size.

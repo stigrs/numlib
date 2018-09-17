@@ -125,7 +125,7 @@ public:
     Matrix_ref<T, N - 1> column(size_type n);
     Matrix_ref<const T, N - 1> column(size_type n) const;
 
-    // Return a reference to the diagonal of a square Matrix_ref of order 2.
+    // Return a reference to the diagonal of a square Matrix_ref of rank 2.
     Matrix_ref<T, N - 1> diag();
     Matrix_ref<const T, N - 1> diag() const;
 
@@ -269,7 +269,7 @@ inline Matrix_ref<const T, N - 1> Matrix_ref<T, N>::column(size_type n) const
 template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix_ref<T, N>::diag()
 {
-    static_assert(N == 2, "diag: only defined for Matrix_ref of order 2");
+    static_assert(N == 2, "diag: only defined for Matrix_ref of rank 2");
     assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;
@@ -284,7 +284,7 @@ inline Matrix_ref<T, N - 1> Matrix_ref<T, N>::diag()
 template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix_ref<T, N>::diag() const
 {
-    static_assert(N == 2, "diag: only defined for Matrix_ref of order 2");
+    static_assert(N == 2, "diag: only defined for Matrix_ref of rank 2");
     assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;
@@ -381,9 +381,9 @@ Matrix_ref<T, N>::operator+=(const M& m)
 // clang-format on
 {
 #ifdef __clang__ // ugly hack to work around bug in Clang on Mac OS X
-    assert(m.order == N);
+    assert(m.rank() == N);
 #else
-    static_assert(m.order == N, "+=: mismatched Matrix dimensions");
+    static_assert(m.rank() == N, "+=: mismatched Matrix dimensions");
 #endif
     assert(same_extents(this->desc, m.descriptor()));
 
@@ -398,9 +398,9 @@ Matrix_ref<T, N>::operator-=(const M& m)
 // clang-format on
 {
 #ifdef __clang__ // ugly hack to work around bug in Clang on Mac OS X
-    assert(m.order == N);
+    assert(m.rank() == N);
 #else
-    static_assert(m.order == N, "-=: mismatched Matrix dimensions");
+    static_assert(m.rank() == N, "-=: mismatched Matrix dimensions");
 #endif
     assert(same_extents(this->desc, m.descriptor()));
 
