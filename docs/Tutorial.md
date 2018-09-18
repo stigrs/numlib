@@ -20,6 +20,8 @@ Example program:
 	              << "extent(1) = " << m.extent(1) << '\n';
 	}
 
+Generated output:
+
 	rank =      2
 	size =      9
 	rows =      3
