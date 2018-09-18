@@ -1,12 +1,12 @@
-## Getting Started
+# Getting Started
 
-### Requirements
+## Requirements
 
 * [CMake](https://cmake.org) 3.4.3
 * [OpenBLAS](https://www.openblas.net/) 0.2.14.1 (Intel MKL is recommended)
 * [Armadillo](http://arma.sourceforge.net) 7.900.1 (for benchmarking)
 
-### Supported Platforms
+## Supported Platforms
 
 The test suite that exercises Numlib has been built and passes successfully
 on the following platforms:
@@ -16,13 +16,13 @@ on the following platforms:
 * OS X High Sierra (10.13) using Apple LLVM 9.1, 9.4
 * Windows using Visual Studio 2017 (x86 and x64)
 
-### Obtaining the Source Code
+## Obtaining the Source Code
 
 The source code can be obtained from
 
         git clone git@github.com:stigrs/numlib.git
 
-### Building the Software
+## Building the Software
 
 These steps assumes that the source code of this repository has been cloned
 into a directory called `numlib`.
