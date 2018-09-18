@@ -11,6 +11,8 @@ set(
     PROGRAMS 
     arithmetic
     constants
+    derivation
+    integration
     matrix_properties 
 	sub_matrix_views
 	subscripting_and_slicing

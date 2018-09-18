@@ -218,3 +218,52 @@ Example program:
 Generated output:
 
     3.14159
+
+## Numerical Derivation
+
+Example program:
+
+    #include <iostream>
+    #include <numlib/math.h>
+
+    double f(double x) { return x * x; }
+
+    int main() { std::cout << Numlib::dfdx(f, 2.0) << '\n'; }
+
+Generated output:
+
+    4
+
+## Numerical Integration
+
+Example program:
+
+    #include <iostream>
+    #include <cmath>
+    #include <numlib/matrix.h>
+    #include <numlib/constants.h>
+    #include <numlib/math.h>
+
+    int main()
+    {
+        using namespace Numlib;
+
+        double xlo = 2.1;
+        double xup = 3.6;
+
+        Vec<double> y = {3.2, 2.7, 2.9, 3.5, 4.1, 5.2};
+
+        std::cout << "trapezoidal: " << trapz(xlo, xup, y) << '\n';
+
+        double a = 0.0;
+        double b = Constants::pi;
+
+        std::cout << "gaussian quadrature: "
+                  << quad<5>([](double x) { return std::sin(x); }, a, b) 
+                  << '\n';
+    }
+
+ Generated output:
+
+    trapezoidal: 5.22
+    gaussian quadrature: 2
