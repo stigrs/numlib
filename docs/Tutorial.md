@@ -165,3 +165,43 @@ Generated output:
              5         6         7         8
              9         0        11         0 ]
 
+### Arithmetic Operations
+
+Example program:
+
+    #include <iostream>
+    #include <numlib/matrix.h>
+
+    int main()
+    {
+        using namespace Numlib;
+
+        Mat<int> a = {{1, 2}, {3, 4}};
+        Mat<int> b = {{10, 20}, {30, 40}};
+
+        auto c = a + b;
+        auto d = a * b;
+
+        std::cout << "a = " << a << '\n'
+                  << "b = " << b << '\n'
+                  << "a + b = " << c << '\n'
+                  << "a * b = " << d << '\n';
+    }
+
+Generated output:
+
+    a = 2 x 2
+    [        1         2
+             3         4 ]
+
+    b = 2 x 2
+    [       10        20
+            30        40 ]
+
+    a + b = 2 x 2
+    [       11        22
+            33        44 ]
+
+    a * b = 2 x 2
+    [       70       100
+           150       220 ]

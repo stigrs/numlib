@@ -9,6 +9,7 @@ endif()
 
 set(
     PROGRAMS 
+    arithmetic
     basic_matrix_uses 
 	sub_matrix_views
 	subscripting_and_slicing
