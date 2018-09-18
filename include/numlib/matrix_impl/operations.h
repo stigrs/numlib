@@ -26,7 +26,7 @@ namespace Numlib {
 //
 // The following operations are defined for all Matrix types:
 
-// Return matrix rank.
+// Return matrix order.
 template <typename M>
 inline Enable_if<Matrix_type<M>(), std::size_t> rank(const M& m)
 {
@@ -60,7 +60,7 @@ inline Enable_if<Matrix_type<M>(), Index> cols(const M& m)
 template <typename M>
 inline Enable_if<Matrix_type<M>(), Index> extent(const M& m, Index dim)
 {
-    assert(dim < static_cast<Index>(m.rank()));
+    assert(dim < static_cast<Index>(m.order));
     return m.extent(dim);
 }
 
@@ -141,6 +141,27 @@ randi(Args... args)
     std::uniform_int_distribution<> ui{};
     for (auto& x : res) {
         x = ui(gen);
+    }
+    return res;
+}
+
+//------------------------------------------------------------------------------
+//
+// Special methods for 2D matrices:
+
+// Transpose.
+template <typename T>
+inline Matrix<T, 2> transpose(const Matrix<T, 2>& m)
+{
+    const Index n = m.rows();
+    const Index p = m.cols();
+
+    Matrix<T, 2> res(p, n);
+
+    for (Index i = 0; i < p; ++i) {
+        for (Index j = 0; j < n; ++j) {
+            res(i, j) = m.data()[i + j * p];
+        }
     }
     return res;
 }
@@ -418,9 +439,9 @@ template <typename M1, typename M2, typename M3>
 Enable_if<Matrix_type<M1>() && Matrix_type<M2>() && Matrix_type<M3>(), void>
 mm_mul(const M1& a, const M2& b, M3& res)
 {
-    static_assert(M1::order == 2, "bad rank for matrix-matrix multiplication");
-    static_assert(M2::order == 2, "bad rank for matrix-matrix multiplication");
-    static_assert(M3::order == 2, "bad rank for matrix-matrix multiplication");
+    static_assert(M1::order == 2, "bad order for matrix-matrix multiplication");
+    static_assert(M2::order == 2, "bad order for matrix-matrix multiplication");
+    static_assert(M3::order == 2, "bad order for matrix-matrix multiplication");
 
     using value_type = typename M1::value_type;
 
@@ -504,9 +525,9 @@ template <typename M1, typename M2, typename M3>
 Enable_if<Matrix_type<M1>() && Matrix_type<M2>() && Matrix_type<M3>(), void>
 mv_mul(const M1& a, const M2& x, M3& y)
 {
-    static_assert(M1::order == 2, "bad rank for matrix-vector multiplication");
-    static_assert(M2::order == 1, "bad rank for matrix-vector multiplication");
-    static_assert(M3::order == 1, "bad rank for matrix-vector multiplication");
+    static_assert(M1::order == 2, "bad order for matrix-vector multiplication");
+    static_assert(M2::order == 1, "bad order for matrix-vector multiplication");
+    static_assert(M3::order == 1, "bad order for matrix-vector multiplication");
 
     assert(x.size() == a.cols());
 

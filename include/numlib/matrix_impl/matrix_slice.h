@@ -324,7 +324,7 @@ inline bool operator!=(const Matrix_slice<N>& a, const Matrix_slice<N>& b)
 
 // Same extents:
 
-// Return true when two slices describe matrices with the same rank and
+// Return true when two slices describe matrices with the same order and
 // extents. The starting offset and strides do not factor into the
 // comparison.
 //

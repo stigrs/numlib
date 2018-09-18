@@ -175,93 +175,9 @@ prod(const M& mat, Index dim)
 
 //------------------------------------------------------------------------------
 //
-// Compute trace of a square matrix:
+// Matrix and vector products:
 
-template <typename M>
-inline Enable_if<Matrix_type<M>(), typename M::value_type> trace(const M& mat)
-{
-    static_assert(M::order == 2, "trace: bad matrix rank");
-    assert(mat.rows() == mat.cols());
-
-    constexpr auto zero = Value_type<M>{0};
-
-    const auto d = mat.diag();
-    return std::accumulate(d.begin(), d.end(), zero);
-}
-
-//------------------------------------------------------------------------------
-//
-// Vector norm:
-//
-// TODO: Only Euclidean vector norm is implemented so far.
-
-// Norm of dense vector.
-template <typename M>
-inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(),
-                 typename M::value_type>
-norm(const M& vec)
-{
-    static_assert(M::order == 1, "norm: bad matrix rank");
-
-    using T = typename M::value_type;
-
-    T result = T{0};
-    if (!vec.empty()) {
-        for (const auto& x : vec) {
-            result += x * x;
-        }
-        result = std::sqrt(result);
-    }
-    return result;
-}
-
-template <typename T>
-inline T norm(const Sparse_vector<T>& vec)
-{
-    T result{0};
-    if (!vec.empty()) {
-        for (const auto& x : vec) {
-            result += x * x;
-        }
-        result = std::sqrt(result);
-    }
-    return result;
-}
-
-// Normalize dense vector.
-template <typename M>
-inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(), M>
-normalize(const M& vec)
-{
-    static_assert(M::order == 1, "normalize: bad matrix rank");
-    constexpr auto zero = Value_type<M>{0};
-
-    M result(vec);
-    auto n = norm(vec);
-    if (n > zero) {
-        result /= n;
-    }
-    return result;
-}
-
-// Normalize sparse vector.
-template <typename T>
-inline Sparse_vector<T> normalize(const Sparse_vector<T>& vec)
-{
-    constexpr auto zero = T{0};
-
-    Sparse_vector<T> result(vec);
-    auto n = norm(vec);
-    if (n > zero) {
-        result /= n;
-    }
-    return result;
-}
-
-//------------------------------------------------------------------------------
-//
-// Vector dot and cross products:
-
+// Dot product of dense vectors.
 template <typename M1, typename M2>
 inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(),
                  typename M1::value_type>
@@ -275,6 +191,7 @@ dot(const M1& x, const M2& y)
     return std::inner_product(x.begin(), x.end(), y.begin(), zero);
 }
 
+// Dot product of sparse vectors.
 template <typename T>
 inline T dot(const Sparse_vector<T>& x, const Sparse_vector<T>& y)
 {
@@ -287,6 +204,7 @@ inline T dot(const Sparse_vector<T>& x, const Sparse_vector<T>& y)
     return result;
 }
 
+// Dot product of a sparse and a dense vector.
 template <typename T>
 inline T dot(const Sparse_vector<T>& x, const Vec<T>& y)
 {
@@ -300,12 +218,14 @@ inline T dot(const Sparse_vector<T>& x, const Vec<T>& y)
     return result;
 }
 
+// Dot product of a dense and a sparse vector.
 template <typename T>
 inline T dot(const Vec<T>& y, const Sparse_vector<T>& x)
 {
     return dot(x, y);
 }
 
+// Cross product.
 template <typename T>
 inline void cross(const Vec<T>& x, const Vec<T>& y, Vec<T>& res)
 {
@@ -316,6 +236,7 @@ inline void cross(const Vec<T>& x, const Vec<T>& y, Vec<T>& res)
     res(2) = x(0) * y(1) - x(1) * y(0);
 }
 
+// Cross product.
 template <typename M1, typename M2>
 inline Enable_if<Matrix_type<M1>() && Matrix_type<M2>(),
                  Vec<typename M1::value_type>>
@@ -329,8 +250,6 @@ cross(const M1& x, const M2& y)
     return res;
 }
 
-//------------------------------------------------------------------------------
-
 // Compute vector-scalar product and add the result to a vector.
 template <typename T>
 inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
@@ -341,28 +260,45 @@ inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
     }
 }
 
-//------------------------------------------------------------------------------
-
-// Transpose.
-template <typename T>
-inline Mat<T> transpose(const Mat<T>& m)
+// Matrix-matrix multiplication.
+inline void matmul(const Mat<double>& a, const Mat<double>& b, Mat<double>& res)
 {
-    const Index n = m.rows();
-    const Index p = m.cols();
+    mm_mul(a, b, res);
+}
 
-    Mat<T> res(p, n);
+// Matrix-vector multiplication.
+inline void matmul(const Mat<double>& a, const Vec<double>& x, Vec<double>& y)
+{
+    mv_mul(a, x, y);
+}
 
-    for (Index i = 0; i < p; ++i) {
+// Kronecker product.
+template <typename T>
+void kron(const Mat<T>& a, const Mat<T>& b, Mat<T>& res)
+{
+    const Index m = a.rows();
+    const Index n = a.cols();
+    const Index p = b.rows();
+    const Index q = b.cols();
+
+    res.resize(m * p, n * q);
+
+    for (Index i = 0; i < m; ++i) {
         for (Index j = 0; j < n; ++j) {
-            res(i, j) = m.data()[i + j * p];
+            Index i0 = i * p;
+            Index j0 = j * q;
+            for (Index k = 0; k < p; ++k) {
+                for (Index l = 0; l < q; ++l) {
+                    res(i0 + k, j0 + l) = a(i, j) * b(k, l);
+                }
+            }
         }
     }
-    return res;
 }
 
 //------------------------------------------------------------------------------
 //
-// Matrix decomposition:
+// Matrix decompositions:
 
 // LU factorization.
 inline void lu(Mat<double>& a, Vec<BLAS_INT>& ipiv)
@@ -383,35 +319,68 @@ inline void lu(Mat<double>& a, Vec<BLAS_INT>& ipiv)
     }
 }
 
-//------------------------------------------------------------------------------
-
-// Determinant of square matrix.
-double det(const Mat<double>& a);
-
-// Matrix inversion.
-inline void inv(Mat<double>& a)
+// QR factorization.
+inline void qr(const Mat<double>& a, Mat<double>& q, Mat<double>& r)
 {
-    assert(a.rows() == a.cols());
+    // Compute QR factorization:
 
-    if (det(a) == 0.0) {
-        throw Math_error("inv: matrix not invertible");
-    }
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
+    const BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
     const BLAS_INT lda = n;
 
-    Vec<BLAS_INT> ipiv(n);
-    lu(a, ipiv); // perform LU factorization
+    Vec<double> tau(std::min(m, n));
+
+    q.resize(m, n);
+    q = a;
 
     BLAS_INT info =
-        LAPACKE_dgetri(LAPACK_ROW_MAJOR, n, a.data(), lda, ipiv.data());
+        LAPACKE_dgeqrf(LAPACK_ROW_MAJOR, m, n, q.data(), lda, tau.data());
     if (info != 0) {
-        throw Math_error("dgetri: matrix inversion failed");
+        throw Math_error("dgeqrf failed");
+    }
+
+    // Compute Q:
+
+    info = LAPACKE_dorgqr(LAPACK_ROW_MAJOR, m, n, n, q.data(), lda, tau.data());
+    if (info != 0) {
+        throw Math_error("dorgqr failed");
+    }
+
+    // Compute R:
+
+    r.resize(m, n);
+    mm_mul(transpose(q), a, r);
+}
+
+// Singular value decomposition.
+inline void svd(Mat<double>& a, Vec<double>& s, Mat<double>& u, Mat<double>& vt)
+{
+    BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+    BLAS_INT lda = n;
+    BLAS_INT ldu = m;
+    BLAS_INT ldvt = n;
+
+    s.resize(n);
+    u.resize(m, ldu);
+    vt.resize(n, ldvt);
+
+    Vec<double> superb(std::min(m, n) - 1);
+
+    BLAS_INT info =
+        LAPACKE_dgesvd(LAPACK_ROW_MAJOR, 'A', 'A', m, n, a.data(), lda,
+                       s.data(), u.data(), ldu, vt.data(), ldvt, superb.data());
+    if (info != 0) {
+        throw Math_error("dgesvd failed");
     }
 }
 
+// Schmidt orthogonalization of n orbitals in a.
+void schmidt(Mat<double>& a, Index n);
+
 //------------------------------------------------------------------------------
 //
-// Eigensolvers:
+// Matrix eigenvalues:
 
 // Compute eigenvalues and eigenvectors of a real symmetric matrix.
 inline void eigs(Mat<double>& a, Vec<double>& w)
@@ -505,6 +474,138 @@ void eig(double emin,
 #endif
 
 //------------------------------------------------------------------------------
+//
+// Norms and other numbers:
+
+// Euclidean norm of dense vector.
+template <typename M>
+inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(),
+                 typename M::value_type>
+norm(const M& vec)
+{
+    static_assert(M::order == 1, "norm: bad matrix rank");
+
+    using T = typename M::value_type;
+
+    T result = T{0};
+    if (!vec.empty()) {
+        for (const auto& x : vec) {
+            result += x * x;
+        }
+        result = std::sqrt(result);
+    }
+    return result;
+}
+
+// Euclidean norm of sparse vector.
+template <typename T>
+inline T norm(const Sparse_vector<T>& vec)
+{
+    T result{0};
+    if (!vec.empty()) {
+        for (const auto& x : vec) {
+            result += x * x;
+        }
+        result = std::sqrt(result);
+    }
+    return result;
+}
+
+// Normalize dense vector.
+template <typename M>
+inline Enable_if<Matrix_type<M>() && Real_type<Value_type<M>>(), M>
+normalize(const M& vec)
+{
+    static_assert(M::order == 1, "normalize: bad matrix rank");
+    constexpr auto zero = Value_type<M>{0};
+
+    M result(vec);
+    auto n = norm(vec);
+    if (n > zero) {
+        result /= n;
+    }
+    return result;
+}
+
+// Normalize sparse vector.
+template <typename T>
+inline Sparse_vector<T> normalize(const Sparse_vector<T>& vec)
+{
+    constexpr auto zero = T{0};
+
+    Sparse_vector<T> result(vec);
+    auto n = norm(vec);
+    if (n > zero) {
+        result /= n;
+    }
+    return result;
+}
+
+// Matrix norm of a general rectangular matrix:
+//
+// Types of matrix norms:
+// - M, m:       largest absolute value of the matrix
+// - 1, O, o:    1-norm of the matrix (maximum column sum)
+// - I, i:       infinity norm of the matrix (maximum row sum)
+// - F, f, E, e: Frobenius norm of the matrix (square root of sum of squares)
+//
+inline double norm(const Mat<double>& a, char norm)
+{
+    assert(norm == 'M' || norm == 'm' || norm == '1' || norm == 'O' ||
+           norm == 'o' || norm == 'I' || norm == 'i' || norm == 'F' ||
+           norm == 'f' || norm == 'E' || norm == 'e');
+
+    BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+    BLAS_INT lda = n;
+
+    return LAPACKE_dlange(LAPACK_ROW_MAJOR, norm, m, n, a.data(), lda);
+}
+
+// Trace of a square matrix.
+template <typename M>
+inline Enable_if<Matrix_type<M>(), typename M::value_type> trace(const M& mat)
+{
+    static_assert(M::order == 2, "trace: bad matrix rank");
+    assert(mat.rows() == mat.cols());
+
+    constexpr auto zero = Value_type<M>{0};
+
+    const auto d = mat.diag();
+    return std::accumulate(d.begin(), d.end(), zero);
+}
+
+// Determinant of square matrix.
+double det(const Mat<double>& a);
+
+// Reciprocal condition number of a matrix.
+inline double rcond(const Mat<double>& a)
+{
+    char nrm = '1';
+    double anorm = norm(a, nrm);
+
+    Mat<double> tmp(a);
+    Vec<BLAS_INT> ipiv;
+    lu(tmp, ipiv);
+
+    BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    BLAS_INT lda = narrow_cast<BLAS_INT>(a.cols());
+
+    double res;
+    BLAS_INT info =
+        LAPACKE_dgecon(LAPACK_ROW_MAJOR, nrm, m, tmp.data(), lda, anorm, &res);
+    if (info != 0) {
+        throw Math_error("dgecon failed");
+    }
+    return res;
+}
+
+// Condition number of a matrix.
+inline double cond(const Mat<double>& a) { return 1.0 / rcond(a); }
+
+//------------------------------------------------------------------------------
+//
+// Solving equations and inverting matrices:
 
 // Solve linear system of equations.
 inline void linsolve(Mat<double>& a, Mat<double>& b)
@@ -526,10 +627,51 @@ inline void linsolve(Mat<double>& a, Mat<double>& b)
     }
 }
 
-//------------------------------------------------------------------------------
+// Solve linear system of equations for a real, nonsymmetric sparse matrix.
+#ifdef USE_MKL
+void linsolve(const Sp_mat<double>& a, Mat<double>& b, Mat<double>& x);
+#endif
 
-// Schmidt orthogonalization of n orbitals in a.
-void schmidt(Mat<double>& a, Index n);
+// Matrix inversion.
+inline void inv(Mat<double>& a)
+{
+    assert(a.rows() == a.cols());
+
+    if (det(a) == 0.0) {
+        throw Math_error("inv: matrix not invertible");
+    }
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
+    const BLAS_INT lda = n;
+
+    Vec<BLAS_INT> ipiv(n);
+    lu(a, ipiv); // perform LU factorization
+
+    BLAS_INT info =
+        LAPACKE_dgetri(LAPACK_ROW_MAJOR, n, a.data(), lda, ipiv.data());
+    if (info != 0) {
+        throw Math_error("dgetri: matrix inversion failed");
+    }
+}
+
+// Compute the minimum norm-solution to a real linear least squares problem.
+inline void lstsq(Mat<double>& a, Mat<double>& b)
+{
+    BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+    BLAS_INT nrhs = narrow_cast<BLAS_INT>(b.cols());
+    BLAS_INT lda = n;
+    BLAS_INT ldb = nrhs;
+    BLAS_INT rank;
+
+    double rcond = -1.0;           // use machine epsilon
+    Vec<double> s(std::min(m, n)); // singular values of a
+
+    BLAS_INT info = LAPACKE_dgelsd(LAPACK_ROW_MAJOR, m, n, nrhs, a.data(), lda,
+                                   b.data(), ldb, s.data(), rcond, &rank);
+    if (info != 0) {
+        throw Math_error("dgelsd failed");
+    }
+}
 
 } // namespace Numlib
 

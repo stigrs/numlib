@@ -14,7 +14,7 @@ namespace Constants {
     //--------------------------------------------------------------------------
     //
     // Provides definitions of mathematical constants, metric prefixes,
-    // physical constants, metric prefixes, and conversion factors.
+    // physical constants, and conversion factors.
 
     // Mathematical constants:
 

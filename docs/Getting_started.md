@@ -1,41 +1,4 @@
-# numlib [![Build Status](https://travis-ci.org/stigrs/numlib.svg?branch=master)](https://travis-ci.org/stigrs/numlib)[![Build status](https://ci.appveyor.com/api/projects/status/github/stigrs/numlib?svg=true)](https://ci.appveyor.com/project/stigrs/numlib)
-
-Numlib provides a C++ library for linear algebra and scientific computing.
-BLAS and LAPACK are used for fast numerical performance. Currently, OpenBLAS
-and Intel MKL are supported.
-
-## Features
-
-* N-dimensional dense matrices using Stroustrup's matrix design
-  (row-major storage order)
-* Band matrices (column-major storage order)
-* Packed matrices (row-major storage order)
-* Sparse vectors and matrices (CSR3 storage format)
-* Selected mathematical functions not provided by the STL
-* Numerical derivation and integration methods
-* Linear algebra methods
-* Mathematical constants, metric prefixes, physical constants, and
-  conversion factors
-
-_Note: Some linear algebra methods are only available when linking with 
-Intel MKL._
-
-## Code of Conduct
-
-This project has adopted the [Covenant Code of Conduct](CODE_OF_CONDUCT.md).
-
-## Licensing
-
-Numlib is released under the [MIT](LICENSE) license.
-
-## Usage of Third Party Libraries
-
-This project makes use of the [Catch2](https://github.com/catchorg/Catch2)
-testing library and code from [origin](http://code.google.com/p/origin).
-Please see the [ThirdPartyNotices.txt](ThirdPartyNotices.txt) file for details
-regarding the licensing of Catch2 and origin.
-
-## Quick Start
+## Getting Started
 
 ### Requirements
 

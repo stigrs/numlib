@@ -21,7 +21,7 @@ namespace Numlib {
 //
 // Template parameters:
 //   T - The underlying value type of the matrix, possibly const
-//   N - The rank of the matrix
+//   N - The order of the matrix
 //
 template <typename T, std::size_t N>
 class Matrix_ref : public Matrix_base<T, N> {
@@ -381,9 +381,9 @@ Matrix_ref<T, N>::operator+=(const M& m)
 // clang-format on
 {
 #ifdef __clang__ // ugly hack to work around bug in Clang on Mac OS X
-    assert(m.order == N);
+    assert(m.rank() == N);
 #else
-    static_assert(m.order == N, "+=: mismatched Matrix dimensions");
+    static_assert(m.rank() == N, "+=: mismatched Matrix dimensions");
 #endif
     assert(same_extents(this->desc, m.descriptor()));
 
@@ -398,9 +398,9 @@ Matrix_ref<T, N>::operator-=(const M& m)
 // clang-format on
 {
 #ifdef __clang__ // ugly hack to work around bug in Clang on Mac OS X
-    assert(m.order == N);
+    assert(m.rank() == N);
 #else
-    static_assert(m.order == N, "-=: mismatched Matrix dimensions");
+    static_assert(m.rank() == N, "-=: mismatched Matrix dimensions");
 #endif
     assert(same_extents(this->desc, m.descriptor()));
 

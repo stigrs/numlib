@@ -21,35 +21,49 @@ Numlib::Vec<double> Numlib::linspace(double x1, double x2, Index n)
     return res;
 }
 
-double Numlib::det(const Mat<double>& a)
+void Numlib::schmidt(Mat<double>& a, Index n)
 {
-    assert(a.rows() == a.cols());
+    Index n_out = 0;
+    Index n_orb = n;
+    Index n_bas = a.rows();
 
-    double ddet = 0.0;
-    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
+    Vec<double> work(n_bas);
+    work = 0.0;
 
-    if (n == 1) {
-        ddet = a(0, 0);
-    }
-    else if (n == 2) {
-        ddet = a(0, 0) * a(1, 1) - a(1, 0) * a(0, 1);
-    }
-    else { // use LU decomposition
-        Mat<double> tmp(a);
-        Vec<BLAS_INT> ipiv;
+    double r_min = 0.1;
 
-        lu(tmp, ipiv);
-
-        BLAS_INT permut = 0;
-        for (BLAS_INT i = 1; i <= n; ++i) {
-            if (i != ipiv(i - 1)) { // Fortran uses base 1
-                permut++;
+    while (n_orb < n_bas) {
+        Index lim = n_orb + n_bas;
+        for (Index i = 0; i < lim; ++i) {
+            if (n_out >= n_bas) {
+                return;
+            }
+            auto an = a.column(n_out);
+            if (i < n_orb) {
+                auto ai = a.column(i);
+                an = ai;
+            }
+            else {
+                an = 0.0;
+                a(i - n_orb, n_out) = 1.0;
+            }
+            for (Index j = 0; j < n_out; ++j) {
+                auto aj = a.column(j);
+                work(j) = dot(aj, an);
+            }
+            for (Index j = 0; j < n_out; ++j) {
+                auto aj = a.column(j);
+                an = an - work(j) * aj;
+            }
+            double r = std::sqrt(dot(an, an));
+            if (r >= r_min) {
+                ++n_out;
+                an /= r;
             }
         }
-        ddet = prod(tmp.diag());
-        ddet *= std::pow(-1.0, narrow_cast<double>(permut));
+        r_min /= 10.0;
+        n_orb = n_out;
     }
-    return ddet;
 }
 
 void Numlib::eig(Mat<double>& a,
@@ -99,21 +113,21 @@ void Numlib::eig(double emin,
 {
     // Intitialize FEAST:
 
-    BLAS_INT fpm[128];
-    feastinit((BLAS_INT*) fpm);
+    MKL_INT fpm[128];
+    feastinit((MKL_INT*) fpm);
 #ifndef NDEBUG
     fpm[0] = 1; // print runtime status
 #endif
 
     // Solve eigenvalue problem:
 
-    BLAS_INT n = narrow_cast<BLAS_INT>(ab.cols());
-    BLAS_INT kla = narrow_cast<BLAS_INT>(ab.upper());
-    BLAS_INT lda = narrow_cast<BLAS_INT>(ab.leading_dim());
-    BLAS_INT m0 = n;
-    BLAS_INT loop = 0;
-    BLAS_INT m = m0;
-    BLAS_INT info = 0;
+    MKL_INT n = narrow_cast<MKL_INT>(ab.cols());
+    MKL_INT kla = narrow_cast<MKL_INT>(ab.upper());
+    MKL_INT lda = narrow_cast<MKL_INT>(ab.leading_dim());
+    MKL_INT m0 = n;
+    MKL_INT loop = 0;
+    MKL_INT m = m0;
+    MKL_INT info = 0;
 
     double epsout = 0.0; // relative error on the trace (not returned)
     Vec<double> res(m0); // residual vector (not returned)
@@ -121,7 +135,7 @@ void Numlib::eig(double emin,
     evec.resize(n, m0);
     eval.resize(m0);
 
-    dfeast_sbev("F", &n, &kla, ab.data(), &lda, (BLAS_INT*) fpm, &epsout, &loop,
+    dfeast_sbev("F", &n, &kla, ab.data(), &lda, (MKL_INT*) fpm, &epsout, &loop,
                 &emin, &emax, &m0, eval.data(), evec.data(), &m, res.data(),
                 &info);
     if (info != 0) {
@@ -144,19 +158,19 @@ void Numlib::eig(double emin,
 {
     // Initialize FEAST:
 
-    BLAS_INT fpm[128];
-    feastinit((BLAS_INT*) fpm);
+    MKL_INT fpm[128];
+    feastinit((MKL_INT*) fpm);
 #ifndef NDEBUG
     fpm[0] = 1; // print runtime status
 #endif
 
     // Solve eigenvalue problem:
 
-    BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
-    BLAS_INT m0 = n;
-    BLAS_INT loop = 0;
-    BLAS_INT m = m0;
-    BLAS_INT info = 0;
+    MKL_INT n = narrow_cast<MKL_INT>(a.cols());
+    MKL_INT m0 = n;
+    MKL_INT loop = 0;
+    MKL_INT m = m0;
+    MKL_INT info = 0;
 
     auto ia = a.row_index_one_based(); // FEAST only support one-based indexing
     auto ja = a.columns_one_based();
@@ -167,7 +181,7 @@ void Numlib::eig(double emin,
     evec.resize(n, m0);
     eval.resize(m0);
 
-    dfeast_scsrev("F", &n, a.data(), ia.data(), ja.data(), (BLAS_INT*) fpm,
+    dfeast_scsrev("F", &n, a.data(), ia.data(), ja.data(), (MKL_INT*) fpm,
                   &epsout, &loop, &emin, &emax, &m0, eval.data(), evec.data(),
                   &m, res.data(), &info);
     if (info != 0) {
@@ -181,47 +195,72 @@ void Numlib::eig(double emin,
 }
 #endif
 
-void Numlib::schmidt(Mat<double>& a, Index n)
+double Numlib::det(const Mat<double>& a)
 {
-    Index n_out = 0;
-    Index n_orb = n;
-    Index n_bas = a.rows();
+    assert(a.rows() == a.cols());
 
-    Vec<double> work(n_bas);
-    work = 0.0;
+    double ddet = 0.0;
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.rows());
 
-    double r_min = 0.1;
+    if (n == 1) {
+        ddet = a(0, 0);
+    }
+    else if (n == 2) {
+        ddet = a(0, 0) * a(1, 1) - a(1, 0) * a(0, 1);
+    }
+    else { // use LU decomposition
+        Mat<double> tmp(a);
+        Vec<BLAS_INT> ipiv;
 
-    while (n_orb < n_bas) {
-        Index lim = n_orb + n_bas;
-        for (Index i = 0; i < lim; ++i) {
-            if (n_out >= n_bas) {
-                return;
-            }
-            auto an = a.column(n_out);
-            if (i < n_orb) {
-                auto ai = a.column(i);
-                an = ai;
-            }
-            else {
-                an = 0.0;
-                a(i - n_orb, n_out) = 1.0;
-            }
-            for (Index j = 0; j < n_out; ++j) {
-                auto aj = a.column(j);
-                work(j) = dot(aj, an);
-            }
-            for (Index j = 0; j < n_out; ++j) {
-                auto aj = a.column(j);
-                an = an - work(j) * aj;
-            }
-            double r = std::sqrt(dot(an, an));
-            if (r >= r_min) {
-                ++n_out;
-                an /= r;
+        lu(tmp, ipiv);
+
+        BLAS_INT permut = 0;
+        for (BLAS_INT i = 1; i <= n; ++i) {
+            if (i != ipiv(i - 1)) { // Fortran uses base 1
+                permut++;
             }
         }
-        r_min /= 10.0;
-        n_orb = n_out;
+        ddet = prod(tmp.diag());
+        ddet *= std::pow(-1.0, narrow_cast<double>(permut));
+    }
+    return ddet;
+}
+
+#ifdef USE_MKL
+void Numlib::linsolve(const Numlib::Sp_mat<double>& a,
+                      Numlib::Mat<double>& b,
+                      Numlib::Mat<double>& x)
+{
+    assert(b.rows() == a.rows());
+    x.resize(b.rows(), b.cols());
+
+    MKL_INT n = narrow_cast<MKL_INT>(b.rows());
+    MKL_INT nrhs = narrow_cast<MKL_INT>(b.cols());
+
+    // Initialize PARDISO:
+
+    void* pt[64];       // internal solver memory pointer
+    MKL_INT iparm[64];  // PARDISO control parameters
+    MKL_INT mtype = 11; // real and nonsymmetric matrix
+    MKL_INT maxfct = 1; // max factors kept in memory
+    MKL_INT mnum = 1;   // which matrix to factorize
+    MKL_INT phase = 13; // analysis, numerical factorization, solve
+    MKL_INT msglvl = 0; // no print of statistical information
+    MKL_INT error = 0;  // initialize error flag
+
+    pardisoinit((void*) pt, &mtype, (MKL_INT*) iparm); // set default values
+    iparm[34] = 1;                                     // zero-based indexing
+
+    // Solve linear system of equations:
+
+    Numlib::Vec<MKL_INT> perm(n);
+
+    pardiso((void*) pt, &maxfct, &mnum, &mtype, &phase, &n, a.data(),
+            a.row_index().data(), a.columns().data(), perm.data(), &nrhs,
+            (MKL_INT*) iparm, &msglvl, b.data(), x.data(), &error);
+
+    if (error != 0) {
+        throw Math_error("could not solve sparse linear system of equations");
     }
 }
+#endif

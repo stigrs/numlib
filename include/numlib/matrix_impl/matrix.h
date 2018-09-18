@@ -23,7 +23,7 @@ namespace Numlib {
 //
 // Template parameters:
 //   T - The element type stored by the matrix
-//   N - The matrix rank
+//   N - The matrix order
 //
 template <typename T, std::size_t N>
 class Matrix : public Matrix_base<T, N> {
@@ -315,7 +315,7 @@ template <typename T, std::size_t N>
 template <typename... Exts>
 inline void Matrix<T, N>::resize(Exts... exts)
 {
-    assert(sizeof...(Exts) == this->rank());
+    assert(sizeof...(Exts) == this->order);
     Matrix_slice<N> d{static_cast<size_type>(exts)...}; // avoid C2398 error
     this->desc = d;
     elems.resize(this->size());
