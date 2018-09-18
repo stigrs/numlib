@@ -11,6 +11,7 @@ endif()
 set(
     SRC_FILES
 	calculus.cpp
+    geometry.cpp
 	linalg.cpp
 )
 add_library(

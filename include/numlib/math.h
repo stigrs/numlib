@@ -26,5 +26,6 @@ struct Math_error : std::runtime_error {
 #include <numlib/math_impl/core.h>
 #include <numlib/math_impl/calculus.h>
 #include <numlib/math_impl/linalg.h>
+#include <numlib/math_impl/geometry.h>
 
 #endif // NUMLIB_MATH_H
