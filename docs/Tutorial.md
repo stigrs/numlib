@@ -258,7 +258,7 @@ Example program:
         double a = 0.0;
         double b = Constants::pi;
 
-        std::cout << "gaussian quadrature: "
+        std::cout << "5-point gaussian quadrature: "
                   << quad<5>([](double x) { return std::sin(x); }, a, b) 
                   << '\n';
     }
@@ -266,4 +266,4 @@ Example program:
  Generated output:
 
     trapezoidal: 5.22
-    gaussian quadrature: 2
+    5-point gaussian quadrature: 2

@@ -18,6 +18,6 @@ int main()
     double a = 0.0;
     double b = Constants::pi;
 
-    std::cout << "gaussian quadrature: "
+    std::cout << "5-point gaussian quadrature: "
               << quad<5>([](double x) { return std::sin(x); }, a, b) << '\n';
 }
