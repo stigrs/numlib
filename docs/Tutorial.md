@@ -1,5 +1,16 @@
 # Tutorial
 
+## Table of Contents
+
+* [Basic Matrix Uses](#basic-matrix-uses)
+  + [Matrix Properties](#matrix-properties)
+  + [Subscripting and Slicing](#subscripting-and-slicing)
+  + [Sub-Matrix Views](#sub-matrix-views)
+  + [Arithmetic Operations](#arithmetic-operations)
+* [Constants](#constants)
+* [Numerical Derivation](#numerical-derivation)
+* [Numerical Integration](#numerical-integration)
+
 ## Basic Matrix Uses
 
 ### Matrix Properties
