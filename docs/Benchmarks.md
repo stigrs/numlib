@@ -1,4 +1,4 @@
-## Benchmarks
+# Benchmarks
 
 The benchmarks show that Numlib can compete with Armadillo when a fast BLAS library is used. BLAS was not used for the
 DAXPY operation. In this case Armadillo performs significantly better than Numlib. However, Numlib is able to compete 

@@ -1,6 +1,6 @@
-## Tutorial
+# Tutorial
 
-### Basic Matrix Uses
+## Basic Matrix Uses
 
 Example program:
 
