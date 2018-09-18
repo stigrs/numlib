@@ -10,6 +10,7 @@ endif()
 set(
     PROGRAMS 
     basic_matrix_uses 
+	subscripting_and_slicing
 )
 
 foreach(program ${PROGRAMS})
