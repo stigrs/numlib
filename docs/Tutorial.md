@@ -100,3 +100,67 @@ Generated output:
     v(slice{0, 3, 2}) (slice with stride 2):
     3
     [         1         3         5 ]
+
+### Sub-Matrix Views
+
+Example program:
+
+	#include <iostream>
+	#include <numlib/matrix.h>
+
+	int main()
+	{
+		using namespace Numlib;
+
+		Matrix<int, 2> m = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
+		std::cout << "matrix:\n" << m << '\n';
+
+		auto r = m.row(1);
+		std::cout << "row(1):\n" << r << "\n\n";
+
+		auto c = m.column(2);
+		std::cout << "column(2):\n" << c << "\n\n";
+
+		auto s1 = m(slice{0, 2}, slice{0, 2});
+		std::cout << "m(0:2, 0:2):\n" << s1 << "\n\n";
+
+		auto s2 = m(slice{0, 2, 2}, slice{1, 2, 2});
+		std::cout << "m(0:2:2, 1:2:2):\n" << s2 << "\n\n";
+
+		s2 = 0;
+		std::cout << "matrix:\n" << m << '\n';
+	}
+
+Generated output:
+
+	matrix:
+	3 x 4
+	[        1         2         3         4
+			 5         6         7         8
+			 9        10        11        12 ]
+
+	row(1):
+	4
+	[         5         6         7         8 ]
+
+	column(2):
+	3
+	[         3         7        11 ]
+
+	m(0:2, 0:2):
+	2 x 2
+	[        1         2
+			 5         6 ]
+
+
+	m(0:2:2, 1:2:2):
+	2 x 2
+	[        2         4
+			10        12 ]
+
+
+	matrix:
+	3 x 4
+	[        1         0         3         0
+			 5         6         7         8
+			 9         0        11         0 ]
