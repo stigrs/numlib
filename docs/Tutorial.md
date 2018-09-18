@@ -205,3 +205,16 @@ Generated output:
     a * b = 2 x 2
     [       70       100
            150       220 ]
+
+## Constants
+
+Example program:
+
+    #include <iostream>
+    #include <numlib/constants.h>
+
+    int main() { std::cout << Numlib::Constants::pi << '\n'; }
+
+Generated output:
+
+    3.14159

@@ -10,6 +10,7 @@ endif()
 set(
     PROGRAMS 
     arithmetic
+    constants
     matrix_properties 
 	sub_matrix_views
 	subscripting_and_slicing
