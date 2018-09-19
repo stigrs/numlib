@@ -23,9 +23,12 @@ struct Math_error : std::runtime_error {
     Math_error(const std::string& s) : std::runtime_error(s) {}
 };
 
+// Note: Do not change this order.
 #include <numlib/math_impl/core.h>
 #include <numlib/math_impl/calculus.h>
 #include <numlib/math_impl/linalg.h>
 #include <numlib/math_impl/geometry.h>
+#include <numlib/math_impl/euler.h>
+#include <numlib/math_impl/quaternion.h>
 
 #endif // NUMLIB_MATH_H

@@ -11,8 +11,10 @@ endif()
 set(
     SRC_FILES
 	calculus.cpp
+    euler.cpp
     geometry.cpp
 	linalg.cpp
+    quaternion.cpp
 )
 add_library(
     numlib 

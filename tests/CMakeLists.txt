@@ -63,8 +63,10 @@ set(PROGRAMS
 	test_constants
 	test_math_core
 	test_math_calculus
+    test_math_euler
 	test_math_geometry
 	test_math_linalg
+	test_math_quaternion
     test_matrix0
     test_matrix1
     test_matrix2
