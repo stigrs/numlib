@@ -15,6 +15,7 @@ set(
     geometry.cpp
 	linalg.cpp
     quaternion.cpp
+    statistics.cpp
 )
 add_library(
     numlib 
