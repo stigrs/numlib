@@ -9,6 +9,7 @@
 
 #include <numlib/traits.h>
 #include <cstdlib>
+#include <cmath>
 
 namespace Numlib {
 

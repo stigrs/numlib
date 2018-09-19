@@ -14,6 +14,9 @@ and Intel MKL are supported.
 * Selected mathematical functions not provided by the STL
 * Numerical derivation and integration methods
 * Linear algebra methods
+* Transformations between rotation matrix, Euler angles and quaternions
+* Vector convolution
+* Statistical methods
 * Mathematical constants, metric prefixes, physical constants, and
   conversion factors
 

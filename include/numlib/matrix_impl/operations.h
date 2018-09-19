@@ -233,8 +233,30 @@ inline Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix<T, N>& b)
 }
 
 template <typename T, std::size_t N>
+inline Matrix<T, N> operator+(const Matrix<const T, N>& a,
+                              const Matrix<const T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res += b;
+    return res;
+}
+
+template <typename T, std::size_t N>
 inline Matrix<T, N> operator+(const Matrix_ref<T, N>& a,
                               const Matrix_ref<T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res += b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator+(const Matrix_ref<const T, N>& a,
+                              const Matrix_ref<const T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -254,7 +276,29 @@ inline Matrix<T, N> operator+(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
 }
 
 template <typename T, std::size_t N>
+inline Matrix<T, N> operator+(const Matrix<const T, N>& a,
+                              const Matrix_ref<const T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res += b;
+    return res;
+}
+
+template <typename T, std::size_t N>
 inline Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res += b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator+(const Matrix_ref<const T, N>& a,
+                              const Matrix<const T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -276,8 +320,30 @@ inline Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix<T, N>& b)
 }
 
 template <typename T, std::size_t N>
+inline Matrix<T, N> operator-(const Matrix<const T, N>& a,
+                              const Matrix<const T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res -= b;
+    return res;
+}
+
+template <typename T, std::size_t N>
 inline Matrix<T, N> operator-(const Matrix_ref<T, N>& a,
                               const Matrix_ref<T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res -= b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator-(const Matrix_ref<const T, N>& a,
+                              const Matrix_ref<const T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -297,7 +363,29 @@ inline Matrix<T, N> operator-(const Matrix<T, N>& a, const Matrix_ref<T, N>& b)
 }
 
 template <typename T, std::size_t N>
+inline Matrix<T, N> operator-(const Matrix<const T, N>& a,
+                              const Matrix_ref<const T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res -= b;
+    return res;
+}
+
+template <typename T, std::size_t N>
 inline Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res -= b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator-(const Matrix_ref<const T, N>& a,
+                              const Matrix<const T, N>& b)
 {
     assert(same_extents(a, b));
 
@@ -317,7 +405,23 @@ inline Matrix<T, N> operator+(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
+inline Matrix<T, N> operator+(const Matrix<const T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res += scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
 inline Matrix<T, N> operator+(const Matrix_ref<T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res += scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator+(const Matrix_ref<const T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res += scalar;
@@ -333,7 +437,23 @@ inline Matrix<T, N> operator+(const T& scalar, const Matrix<T, N>& a)
 }
 
 template <typename T, std::size_t N>
+inline Matrix<T, N> operator+(const T& scalar, const Matrix<const T, N>& a)
+{
+    Matrix<T, N> res = a;
+    res += scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
 inline Matrix<T, N> operator+(const T& scalar, const Matrix_ref<T, N>& a)
+{
+    Matrix<T, N> res = a;
+    res += scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator+(const T& scalar, const Matrix_ref<const T, N>& a)
 {
     Matrix<T, N> res = a;
     res += scalar;
@@ -351,7 +471,23 @@ inline Matrix<T, N> operator-(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
+inline Matrix<T, N> operator-(const Matrix<const T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res -= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
 inline Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res -= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator-(const Matrix_ref<const T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res -= scalar;
@@ -369,7 +505,23 @@ inline Matrix<T, N> operator*(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
+inline Matrix<T, N> operator*(const Matrix<const T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res *= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
 inline Matrix<T, N> operator*(const Matrix_ref<T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res *= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator*(const Matrix_ref<const T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res *= scalar;
@@ -385,7 +537,23 @@ inline Matrix<T, N> operator*(const T& scalar, const Matrix<T, N>& a)
 }
 
 template <typename T, std::size_t N>
+inline Matrix<T, N> operator*(const T& scalar, const Matrix<const T, N>& a)
+{
+    Matrix<T, N> res = a;
+    res *= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
 inline Matrix<T, N> operator*(const T& scalar, const Matrix_ref<T, N>& a)
+{
+    Matrix<T, N> res = a;
+    res *= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator*(const T& scalar, const Matrix_ref<const T, N>& a)
 {
     Matrix<T, N> res = a;
     res *= scalar;
@@ -403,7 +571,23 @@ inline Matrix<T, N> operator/(const Matrix<T, N>& a, const T& scalar)
 }
 
 template <typename T, std::size_t N>
+inline Matrix<T, N> operator/(const Matrix<const T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res /= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
 inline Matrix<T, N> operator/(const Matrix_ref<T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res /= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator/(const Matrix_ref<const T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res /= scalar;
@@ -423,7 +607,25 @@ operator%(const Matrix<T, N>& a, const T& scalar)
 
 template <typename T, std::size_t N>
 inline Enable_if<Integer_type<T>(), Matrix<T, N>>
+operator%(const Matrix<const T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res %= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Enable_if<Integer_type<T>(), Matrix<T, N>>
 operator%(const Matrix_ref<T, N>& a, const T& scalar)
+{
+    Matrix<T, N> res = a;
+    res %= scalar;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Enable_if<Integer_type<T>(), Matrix<T, N>>
+operator%(const Matrix_ref<const T, N>& a, const T& scalar)
 {
     Matrix<T, N> res = a;
     res %= scalar;
@@ -493,8 +695,26 @@ inline Matrix<T, 2> operator*(const Matrix<T, 2>& a, const Matrix<T, 2>& b)
 }
 
 template <typename T>
+inline Matrix<T, 2> operator*(const Matrix<const T, 2>& a,
+                              const Matrix<const T, 2>& b)
+{
+    Matrix<T, 2> res;
+    mm_mul(a, b, res);
+    return res;
+}
+
+template <typename T>
 inline Matrix<T, 2> operator*(const Matrix_ref<T, 2>& a,
                               const Matrix_ref<T, 2>& b)
+{
+    Matrix<T, 2> res;
+    mm_mul(a, b, res);
+    return res;
+}
+
+template <typename T>
+inline Matrix<T, 2> operator*(const Matrix_ref<const T, 2>& a,
+                              const Matrix_ref<const T, 2>& b)
 {
     Matrix<T, 2> res;
     mm_mul(a, b, res);
@@ -510,7 +730,25 @@ inline Matrix<T, 2> operator*(const Matrix<T, 2>& a, const Matrix_ref<T, 2>& b)
 }
 
 template <typename T>
+inline Matrix<T, 2> operator*(const Matrix<const T, 2>& a,
+                              const Matrix_ref<const T, 2>& b)
+{
+    Matrix<T, 2> res;
+    mm_mul(a, b, res);
+    return res;
+}
+
+template <typename T>
 inline Matrix<T, 2> operator*(const Matrix_ref<T, 2>& a, const Matrix<T, 2>& b)
+{
+    Matrix<T, 2> res;
+    mm_mul(a, b, res);
+    return res;
+}
+
+template <typename T>
+inline Matrix<T, 2> operator*(const Matrix_ref<const T, 2>& a,
+                              const Matrix<const T, 2>& b)
 {
     Matrix<T, 2> res;
     mm_mul(a, b, res);
@@ -575,8 +813,26 @@ inline Matrix<T, 1> operator*(const Matrix<T, 2>& a, const Matrix<T, 1>& x)
 }
 
 template <typename T>
+inline Matrix<T, 1> operator*(const Matrix<const T, 2>& a,
+                              const Matrix<const T, 1>& x)
+{
+    Matrix<T, 1> res;
+    mv_mul(a, x, res);
+    return res;
+}
+
+template <typename T>
 inline Matrix<T, 1> operator*(const Matrix_ref<T, 2>& a,
                               const Matrix_ref<T, 1>& x)
+{
+    Matrix<T, 1> res;
+    mv_mul(a, x, res);
+    return res;
+}
+
+template <typename T>
+inline Matrix<T, 1> operator*(const Matrix_ref<const T, 2>& a,
+                              const Matrix_ref<const T, 1>& x)
 {
     Matrix<T, 1> res;
     mv_mul(a, x, res);
@@ -592,7 +848,25 @@ inline Matrix<T, 1> operator*(const Matrix<T, 2>& a, const Matrix_ref<T, 1>& x)
 }
 
 template <typename T>
+inline Matrix<T, 1> operator*(const Matrix<const T, 2>& a,
+                              const Matrix_ref<const T, 1>& x)
+{
+    Matrix<T, 1> res;
+    mv_mul(a, x, res);
+    return res;
+}
+
+template <typename T>
 inline Matrix<T, 1> operator*(const Matrix_ref<T, 2>& a, const Matrix<T, 1>& x)
+{
+    Matrix<T, 1> res;
+    mv_mul(a, x, res);
+    return res;
+}
+
+template <typename T>
+inline Matrix<T, 1> operator*(const Matrix_ref<const T, 2>& a,
+                              const Matrix<const T, 1>& x)
 {
     Matrix<T, 1> res;
     mv_mul(a, x, res);
