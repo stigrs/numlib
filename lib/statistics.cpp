@@ -89,7 +89,6 @@ double Numlib::cov(const Numlib::Vec<double>& x, const Numlib::Vec<double>& y)
 {
     assert(x.size() == y.size() && !x.empty());
 
-    double n = x.size();
     double xmean = mean(x);
     double ymean = mean(y);
     double cov = 0.0;
@@ -97,7 +96,7 @@ double Numlib::cov(const Numlib::Vec<double>& x, const Numlib::Vec<double>& y)
     for (Index i = 0; i < x.size(); ++i) {
         double a = x(i) - xmean;
         double b = y(i) - ymean;
-        cov += a * b / (n - 1.0);
+        cov += a * b / (x.size() - 1.0);
     }
     return cov;
 }
