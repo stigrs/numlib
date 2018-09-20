@@ -97,6 +97,12 @@ double dihedral(const Vec<double>& a,
 // Compute the pair-wise distances between observations in n-dim. space.
 void pdist_matrix(Mat<double>& dm, const Mat<double>& mat);
 
+// Compute centroid of a XYZ coordinate matrix.
+inline Vec<double> centroid(const Mat<double>& xyz)
+{
+    return sum(xyz, 1) / narrow_cast<double>(xyz.rows());
+}
+
 // Perform translation.
 void translate(Mat<double>& xyz, double dx, double dy, double dz);
 
