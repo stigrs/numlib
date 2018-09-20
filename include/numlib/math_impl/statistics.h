@@ -45,6 +45,13 @@ double rms(const Vec<double>& x);
 // Root-mean-square displacement.
 double rmsd(const Mat<double>& a, const Mat<double>& b);
 
+// Minimum root-mean-square displacement between two paired set of points.
+//
+// Algorithm:
+//   Kabsch algorithm (https://en.wikipedia.org/wiki/Kabsch_algorithm)
+//
+double kabsch_rmsd(const Mat<double>& p, const Mat<double>& q);
+
 } // namespace Numlib
 
 #endif // NUMLIB_MATH_STATISTICS_H
