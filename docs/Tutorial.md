@@ -10,6 +10,9 @@
 * [Constants](#constants)
 * [Numerical Derivation](#numerical-derivation)
 * [Numerical Integration](#numerical-integration)
+* [Linear Algebra](#linear-algebra)
+  + [Basic Linear Algebra](#basic-linear-algebra)
+  + [Matrix Inversion](#matrix-inversion)
 
 ## Basic Matrix Uses
 
@@ -42,7 +45,9 @@ Example program:
                   << "extent(1) = " << m1.extent(1) << "\n\n";
 
         Mat<int> m2 = {{1, 2, 3}, {4, 5, 6}};
-        std::cout << m2 << '\n';
+        std::cout << "m2 = \n" << m2 << '\n';
+
+        std::cout << "transpose(m2) =\n" << transpose(m2) << '\n';
     }
 
 Generated output:
@@ -61,9 +66,16 @@ Generated output:
     extent(0) = 5
     extent(1) = 5
 
+    m2 =
     2 x 3
     [        1         2         3
              4         5         6 ]
+
+    transpose(m2) =
+    3 x 2
+    [        1         4
+             2         5
+             3         6 ]
 
 ### Subscripting and Slicing
 [back to top](#table-of-contents)
@@ -285,3 +297,146 @@ Example program:
 
     trapezoidal: 5.22
     5-point gaussian quadrature: 2
+
+## Linear Algebra
+ 
+### Basic Linear Algebra
+[back to top](#table-of-contents)
+
+Example program:
+
+    #include <iostream>
+    #include <numlib/matrix.h>
+    #include <numlib/math.h>
+
+    int main()
+    {
+        using namespace Numlib;
+
+        Vec<double> x = linspace(1.0, 10.0, 10);
+        std::cout << "x = \n" << x << "\n\n";
+
+        Vec<double> y = 2.0 * ones<Vec<double>>(10);
+
+        std::cout << "min(x) =    " << min(x) << '\n'
+                  << "max(x) =    " << max(x) << '\n'
+                  << "sum(x) =    " << sum(x) << '\n'
+                  << "prod(x) =   " << prod(x) << '\n'
+                  << "norm(x) =   " << norm(x) << '\n'
+                  << "dot(x, y) = " << dot(x, y) << "\n\n";
+
+        Vec<double> a = {3.0, -3.0, 1.0};
+        Vec<double> b = {4.0, 9.0, 2.0};
+        std::cout << "cross(a, b) = \n" << cross(a, b) << '\n';
+    }
+
+Generated output:
+
+    x =
+    10
+    [         1         2         3         4         5         6         7
+              8         9        10 ]
+
+    min(x) =    1
+    max(x) =    10
+    sum(x) =    55
+    prod(x) =   3.6288e+06
+    norm(x) =   19.6214
+    dot(x, y) = 110
+
+    cross(a, b) =
+    3
+    [       -15        -2        39 ]
+
+### Matrix Inversion
+[back to top](#table-of-contents)
+
+Example program:
+
+    #include <iostream>
+    #include <numlib/matrix.h>
+    #include <numlib/math.h>
+
+    int main()
+    {
+        using namespace Numlib;
+
+        Mat<double> a = {{1.0, 5.0, 4.0, 2.0},
+                         {-2.0, 3.0, 6.0, 4.0},
+                         {5.0, 1.0, 0.0, -1.0},
+                         {2.0, 3.0, -4.0, 0.0}};
+        inv(a);
+        std::cout << a << '\n';
+    }
+
+Generated output:
+
+    4 x 4
+    [-0.190083  0.165289  0.280992 0.0578512
+      0.347107 -0.214876 -0.165289 0.0247934
+      0.165289 -0.0785124 0.0165289 -0.202479
+     -0.603306   0.61157  0.239669   0.31405 ]
+
+### Matrix Decompositions
+[back to top](#table-of-contents)
+
+Example program:
+
+    #include <iostream>
+    #include <numlib/matrix.h>
+    #include <numlib/math.h>
+
+    int main()
+    {
+        using namespace Numlib;
+
+        Mat<double> a = {
+            {12.0, -51.0, 4.0}, {6.0, 167.0, -68.0}, {-4.0, 24.0, -41.0}};
+
+        Mat<double> q;
+        Mat<double> r;
+
+        qr(a, q, r);
+
+        Mat<double> qr = q * r;
+        std::cout << "QR decomposition (A = QR):\n" << qr << '\n';
+
+        Mat<double> m = {
+            {8.79, 9.93, 9.83, 5.45, 3.16},   
+            {6.11, 6.91, 5.04, -0.27, 7.98},
+            {-9.15, -7.93, 4.86, 4.85, 3.01}, 
+            {9.57, 1.64, 8.83, 0.74, 5.8},
+            {-3.49, 4.02, 9.80, 10.00, 4.27}, 
+            {9.84, 0.15, -8.99, -6.02, -5.31}};
+
+        Vec<double> s;
+        Mat<double> u;
+        Mat<double> vt;
+
+        svd(m, s, u, vt);
+
+        Mat<double> sigma = zeros<Mat<double>>(m.rows(), m.cols());
+        for (Index i = 0; i < s.size(); ++i) {
+            sigma(i, i) = s(i);
+        }
+        std::cout << "SVD decomposition (M = USVT):\n" 
+                  << u * sigma * vt 
+                  << '\n';
+    }
+
+ Generated output:
+
+    QR decomposition (A = QR):
+    3 x 3
+    [       12       -51         4
+             6       167       -68
+            -4        24       -41 ]
+
+    SVD decomposition (M = USVT):
+    6 x 5
+    [     8.79      9.93      9.83      5.45      3.16
+          6.11      6.91      5.04     -0.27      7.98
+         -9.15     -7.93      4.86      4.85      3.01
+          9.57      1.64      8.83      0.74       5.8
+         -3.49      4.02       9.8        10      4.27
+          9.84      0.15     -8.99     -6.02     -5.31 ]

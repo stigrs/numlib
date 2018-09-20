@@ -13,6 +13,9 @@ set(
     constants
     derivation
     integration
+    linear_algebra
+    matrix_decomposition 
+    matrix_inversion 
     matrix_properties 
 	sub_matrix_views
 	subscripting_and_slicing
