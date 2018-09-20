@@ -78,7 +78,7 @@ max(const M& mat, Index dim)
         }
     }
     else { // column
-        for (Index i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.cols(); ++i) {
             result(i) = max(mat.column(i));
         }
     }
@@ -106,7 +106,7 @@ min(const M& mat, Index dim)
         }
     }
     else { // column
-        for (Index i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.cols(); ++i) {
             result(i) = min(mat.column(i));
         }
     }
@@ -135,7 +135,7 @@ sum(const M& mat, Index dim)
         }
     }
     else { // column
-        for (Index i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.cols(); ++i) {
             result(i) = sum(mat.column(i));
         }
     }
@@ -166,7 +166,7 @@ prod(const M& mat, Index dim)
         }
     }
     else { // column
-        for (Index i = 0; i < mat.rows(); ++i) {
+        for (Index i = 0; i < mat.cols(); ++i) {
             result(i) = prod(mat.column(i));
         }
     }
