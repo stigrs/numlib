@@ -361,7 +361,7 @@ inline void svd(Mat<double>& a, Vec<double>& s, Mat<double>& u, Mat<double>& vt)
     BLAS_INT ldu = m;
     BLAS_INT ldvt = n;
 
-    s.resize(n);
+    s.resize(std::min(m, n));
     u.resize(m, ldu);
     vt.resize(n, ldvt);
 
