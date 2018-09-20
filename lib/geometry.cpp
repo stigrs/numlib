@@ -73,9 +73,6 @@ void Numlib::rotate(Numlib::Mat<double>& xyz, const Numlib::Mat<double>& rotm)
     assert(rotm.rows() == 3 && rotm.cols() == 3);
 
     for (Index i = 0; i < xyz.rows(); ++i) {
-        auto xyz_new = rotm * xyz.row(i);
-        xyz(i, 0) = xyz_new(0);
-        xyz(i, 1) = xyz_new(1);
-        xyz(i, 2) = xyz_new(2);
+        xyz.row(i) = rotm * xyz.row(i);
     }
 }
