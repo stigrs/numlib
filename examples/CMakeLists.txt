@@ -12,6 +12,7 @@ set(
     arithmetic
     band_matrix
     constants
+    convolution
     derivation
     eigensolvers
     integration
@@ -20,9 +21,10 @@ set(
     matrix_inversion 
     matrix_properties 
     packed_matrix
+    solve_linear_equations
     sparse_eigensolver
     sparse_linsolve
-    solve_linear_equations
+    statistics
 	sub_matrix_views
 	subscripting_and_slicing
 )
