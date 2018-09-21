@@ -29,8 +29,7 @@ int main()
     svd(m, s, u, vt);
 
     Mat<double> sigma = zeros<Mat<double>>(m.rows(), m.cols());
-    for (Index i = 0; i < s.size(); ++i) {
-        sigma(i, i) = s(i);
-    }
+    sigma.diag() = s;
+
     std::cout << "SVD decomposition (M = USVT):\n" << u * sigma * vt << '\n';
 }
