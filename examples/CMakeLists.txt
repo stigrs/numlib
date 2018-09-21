@@ -12,6 +12,7 @@ set(
     arithmetic
     constants
     derivation
+    eigensolvers
     integration
     linear_algebra
     matrix_decomposition 

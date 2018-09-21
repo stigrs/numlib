@@ -14,6 +14,7 @@
   + [Basic Linear Algebra](#basic-linear-algebra)
   + [Matrix Inversion](#matrix-inversion)
   + [Matrix Decompositions](#matrix-decompositions)
+  + [Eigensolvers](#eigensolvers)
 
 ## Basic Matrix Uses
 
@@ -440,3 +441,66 @@ Example program:
           9.57      1.64      8.83      0.74       5.8
          -3.49      4.02       9.8        10      4.27
           9.84      0.15     -8.99     -6.02     -5.31 ]
+
+### Eigensolvers
+[back to top](#table-of-contents)
+
+Example program:
+
+    #include <iostream>
+    #include <complex>
+    #include <numlib/matrix.h>
+    #include <numlib/math.h>
+
+    int main()
+    {
+        using namespace Numlib;
+
+        Mat<double> sa = hilbert(5);
+        Vec<double> eval;
+
+        eigs(sa, eval);
+        std::cout << "Eigenvalues for symmetric matrix:\n"
+                  << eval << "\n\n"
+                  << "Eigenvectors for symmetric matrix:\n"
+                  << sa << '\n';
+
+        Mat<double> ga = {{1.0, 5.0, 4.0, 2.0},
+                         {-2.0, 3.0, 6.0, 4.0},
+                         {5.0, 1.0, 0.0, -1.0},
+                         {2.0, 3.0, -4.0, 0.0}};
+
+        Vec<std::complex<double>> geval;
+        Mat<std::complex<double>> gevec;
+
+        eig(ga, gevec, geval);
+        std::cout << "Eigenvalues for general matrix:\n"
+                  << geval << "\n\n"
+                  << "Right eigenvectors for general matrix:\n"
+                  << gevec << '\n';
+    }
+
+Generated output:
+
+    Eigenvalues for symmetric matrix:
+    5
+    [ 3.28793e-06 0.000305898 0.0114075  0.208534   1.56705 ]
+
+    Eigenvectors for symmetric matrix:
+    5 x 5
+    [-0.00617386 0.0471618  0.214214 -0.601871  0.767855
+      0.116693 -0.432667 -0.724102  0.275913  0.445791
+     -0.506164   0.66735 -0.120453  0.424877  0.321578
+      0.767191  0.233025  0.309574  0.443903  0.253439
+     -0.376246   -0.5576  0.565193  0.429013  0.209823 ]
+
+    Eigenvalues for general matrix:
+    4
+    [ (-3.1736,1.12844) (-3.1736,-1.12844) (2.8422,0) (7.50501,0) ]
+
+    Right eigenvectors for general matrix:
+    4 x 4
+    [(-0.168896,-0.112295) (-0.168896,0.112295) (-0.195144,0) (0.70846,0)
+     (0.61502,-0.0394273) (0.61502,0.0394273) (0.0860169,0) (0.465904,0)
+     (-0.19838,0.118805) (-0.19838,-0.118805) (-0.587648,0) (0.521106,0)
+     (-0.724976,0) (-0.724976,-0) (0.780506,0) (0.0972959,0) ]
