@@ -263,12 +263,11 @@ template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix<T, N>::diag()
 {
     static_assert(N == 2, "diag: only defined for Matrix of rank 2");
-    assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;
     d.start = this->desc.start;
-    d.extents[0] = this->rows();
-    d.strides[0] = this->rows() + 1;
+    d.extents[0] = std::min(this->rows(), this->cols());
+    d.strides[0] = this->desc.strides[0] + 1;
     d.size = Matrix_impl::compute_size(d.extents);
 
     return {d, data()};
@@ -278,12 +277,11 @@ template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix<T, N>::diag() const
 {
     static_assert(N == 2, "diag: only defined for Matrix of rank 2");
-    assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;
     d.start = this->desc.start;
-    d.extents[0] = this->rows();
-    d.strides[0] = this->rows() + 1;
+    d.extents[0] = std::min(this->rows(), this->cols());
+    d.strides[0] = this->desc.strides[0] + 1;
     d.size = Matrix_impl::compute_size(d.extents);
 
     return {d, data()};
