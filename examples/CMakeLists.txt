@@ -10,6 +10,7 @@ endif()
 set(
     PROGRAMS 
     arithmetic
+    band_matrix
     constants
     derivation
     eigensolvers
@@ -18,6 +19,10 @@ set(
     matrix_decomposition 
     matrix_inversion 
     matrix_properties 
+    packed_matrix
+    sparse_eigensolver
+    sparse_linsolve
+    solve_linear_equations
 	sub_matrix_views
 	subscripting_and_slicing
 )

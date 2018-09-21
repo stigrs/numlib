@@ -15,6 +15,11 @@
   + [Matrix Inversion](#matrix-inversion)
   + [Matrix Decompositions](#matrix-decompositions)
   + [Eigensolvers](#eigensolvers)
+  + [Solve Linear System of Equations](#solve-linear-system-of-equations)
+  + [Band Matrices](#band-matrices)
+  + [Sparse Matrices](#sparse-matrices)
+    - [Eigensolver for Sparse Matrices](#eigensolver-for-sparse-matrices)
+    - [Sparse Linear System of Equations](#sparse-linear-system-of-equations)
 
 ## Basic Matrix Uses
 
@@ -504,3 +509,209 @@ Generated output:
      (0.61502,-0.0394273) (0.61502,0.0394273) (0.0860169,0) (0.465904,0)
      (-0.19838,0.118805) (-0.19838,-0.118805) (-0.587648,0) (0.521106,0)
      (-0.724976,0) (-0.724976,-0) (0.780506,0) (0.0972959,0) ]
+
+### Solve Linear System of Equations
+[back to top](#table-of-contents)
+
+Example program:
+
+    #include <iostream>
+    #include <numlib/matrix.h>
+    #include <numlib/math.h>
+
+    int main()
+    {
+        using namespace Numlib;
+
+        Mat<double> A = {{1.0, 2.0, 3.0}, {2.0, 3.0, 4.0}, {3.0, 4.0, 1.0}};
+        Mat<double> B = {{14.0}, {20.0}, {14.0}};
+
+        linsolve(A, B);
+        std::cout << B << '\n';
+    }
+
+Generated output:
+
+    3 x 1
+    [        1
+             2
+             3 ]
+
+### Band Matrices
+[back to top](#table-of-contents)
+
+Example program:
+
+    #include <iostream>
+    #include <numlib/matrix.h>
+    #include <numlib/math.h>
+
+    int main()
+    {
+        using namespace Numlib;
+
+        Mat<double> a = {{1.0, 5.0, 2.0, 0.0},
+                         {5.0, 2.0, 5.0, 2.0},
+                         {2.0, 5.0, 3.0, 5.0},
+                         {0.0, 2.0, 5.0, 4.0}};
+
+        Band_matrix<double> ab(/* kl = */ 3, /* ku = */ 3, a);
+        Mat<double> evec;
+        Vec<double> eval;
+
+        eigs(ab, evec, eval);
+        std::cout << eval << '\n';
+    }
+
+Generated output:
+
+    4
+    [  -4.26201  -2.22987   3.95222   12.5397 ]
+
+### Packed Matrices
+[back to top](#table-of-contents)
+
+Example program:
+
+    #include <iostream>
+    #include <numlib/matrix.h>
+    #include <numlib/math.h>
+
+    int main()
+    {
+    #ifdef USE_MKL
+        using namespace Numlib;
+
+        auto a = hilbert<>(5);
+        Symm_mat<double, lower_triang> ap(a);
+
+        Mat<double> evec;
+        Vec<double> eval(5); // correct size must be allocated
+
+        eigs(ap, evec, eval);
+        std::cout << eval << '\n';
+    #else
+        std::cout << "Intel MKL is required\n";
+    #endif
+    }
+
+Generated output:
+
+    5
+    [ 3.28793e-06 0.000305898 0.0114075  0.208534   1.56705 ]
+
+### Sparse Matrices
+#### Eigensolver for Sparse Matrices
+[back to top](#table-of-contents)
+
+Example program:
+
+    #include <iostream>
+    #include <numlib/matrix.h>
+    #include <numlib/math.h>
+
+    int main()
+    {
+    #ifdef USE_MKL
+        using namespace Numlib;
+
+        // clang-format off
+        BLAS_INT rows[12] = {0, 4, 9, 15, 22, 29, 36, 43, 50, 56, 61, 65};
+        BLAS_INT cols[65] = {0,   1,   2,   3,
+                             0,   1,   2,   3,   4,
+                             0,   1,   2,   3,   4,   5,
+                             0,   1,   2,   3,   4,   5,   6,
+                                  1,   2,   3,   4,   5,   6,   7,
+                                       2,   3,   4,   5,   6,   7,   8,
+                                            3,   4,   5,   6,   7,   8,  9,
+                                                 4,   5,   6,   7,   8,  9,  10,
+                                                      5,   6,   7,   8,  9,  10,
+                                                           6,   7,   8,  9,  10,
+                                                                7,   8,  9,  10
+        };
+        double val[65] = {5.0, 2.0, 1.0, 1.0,
+                          2.0, 6.0, 3.0, 1.0, 1.0,
+                          1.0, 3.0, 6.0, 3.0, 1.0, 1.0,
+                          1.0, 1.0, 3.0, 6.0, 3.0, 1.0, 1.0,
+                               1.0, 1.0, 3.0, 6.0, 3.0, 1.0, 1.0,
+                                    1.0, 1.0, 3.0, 6.0, 3.0, 1.0, 1.0,
+                                         1.0, 1.0, 3.0, 6.0, 3.0, 1.0, 1.0,
+                                              1.0, 1.0, 3.0, 6.0, 3.0, 1.0, 1.0,
+                                                   1.0, 1.0, 3.0, 6.0, 3.0, 1.0,
+                                                        1.0, 1.0, 3.0, 6.0, 2.0,
+                                                             1.0, 1.0, 2.0, 5.0
+        };
+        // clang-format on
+
+        Sp_mat<double> a(11, 11, val, cols, rows);
+        Mat<double> evec(a.rows(), a.cols());
+        Vec<double> eval(a.cols());
+
+        double emin = 3.0;
+        double emax = 7.0;
+
+        eig(emin, emax, a, evec, eval);
+
+        std::cout << eval << '\n';
+    #else
+        std::cout << "Intel MKL is required\n";
+    #endif
+    }
+
+Generated output (in debug mode):
+
+    Intel MKL Extended Eigensolvers: double precision driver
+    Intel MKL Extended Eigensolvers: List of input parameters fpm(1:64)-- if different from default
+    Intel MKL Extended Eigensolvers: fpm(1)=1
+    Search interval [3.000000000000000e+00;7.000000000000000e+00]
+    Intel MKL Extended Eigensolvers: Size subspace 11
+    #Loop | #Eig  |    Trace     | Error-Trace |  Max-Residual
+    Intel MKL Extended Eigensolvers: Resize subspace 9
+    0,6,2.570747126011656e+01,1.000000000000000e+00,2.405853064980635e-07
+    1,6,2.570747126011605e+01,7.308439567818174e-14,3.217497813885594e-14
+    Intel MKL Extended Eigensolvers have successfully converged (to desired tolerance).
+    Intel MKL Extended Eigensolvers have successfully converged (to desired tolerance).
+    6
+    [   3.17157         4         4   4.12925   4.40665         6 ]
+
+#### Sparse Linear System of Equations
+[back to top](#table-of-contents)
+
+Example program:
+
+    #include <iostream>
+    #include <numlib/matrix.h>
+    #include <numlib/math.h>
+
+    int main()
+    {
+    #ifdef USE_MKL
+        using namespace Numlib;
+
+        Mat<double> A = {{0.0, 2.0, 0.0, 1.0, 0.0},
+                         {4.0, -1.0, -1.0, 0.0, 0.0},
+                         {0.0, 0.0, 0.0, 3.0, -6.0},
+                         {-2.0, 0.0, 0.0, 0.0, 2.0},
+                         {0.0, 0.0, 4.0, 2.0, 0.0}};
+
+        Sp_mat<double> SA = gather(A);
+
+        Mat<double> B = {{8.0}, {-1.0}, {-18.0}, {8.0}, {20.0}};
+        Mat<double> x;
+
+        linsolve(SA, B, x);
+        std::cout << x << '\n';
+    #else
+        std::cout << "Intel MKL is required\n";
+    #endif
+    }
+
+Generated output:
+
+    5 x 1
+    [        1
+             2
+             3
+             4
+             5 ]
+
