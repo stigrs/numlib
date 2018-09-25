@@ -45,7 +45,7 @@ Numlib::Vec<std::complex<double>> Numlib::fft(const Numlib::Vec<double>& x)
     }
 
     // Compute forward transform:
-    status = DftiComputeForward(hand, (void*) x.data(), y.data());
+    status = DftiComputeForward(hand, const_cast<double*>(x.data()), y.data());
     if (status != DFTI_NO_ERROR) {
         DftiFreeDescriptor(&hand);
         throw Math_error("DftiComputeForward failed");
@@ -111,7 +111,8 @@ Numlib::Vec<double> Numlib::ifft(const Numlib::Vec<std::complex<double>>& y)
     }
 
     // Compute backward transform:
-    status = DftiComputeBackward(hand, (void*) y.data(), x.data());
+    status = DftiComputeBackward(
+        hand, const_cast<std::complex<double>*>(y.data()), x.data());
     if (status != DFTI_NO_ERROR) {
         DftiFreeDescriptor(&hand);
         throw Math_error("DftiComputeBackward failed");
