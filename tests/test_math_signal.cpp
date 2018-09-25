@@ -8,6 +8,7 @@
 #include <numlib/math.h>
 #include <numlib/matrix.h>
 #include <catch2/catch.hpp>
+#include <cfloat>
 
 double moda(int k, int l, int m)
 {
