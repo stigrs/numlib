@@ -18,6 +18,7 @@ set(
     fourier_transform
     integration
     linear_algebra
+    linear_least_squares
     matrix_decomposition 
     matrix_inversion 
     matrix_properties 
