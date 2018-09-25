@@ -9,6 +9,11 @@
 
 #include <numlib/matrix.h>
 
+#ifdef USE_MKL
+#include <complex>
+#include <mkl.h>
+#endif
+
 namespace Numlib {
 
 // Vector convolution.
@@ -35,6 +40,16 @@ Enable_if<Matrix_type<M>(), Vec<typename M::value_type>> conv(const M& a,
     }
     return res;
 }
+
+#ifdef USE_MKL
+// Forward real-to-complex 1D discrete Fourier transform.
+Vec<std::complex<double>> fft(const Vec<double>& x);
+#endif
+
+#ifdef USE_MKL
+// Inverse complex-to-real 1D discrete Fourier transform.
+Vec<double> ifft(const Vec<std::complex<double>>& y);
+#endif
 
 } // namespace Numlib
 

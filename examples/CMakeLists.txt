@@ -15,6 +15,7 @@ set(
     convolution
     derivation
     eigensolvers
+    fourier_transform
     integration
     linear_algebra
     matrix_decomposition 

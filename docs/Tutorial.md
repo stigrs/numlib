@@ -22,6 +22,7 @@
     - [Eigensolver for Sparse Matrices](#eigensolver-for-sparse-matrices)
     - [Sparse Linear System of Equations](#sparse-linear-system-of-equations)
 * [Convolution](#convolution)
+* [Discrete Fourier Transform](#discrete-fourier-transform)
 * [Statistics](#statistics)
 
 ## Basic Matrix Uses
@@ -745,6 +746,62 @@ Generated output:
 
     6
     [         4        13        28        34        32        21 ]
+
+## Discrete Fourier Transform
+[back to top](#table-of-contents)
+
+Example program:
+
+    #include <iostream>
+    #include <numlib/constants.h>
+    #include <numlib/matrix.h>
+    #include <numlib/math.h>
+
+    double moda(int k, int l, int m)
+    {
+        return narrow_cast<double>(narrow_cast<long long>(k * l) % m);
+    }
+
+    int main()
+    {
+    #ifdef USE_MKL
+        using namespace Numlib;
+
+        const double twopi = 2.0 * Constants::pi;
+        const int n = 6;
+        int h = -1;
+
+        Vec<double> x(n);
+
+        double factor = (2 * (n - h) % n == 0) ? 1.0 : 2.0;
+        for (int i = 0; i < n; ++i) {
+            double phase = moda(i, h, n) / n;
+            x(i) = factor * std::cos(twopi * phase) / n;
+        }
+        auto y = fft(x);
+        std::cout << "x = " << x << "\n\n"
+                  << "y = fft(x):\n"
+                  << y << "\n\n"
+                  << "x = ifft(y):\n"
+                  << ifft(y) << '\n';
+
+    #else
+        std::cout << "Intel MKL is required\n";
+    #endif
+    }
+
+Generated output:
+
+    x = 6
+    [  0.333333  0.166667 -0.166667 -0.333333 -0.166667  0.166667 ]
+    
+    y = fft(x):
+    6
+    [     (0,0) (1,-1.92296e-16) (0,1.92296e-16) (-2.22045e-16,0) (0,-1.92296e-16) (1,1.92296e-16) ]
+
+    x = ifft(y):
+    6
+    [  0.333333  0.166667 -0.166667 -0.333333 -0.166667  0.166667 ]
 
 ## Statistics
 [back to top](#table-of-contents)

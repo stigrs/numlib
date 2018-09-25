@@ -15,6 +15,7 @@ set(
     geometry.cpp
 	linalg.cpp
     quaternion.cpp
+    signal.cpp
     statistics.cpp
 )
 add_library(

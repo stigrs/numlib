@@ -16,6 +16,7 @@ and Intel MKL are supported.
 * Linear algebra methods
 * Transformations between rotation matrix, Euler angles and quaternions
 * Vector convolution
+* Forward and inverse discrete Fourier transform (FFT and IFFT)
 * Statistical methods
 * Mathematical constants, metric prefixes, physical constants, and
   conversion factors
