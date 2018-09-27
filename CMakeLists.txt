@@ -4,13 +4,6 @@ project(numlib CXX)
 include(ExternalProject)
 find_package(Git)
 
-# By default, numlib is install in the HOME directory.
-if(WIN32)
-    set(CMAKE_INSTALL_PREFIX "C:/Users/$ENV{USERNAME}")
-else()
-    set(CMAKE_INSTALL_PREFIX $ENV{HOME})
-endif()
-
 # Enforce C++14 standard.
 set(CMAKE_CXX_STANDARD 14)
 
