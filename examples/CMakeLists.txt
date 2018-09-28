@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.4.3)
 project(numlib_examples CXX)
 
+include_directories(${numlib_SOURCE_DIR}/include)
 include_directories(${BLAS_INCLUDE_DIRS})
 include_directories(${LAPACKE_INCLUDE_DIRS})
 if(MKL_FOUND)
@@ -38,6 +39,5 @@ foreach(program ${PROGRAMS})
 		numlib
 		${BLAS_LIBRARIES}
 		${LAPACK_LIBRARIES}
-		numlib_config
 	) 
 endforeach()

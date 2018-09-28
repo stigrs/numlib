@@ -19,9 +19,6 @@ endif()
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_BENCH "Build benchmarks." OFF)
 option(BUILD_EXAMPLES "Build examples." ON)
-if(WIN32)
-	set(BUILD_BENCH ON)
-endif()
 
 # Set default MSVC compiler options to avoid D9025 error.
 if(MSVC)
@@ -79,14 +76,6 @@ else()
 	find_path(BLAS_INCLUDE_DIRS cblas.h HINTS ${BLAS_DIR}/include)
 	find_path(LAPACKE_INCLUDE_DIRS lapacke.h HINTS ${BLAS_DIR}/include)
 endif()
-
-# Create Numlib interface library.
-add_library(numlib_config INTERFACE)
-target_include_directories(numlib_config INTERFACE
-    $<BUILD_INTERFACE:
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-    >
-)
 
 install(
     DIRECTORY include/numlib
