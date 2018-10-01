@@ -198,7 +198,7 @@ inline Matrix<T, N>::Matrix(const Matrix_ref<U, N>& m)
     this->desc.start = 0;
     this->desc.extents = m.descriptor().extents;
     Matrix_impl::compute_strides(this->desc);
-    assert(this->desc.size() == narrow_cast<Index>(elems.size()));
+    assert(this->desc.size == narrow_cast<Index>(elems.size()));
 }
 
 template <typename T, std::size_t N>
@@ -211,7 +211,7 @@ inline Matrix<T, N>& Matrix<T, N>::operator=(const Matrix_ref<U, N>& m)
     this->desc.extents = m.descriptor().extents;
     Matrix_impl::compute_strides(this->desc);
     elems.assign(m.begin(), m.end());
-    assert(this->desc.size() == narrow_cast<Index>(elems.size()));
+    assert(this->desc.size == narrow_cast<Index>(elems.size()));
     return *this;
 }
 

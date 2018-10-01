@@ -194,7 +194,7 @@ namespace Matrix_impl {
             (s.length == Index(-1))
                 ? (os.extents[i] - s.start + s.stride - 1) / s.stride
                 : s.length;
-        return s.start * os.strides[i];
+        return os.start + s.start * os.strides[i];
     }
 
     template <std::size_t N>
