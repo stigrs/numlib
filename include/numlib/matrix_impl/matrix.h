@@ -191,10 +191,14 @@ inline Matrix<T, N>::Matrix(Exts... exts)
 template <typename T, std::size_t N>
 template <typename U>
 inline Matrix<T, N>::Matrix(const Matrix_ref<U, N>& m)
-    : Matrix_base<T, N>(m.descriptor()), elems{m.begin(), m.end()}
+    : Matrix_base<T, N>(), elems{m.begin(), m.end()}
 {
     static_assert(Convertible<U, T>(),
                   "Matrix constructor: incompatible element types");
+    this->desc.start = 0;
+    this->desc.extents = m.descriptor().extents;
+    Matrix_impl::compute_strides(this->desc);
+    assert(this->desc.size() == narrow_cast<Index>(elems.size()));
 }
 
 template <typename T, std::size_t N>
@@ -203,8 +207,11 @@ inline Matrix<T, N>& Matrix<T, N>::operator=(const Matrix_ref<U, N>& m)
 {
     static_assert(Convertible<U, T>(),
                   "Matrix assignment: incompatible element types");
-    this->desc = m.descriptor();
+    this->desc.start = 0;
+    this->desc.extents = m.descriptor().extents;
+    Matrix_impl::compute_strides(this->desc);
     elems.assign(m.begin(), m.end());
+    assert(this->desc.size() == narrow_cast<Index>(elems.size()));
     return *this;
 }
 
