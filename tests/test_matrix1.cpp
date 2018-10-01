@@ -24,6 +24,18 @@ TEST_CASE("test_matrix1")
         CHECK(m1(3) == 4);
     }
 
+    SECTION("copy")
+    {
+        Matrix<int, 1> mc(m1);
+        CHECK(mc == m1);
+    }
+
+    SECTION("assign")
+    {
+        Matrix<int, 1> mc = m1;
+        CHECK(mc == m1);
+    }
+
     SECTION("row")
     {
         int r = m1.row(1);
@@ -65,6 +77,20 @@ TEST_CASE("test_matrix1")
         CHECK(m1(1) == 2);
         CHECK(m1(2) == 3);
         CHECK(m1(3) == 4);
+    }
+
+    SECTION("copy_from_matrix_ref")
+    {
+        Matrix_ref<int, 1> s = m1(slice{0, 3});
+        Matrix<int, 1> ss(s);
+        CHECK(ss == s);
+    }
+
+    SECTION("assign_from_matrix_ref")
+    {
+        Matrix_ref<int, 1> s = m1(slice{0, 3});
+        Matrix<int, 1> ss = s;
+        CHECK(ss == s);
     }
 
     SECTION("head")
