@@ -33,7 +33,7 @@ public:
     using iterator = typename std::vector<T>::iterator;
     using const_iterator = typename std::vector<T>::const_iterator;
 
-    Matrix() = default;
+    Matrix() : Matrix_base<T, N>(), elems(0) {}
 
     // Move construction and assignment:
 
@@ -191,10 +191,14 @@ inline Matrix<T, N>::Matrix(Exts... exts)
 template <typename T, std::size_t N>
 template <typename U>
 inline Matrix<T, N>::Matrix(const Matrix_ref<U, N>& m)
-    : Matrix_base<T, N>(m.descriptor()), elems{m.begin(), m.end()}
+    : Matrix_base<T, N>(), elems{m.begin(), m.end()}
 {
     static_assert(Convertible<U, T>(),
                   "Matrix constructor: incompatible element types");
+    this->desc.start = 0;
+    this->desc.extents = m.descriptor().extents;
+    Matrix_impl::compute_strides(this->desc);
+    assert(this->desc.size == narrow_cast<Index>(elems.size()));
 }
 
 template <typename T, std::size_t N>
@@ -203,8 +207,11 @@ inline Matrix<T, N>& Matrix<T, N>::operator=(const Matrix_ref<U, N>& m)
 {
     static_assert(Convertible<U, T>(),
                   "Matrix assignment: incompatible element types");
-    this->desc = m.descriptor();
+    this->desc.start = 0;
+    this->desc.extents = m.descriptor().extents;
+    Matrix_impl::compute_strides(this->desc);
     elems.assign(m.begin(), m.end());
+    assert(this->desc.size == narrow_cast<Index>(elems.size()));
     return *this;
 }
 
@@ -263,12 +270,11 @@ template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix<T, N>::diag()
 {
     static_assert(N == 2, "diag: only defined for Matrix of rank 2");
-    assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;
     d.start = this->desc.start;
-    d.extents[0] = this->rows();
-    d.strides[0] = this->rows() + 1;
+    d.extents[0] = std::min(this->rows(), this->cols());
+    d.strides[0] = this->desc.strides[0] + 1;
     d.size = Matrix_impl::compute_size(d.extents);
 
     return {d, data()};
@@ -278,12 +284,11 @@ template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix<T, N>::diag() const
 {
     static_assert(N == 2, "diag: only defined for Matrix of rank 2");
-    assert(this->rows() == this->cols());
 
     Matrix_slice<N - 1> d;
     d.start = this->desc.start;
-    d.extents[0] = this->rows();
-    d.strides[0] = this->rows() + 1;
+    d.extents[0] = std::min(this->rows(), this->cols());
+    d.strides[0] = this->desc.strides[0] + 1;
     d.size = Matrix_impl::compute_size(d.extents);
 
     return {d, data()};

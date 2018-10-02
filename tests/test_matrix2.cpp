@@ -115,6 +115,20 @@ TEST_CASE("test_matrix2")
         CHECK(m4 == m4_ans);
     }
 
+    SECTION("copy_from_matrix_ref")
+    {
+        Matrix_ref<int, 1> r0 = m2.row(0);
+        Matrix<int, 1> r(r0);
+        CHECK(r == r0);
+    }
+
+    SECTION("assign_from_matrix_ref")
+    {
+        Matrix_ref<int, 1> r0 = m2.row(0);
+        Matrix<int, 1> r = r0;
+        CHECK(r == r0);
+    }
+
     SECTION("construct_from_array")
     {
         int ptr[4] = {10, 20, 30, 40};

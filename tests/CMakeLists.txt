@@ -1,19 +1,19 @@
 cmake_minimum_required(VERSION 3.4.3)
 project(numlib_tests CXX)
 
+include_directories(${numlib_SOURCE_DIR}/include)
 include_directories(${BLAS_INCLUDE_DIRS})
 include_directories(${LAPACKE_INCLUDE_DIRS})
 if(MKL_FOUND)
 	link_directories(${MKL_LIBRARY_DIRS})
 endif()
 
-list(APPEND CATCH_CMAKE_ARGS
-    "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/external"
-    "-DCATCH_BUILD_TESTING=OFF"
-)
-
 if(GIT_FOUND)
     # Add catch
+    list(APPEND CATCH_CMAKE_ARGS
+        "-DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_BINARY_DIR}/external"
+        "-DCATCH_BUILD_TESTING=OFF"
+    )
     ExternalProject_Add(
         catch2
         PREFIX ${CMAKE_BINARY_DIR}/catch
@@ -52,7 +52,6 @@ function(add_numlib_test name)
 		${BLAS_LIBRARIES}
 		${LAPACK_LIBRARIES}
         test_catch2
-        numlib_config
     ) 
     add_dependencies(${name} Catch2)
     add_test(NAME ${name} COMMAND ${name})

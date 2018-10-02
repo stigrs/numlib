@@ -157,7 +157,7 @@ namespace Matrix_impl {
 
     // Return Matrix_slice describing n'th row.
     template <Index D, std::size_t N>
-    Matrix_slice<N - 1> slice_dim(const Matrix_slice<N>& ms, Index n)
+    inline Matrix_slice<N - 1> slice_dim(const Matrix_slice<N>& ms, Index n)
     {
         static_assert(N >= 1 && D <= N, "get_row: bad dimension");
 
@@ -177,39 +177,57 @@ namespace Matrix_impl {
     // Return starting offset given a slice:
 
     template <Index D, std::size_t N>
-    Index do_slice_dim(const Matrix_slice<N>& os, Matrix_slice<N>& ns, Index s)
+    inline Index
+    do_slice_dim(const Matrix_slice<N>& os, Matrix_slice<N>& ns, slice s)
     {
-        Index i = N - D;
-        ns.strides[i] = os.strides[i];
-        ns.extents[i] = 1;
-        return s * ns.strides[i];
+        // If the starting point is past the extent, request the entire slice:
+        if (s.start >= os.extents[D]) {
+            s.start = 0;
+        }
+
+        // If the slice requests more elements than are available, make it
+        // stop at the right extent:
+        if (s.length > os.extents[D] || s.start + s.length > os.extents[D]) {
+            s.length = os.extents[D] - s.start;
+        }
+
+        // If the stride over-runs the edge of the matrix or length is not set,
+        // re-compute the length so that we stop at the right number of
+        // increments:
+        if (s.start + s.length * s.stride > os.extents[D] ||
+            s.length == Index{-1}) {
+            s.length = ((os.extents[D] - s.start) + s.stride - 1) / s.stride;
+        }
+
+        // Compute the extents and strides in dimension D:
+        ns.strides[D] = s.stride * os.strides[D];
+        ns.extents[D] = s.length;
+
+        return os.start + s.start * os.strides[D];
     }
 
     template <Index D, std::size_t N>
-    Index do_slice_dim(const Matrix_slice<N>& os, Matrix_slice<N>& ns, slice s)
+    inline Index
+    do_slice_dim(const Matrix_slice<N>& os, Matrix_slice<N>& ns, Index s)
     {
-        Index i = N - D;
-        ns.strides[i] = s.stride * os.strides[i];
-        ns.extents[i] =
-            (s.length == Index(-1))
-                ? (os.extents[i] - s.start + s.stride - 1) / s.stride
-                : s.length;
-        return s.start * os.strides[i];
+        return do_slice_dim<D>(os, ns, slice{s, 1, 1});
     }
 
     template <std::size_t N>
-    Index do_slice(const Matrix_slice<N>& /* os */, Matrix_slice<N>& /* ns */)
+    inline Index do_slice(const Matrix_slice<N>& /* os */,
+                          Matrix_slice<N>& /* ns */)
     {
         return 0;
     }
 
     template <std::size_t N, typename T, typename... Args>
-    Index do_slice(const Matrix_slice<N>& os,
-                   Matrix_slice<N>& ns,
-                   const T& s,
-                   const Args&... args)
+    inline Index do_slice(const Matrix_slice<N>& os,
+                          Matrix_slice<N>& ns,
+                          const T& s,
+                          const Args&... args)
     {
-        Index m = do_slice_dim<sizeof...(Args) + 1>(os, ns, s);
+        constexpr Index D = N - sizeof...(Args) - 1;
+        Index m = do_slice_dim<D>(os, ns, s);
         Index n = do_slice(os, ns, args...);
         return m + n;
     }

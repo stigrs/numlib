@@ -100,3 +100,50 @@ double Numlib::cov(const Numlib::Vec<double>& x, const Numlib::Vec<double>& y)
     }
     return cov;
 }
+
+double Numlib::kabsch_rmsd(const Numlib::Mat<double>& p,
+                           const Numlib::Mat<double>& q)
+{
+    assert(same_extents(p, q));
+
+    // Centroid of P:
+    Vec<double> p0 = centroid(p);
+
+    // Centroid of Q:
+    Vec<double> q0 = centroid(q);
+
+    // Translate P to center the origin:
+    Mat<double> pc(p);
+    translate(pc, -p0(0), -p0(1), -p0(2));
+
+    // Translate Q to center the origin:
+    Mat<double> qc(q);
+    translate(qc, -q0(0), -q0(1), -q0(2));
+
+    // Cross-covariance matrix:
+    Mat<double> h = transpose(pc) * qc;
+
+    // Singular value decomposition:
+    Vec<double> s;
+    Mat<double> u;
+    Mat<double> vt;
+
+    svd(h, s, u, vt);
+
+    Mat<double> v = transpose(vt);
+    Mat<double> ut = transpose(u);
+
+    // Ensure right-handedness:
+    double d = det(v * ut);
+    Mat<double> eye = identity(3);
+    eye(2, 2) = sign(1.0, d);
+
+    // Optimal rotation matrix:
+    Mat<double> rotm = v * eye * ut;
+
+    // Rotate coordinates:
+    rotate(pc, rotm);
+
+    // Compute RMSD:
+    return rmsd(pc, qc);
+}

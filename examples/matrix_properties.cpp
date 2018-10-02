@@ -22,5 +22,7 @@ int main()
               << "extent(1) = " << m1.extent(1) << "\n\n";
 
     Mat<int> m2 = {{1, 2, 3}, {4, 5, 6}};
-    std::cout << m2 << '\n';
+    std::cout << "m2 = \n" << m2 << '\n';
+
+    std::cout << "transpose(m2) =\n" << transpose(m2) << '\n';
 }

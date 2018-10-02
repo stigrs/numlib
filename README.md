@@ -16,12 +16,12 @@ and Intel MKL are supported.
 * Linear algebra methods
 * Transformations between rotation matrix, Euler angles and quaternions
 * Vector convolution
+* Forward and inverse discrete Fourier transform (FFT and IFFT)
 * Statistical methods
 * Mathematical constants, metric prefixes, physical constants, and
   conversion factors
 
-_Note: Some linear algebra methods are only available when linking with 
-Intel MKL._
+_Note: Some features are only available when linking with Intel MKL._
 
 ## Code of Conduct
 

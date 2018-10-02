@@ -680,7 +680,7 @@ inline void mm_mul(const Matrix<double, 2>& a,
     const BLAS_INT ldb = n;
     const BLAS_INT ldc = n;
 
-    res.resize(ldc, m);
+    res.resize(m, n);
 
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, alpha,
                 a.data(), lda, b.data(), ldb, beta, res.data(), ldc);

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.4.3)
 project(libnumlib CXX)
 
+include_directories(${numlib_SOURCE_DIR}/include)
 include_directories(${BLAS_INCLUDE_DIRS})
 include_directories(${LAPACKE_INCLUDE_DIRS})
 link_directories(${numlib_BINARY_DIR})
@@ -15,18 +16,17 @@ set(
     geometry.cpp
 	linalg.cpp
     quaternion.cpp
+    signal.cpp
     statistics.cpp
 )
 add_library(
     numlib 
     ${SRC_FILES}
 )
-add_dependencies(numlib numlib_config)
 target_link_libraries(
     numlib 
 	${BLAS_LIBRARIES}
     ${LAPACK_LIBRARIES}
-    numlib_config
 ) 
 
 install(

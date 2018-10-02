@@ -4,6 +4,7 @@ project(numlib_bench CXX)
 if(WIN32)
     include_directories(${ARMADILLO_INCLUDE_DIRS})
 endif()
+include_directories(${numlib_SOURCE_DIR}/include)
 include_directories(${BLAS_INCLUDE_DIRS})
 include_directories(${LAPACKE_INCLUDE_DIRS})
 if(MKL_FOUND)
@@ -29,6 +30,5 @@ foreach(program ${PROGRAMS})
 		${BLAS_LIBRARIES}
 		${LAPACK_LIBRARIES}
 		${ARMADILLO_LIBRARIES} 
-		numlib_config
 	) 
 endforeach()

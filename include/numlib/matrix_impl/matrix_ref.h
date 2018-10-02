@@ -31,7 +31,7 @@ public:
     using iterator = Slice_iterator<T, N>;
     using const_iterator = Slice_iterator<const T, N>;
 
-    Matrix_ref() = default;
+    Matrix_ref() = delete; // Matrix_ref is non-owing
 
     // Move construction and assignment:
     Matrix_ref(Matrix_ref&&);
@@ -270,11 +270,11 @@ template <typename T, std::size_t N>
 inline Matrix_ref<T, N - 1> Matrix_ref<T, N>::diag()
 {
     static_assert(N == 2, "diag: only defined for Matrix_ref of rank 2");
-    assert(this->rows() == this->cols());
+    assert(this->desc.strides[1] == 1);
 
     Matrix_slice<N - 1> d;
     d.start = this->desc.start;
-    d.extents[0] = this->rows();
+    d.extents[0] = std::min(this->rows(), this->cols());
     d.strides[0] = this->desc.strides[0] + 1;
     d.size = Matrix_impl::compute_size(d.extents);
 
@@ -285,11 +285,11 @@ template <typename T, std::size_t N>
 inline Matrix_ref<const T, N - 1> Matrix_ref<T, N>::diag() const
 {
     static_assert(N == 2, "diag: only defined for Matrix_ref of rank 2");
-    assert(this->rows() == this->cols());
+    assert(this->desc.strides[1] == 1);
 
     Matrix_slice<N - 1> d;
     d.start = this->desc.start;
-    d.extents[0] = this->rows();
+    d.extents[0] = std::min(this->rows(), this->cols());
     d.strides[0] = this->desc.strides[0] + 1;
     d.size = Matrix_impl::compute_size(d.extents);
 
