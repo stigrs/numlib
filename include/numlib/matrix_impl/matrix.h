@@ -33,7 +33,7 @@ public:
     using iterator = typename std::vector<T>::iterator;
     using const_iterator = typename std::vector<T>::const_iterator;
 
-    Matrix() : Matrix_base(), elems(0) {}
+    Matrix() : Matrix_base<T, N>(), elems(0) {}
 
     // Move construction and assignment:
 
