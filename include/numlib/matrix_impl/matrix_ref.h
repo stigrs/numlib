@@ -31,7 +31,7 @@ public:
     using iterator = Slice_iterator<T, N>;
     using const_iterator = Slice_iterator<const T, N>;
 
-    Matrix_ref() = default;
+    Matrix_ref() = delete; // Matrix_ref is non-owing
 
     // Move construction and assignment:
     Matrix_ref(Matrix_ref&&);
