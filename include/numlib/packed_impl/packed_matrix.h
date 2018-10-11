@@ -56,6 +56,7 @@ public:
     Packed_matrix(size_type n, const T (&ap)[np]);
 
     // Construct from matrix.
+    Packed_matrix(const Matrix<T, 1>& a);
     Packed_matrix(const Matrix<T, 2>& a);
 
     ~Packed_matrix() = default;
@@ -140,6 +141,19 @@ Packed_matrix<T, Uplo>::Packed_matrix(size_type n, const T (&ap)[np])
     assert(np >= n * (n + 1) / 2);
     for (size_type i = 0; i < np; ++i) {
         elems[i] = ap[i];
+    }
+}
+
+template <typename T, Uplo_scheme Uplo>
+Packed_matrix<T, Uplo>::Packed_matrix(const Matrix<T, 1>& a) : elems(a.size())
+{
+    size_type n = narrow_cast<size_type>(
+        std::ceil(-1.0 + std::sqrt(1.0 + 4.0 * 2.0 * a.size()) / 2.0));
+    assert(a.size() >= n * (n + 1) / 2);
+    extents[0] = n;
+    extents[1] = n;
+    for (size_type i = 0; i < size(); ++i) {
+        elems[i] = a(i);
     }
 }
 
