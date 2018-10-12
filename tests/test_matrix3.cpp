@@ -56,4 +56,17 @@ TEST_CASE("test_matrix3")
         CHECK(m3.extent(1) == 4);
         CHECK(m3.extent(2) == 5);
     }
+
+    SECTION("ravel")
+    {
+        Matrix<int, 1> ans = {5, 6, 7, 8};
+        auto r = m3.row(1);
+        auto res = r.ravel();
+        CHECK(res == ans);
+
+        res = 0;
+        Matrix<int, 3> ans3 = {
+            {{1, 2}, {3, 4}}, {{0, 0}, {0, 0}}, {{9, 10}, {11, 12}}};
+        CHECK(m3 == ans3);
+    }
 }

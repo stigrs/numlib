@@ -71,8 +71,12 @@ public:
     ~Matrix() = default;
 
     // "Flat" element access:
+
     T* data() { return elems.data(); }
     const T* data() const { return elems.data(); }
+
+    Matrix_ref<T, 1> ravel();
+    Matrix_ref<const T, 1> ravel() const;
 
     // Properties:
 
@@ -232,6 +236,22 @@ inline Matrix<T, N>& Matrix<T, N>::operator=(Matrix_initializer<T, N> init)
     Matrix tmp(init);
     swap(tmp);
     return *this;
+}
+
+template <typename T, std::size_t N>
+inline Matrix_ref<T, 1> Matrix<T, N>::ravel()
+{
+    static_assert(N > 1, "bad matrix order");
+    Matrix_slice<1> d(this->desc.start, {this->desc.size});
+    return {d, data()};
+}
+
+template <typename T, std::size_t N>
+inline Matrix_ref<const T, 1> Matrix<T, N>::ravel() const
+{
+    static_assert(N > 1, "bad matrix order");
+    Matrix_slice<1> d(this->desc.start, {this->desc.size});
+    return {d, data()};
 }
 
 template <typename T, std::size_t N>

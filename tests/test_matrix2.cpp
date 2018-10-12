@@ -35,6 +35,13 @@ TEST_CASE("test_matrix2")
         }
     }
 
+    SECTION("ravel")
+    {
+        Matrix<int, 1> ans = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        auto res = m2.ravel();
+        CHECK(res == ans);
+    }
+
     SECTION("row")
     {
         Matrix<int, 1> m2_r0 = {1, 2, 3, 4};

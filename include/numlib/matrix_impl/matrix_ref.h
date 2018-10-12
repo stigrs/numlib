@@ -72,8 +72,12 @@ public:
     ~Matrix_ref() = default;
 
     // "Flat" element access:
+
     T* data() { return ptr; }
     const T* data() const { return ptr; }
+
+    Matrix_ref<T, 1> ravel();
+    Matrix_ref<const T, 1> ravel() const;
 
     // Subscripting:
 
@@ -232,6 +236,22 @@ Matrix_ref<T, N>& Matrix_ref<T, N>::operator=(const Matrix<value_type, N>& m)
     assert(same_extents(this->desc, m.descriptor()));
     apply(m, [](T& a, const T& b) { a = b; });
     return *this;
+}
+
+template <typename T, std::size_t N>
+inline Matrix_ref<T, 1> Matrix_ref<T, N>::ravel()
+{
+    static_assert(N > 1, "bad matrix_ref order");
+    Matrix_slice<1> d(this->desc.start, {this->desc.size});
+    return {d, data()};
+}
+
+template <typename T, std::size_t N>
+inline Matrix_ref<const T, 1> Matrix_ref<T, N>::ravel() const
+{
+    static_assert(N > 1, "bad matrix_ref order");
+    Matrix_slice<1> d(this->desc.start, {this->desc.size});
+    return {d, data()};
 }
 
 template <typename T, std::size_t N>
