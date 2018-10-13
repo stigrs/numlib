@@ -68,6 +68,13 @@ public:
     Matrix(Matrix_initializer<T, N>);
     Matrix& operator=(Matrix_initializer<T, N>);
 
+    // Initialize from C pointer:
+
+    Matrix(const Matrix_slice<N>& ms, T* p)
+        : Matrix_base<T, N>(ms), elems(p, p + ms.size)
+    {
+    }
+
     ~Matrix() = default;
 
     // "Flat" element access:
