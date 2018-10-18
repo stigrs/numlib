@@ -48,9 +48,9 @@ function(add_numlib_test name)
     add_executable(${name} ${name}.cpp)
     target_link_libraries (
         ${name} 
-		numlib
-		${BLAS_LIBRARIES}
-		${LAPACK_LIBRARIES}
+	num
+	${BLAS_LIBRARIES}
+	${LAPACK_LIBRARIES}
         test_catch2
     ) 
     add_dependencies(${name} Catch2)
@@ -58,31 +58,31 @@ function(add_numlib_test name)
 endfunction()
 
 set(PROGRAMS 
-	test_band_matrix
-	test_constants
-	test_math_core
-	test_math_calculus
+    test_band_matrix
+    test_constants
+    test_math_core
+    test_math_calculus
     test_math_euler
-	test_math_geometry
-	test_math_linalg
-	test_math_quaternion
-	test_math_signal
-	test_math_statistics
+    test_math_geometry
+    test_math_linalg
+    test_math_quaternion
+    test_math_signal
+    test_math_statistics
     test_matrix0
     test_matrix1
     test_matrix2
     test_matrix3
-	test_matrix4
-	test_packed_matrix
-	test_sparse_matrix
-	test_sparse_vector
+    test_matrix4
+    test_packed_matrix
+    test_sparse_matrix
+    test_sparse_vector
 )
 
 foreach(program ${PROGRAMS})
     add_numlib_test(${program})
 	if(WIN32)
-		if(NOT MKL_FOUND)
-			set_tests_properties(${program} PROPERTIES ENVIRONMENT "PATH=${BLAS_BIN};$ENV{PATH}")
-		endif()
+	    if(NOT MKL_FOUND)
+		set_tests_properties(${program} PROPERTIES ENVIRONMENT "PATH=${BLAS_BIN};$ENV{PATH}")
+	    endif()
 	endif()
 endforeach()

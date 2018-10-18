@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.3)
-project(libnumlib CXX)
+project(libnum CXX)
 
 include_directories(${numlib_SOURCE_DIR}/include)
 include_directories(${BLAS_INCLUDE_DIRS})
@@ -11,26 +11,27 @@ endif()
 
 set(
     SRC_FILES
-	calculus.cpp
+    calculus.cpp
     euler.cpp
     geometry.cpp
-	linalg.cpp
+    linalg.cpp
     quaternion.cpp
     signal.cpp
     statistics.cpp
 )
 add_library(
-    numlib 
+    num 
     ${SRC_FILES}
 )
 target_link_libraries(
-    numlib 
-	${BLAS_LIBRARIES}
+    num 
+    ${BLAS_LIBRARIES}
     ${LAPACK_LIBRARIES}
 ) 
 
 install(
-    TARGETS numlib
+    TARGETS num
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
 )
+

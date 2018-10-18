@@ -25,7 +25,7 @@ void Numlib::schmidt(Mat<double>& a, Index n)
 {
     Index n_out = 0;
     Index n_orb = n;
-    Index n_bas = a.rows();
+    Index n_bas = a.cols();
 
     Vec<double> work(n_bas);
     work = 0.0;
@@ -38,21 +38,21 @@ void Numlib::schmidt(Mat<double>& a, Index n)
             if (n_out >= n_bas) {
                 return;
             }
-            auto an = a.column(n_out);
+            auto an = a.row(n_out);
             if (i < n_orb) {
-                auto ai = a.column(i);
+                auto ai = a.row(i);
                 an = ai;
             }
             else {
                 an = 0.0;
-                a(i - n_orb, n_out) = 1.0;
+                a(n_out, i - n_orb) = 1.0;
             }
             for (Index j = 0; j < n_out; ++j) {
-                auto aj = a.column(j);
+                auto aj = a.row(j);
                 work(j) = dot(aj, an);
             }
             for (Index j = 0; j < n_out; ++j) {
-                auto aj = a.column(j);
+                auto aj = a.row(j);
                 an = an - work(j) * aj;
             }
             double r = std::sqrt(dot(an, an));
