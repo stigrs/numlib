@@ -5,7 +5,7 @@ include_directories(${numlib_SOURCE_DIR}/include)
 include_directories(${BLAS_INCLUDE_DIRS})
 include_directories(${LAPACKE_INCLUDE_DIRS})
 if(MKL_FOUND)
-	link_directories(${MKL_LIBRARY_DIRS})
+    link_directories(${MKL_LIBRARY_DIRS})
 endif()
 
 set(
@@ -28,16 +28,16 @@ set(
     sparse_eigensolver
     sparse_linsolve
     statistics
-	sub_matrix_views
-	subscripting_and_slicing
+    sub_matrix_views
+    subscripting_and_slicing
 )
 
 foreach(program ${PROGRAMS})
     add_executable(${program} ${program}.cpp)
 	target_link_libraries (
-		${program} 
-		numlib
-		${BLAS_LIBRARIES}
-		${LAPACK_LIBRARIES}
+	    ${program} 
+	    num
+	    ${BLAS_LIBRARIES}
+	    ${LAPACK_LIBRARIES}
 	) 
 endforeach()
