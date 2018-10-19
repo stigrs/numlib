@@ -8,7 +8,7 @@ int main()
     using namespace Numlib;
 
     auto a = hilbert<>(5);
-    Symm_mat<double, lower_triang> ap(a);
+    Symm_mat<double, lo> ap(a);
 
     Mat<double> evec;
     Vec<double> eval(5); // correct size must be allocated

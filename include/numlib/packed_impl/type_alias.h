@@ -17,11 +17,11 @@ using Symm_mat = Packed_matrix<T, Uplo>;
 
 // Packed matrix held in upper triangular format.
 template <typename T>
-using Upper_triang_mat = Packed_matrix<T, upper_triang>;
+using Upper_triang_mat = Packed_matrix<T, up>;
 
 // Packed matrix held in lower triangular format.
 template <typename T>
-using Lower_triang_mat = Packed_matrix<T, lower_triang>;
+using Lower_triang_mat = Packed_matrix<T, lo>;
 
 } // namespace Numlib
 

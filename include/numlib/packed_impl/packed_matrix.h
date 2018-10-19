@@ -82,7 +82,7 @@ public:
     // Return UPLO scheme.
     char uplo_scheme() const
     {
-        if /* constexpr */ (uplo == upper_triang) { // C++17
+        if /* constexpr */ (uplo == up) { // C++17
             return 'U';
         }
         else { // lower triangular
@@ -163,7 +163,7 @@ Packed_matrix<T, Uplo>::Packed_matrix(const Matrix<T, 2>& a)
     : elems(a.rows() * (a.rows() + 1) / 2), extents{a.rows(), a.cols()}
 {
     assert(a.rows() == a.cols());
-    if /* constexpr */ (Uplo == upper_triang) { // C++17
+    if /* constexpr */ (Uplo == up) { // C++17
         for (size_type i = 0; i < a.rows(); ++i) {
             for (size_type j = i; j < a.cols(); ++j) {
                 (*this)(i, j) = a(i, j);
@@ -250,16 +250,16 @@ operator%=(const T& value)
 template <typename T, Uplo_scheme Uplo>
 inline T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j)
 {
-    static_assert(Uplo == upper_triang || Uplo == lower_triang,
+    static_assert(Uplo == up || Uplo == lo,
                   "Packed_matrix: bad storage scheme");
 
     assert(0 <= i && i < extents[0]);
     assert(0 <= j && j < extents[1]);
-    if /* constexpr */ (Uplo == upper_triang) { // C++17
+    if /* constexpr */ (Uplo == up) { // C++17
         assert(i <= j);
         return elems[offset(i, j)];
     }
-    else if /* constexpr */ (Uplo == lower_triang) { // C++17
+    else if /* constexpr */ (Uplo == lo) { // C++17
         assert(j <= i);
         return elems[offset(i, j)];
     }
@@ -268,17 +268,17 @@ inline T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j)
 template <typename T, Uplo_scheme Uplo>
 inline const T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j) const
 {
-    static_assert(Uplo == upper_triang || Uplo == lower_triang,
+    static_assert(Uplo == up || Uplo == lo,
                   "Packed_matrix: bad storage scheme");
 
     assert(0 <= i && i < extents[0]);
     assert(0 <= j && j < extents[1]);
-    if /* constexpr */ (Uplo == upper_triang) { // C++17
+    if /* constexpr */ (Uplo == up) { // C++17
         if (i <= j) {
             return elems[offset(i, j)];
         }
     }
-    else if /* constexpr */ (Uplo == lower_triang) { // C++17
+    else if /* constexpr */ (Uplo == lo) { // C++17
         if (j <= i) {
             return elems[offset(i, j)];
         }
@@ -289,14 +289,14 @@ inline const T& Packed_matrix<T, Uplo>::ref(size_type i, size_type j) const
 template <typename T, Uplo_scheme Uplo>
 inline Index Packed_matrix<T, Uplo>::offset(size_type i, size_type j) const
 {
-    static_assert(Uplo == lower_triang || Uplo == upper_triang,
+    static_assert(Uplo == lo || Uplo == up,
                   "Packed_matrix: bad storage scheme");
 
     size_type res = 0;
-    if /* constexpr */ (Uplo == upper_triang) { // C++17
+    if /* constexpr */ (Uplo == up) { // C++17
         res = j + i * (2 * extents[0] - i - 1) / 2;
     }
-    else if /* constexpr */ (Uplo == lower_triang) { // C++17
+    else if /* constexpr */ (Uplo == lo) { // C++17
         res = j + i * (i + 1) / 2;
     }
     return res;

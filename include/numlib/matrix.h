@@ -49,9 +49,9 @@ class Band_matrix;
 // Packed matrix class:
 
 // Enumeration of triangular storage schemes.
-enum Uplo_scheme { upper_triang, lower_triang };
+enum Uplo_scheme { up, lo };
 
-template <typename T, Uplo_scheme Uplo = lower_triang>
+template <typename T, Uplo_scheme Uplo = lo>
 class Packed_matrix;
 
 //------------------------------------------------------------------------------

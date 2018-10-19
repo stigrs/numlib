@@ -436,7 +436,7 @@ TEST_CASE("test_math_linalg")
             {0.37624555, -0.55759995, -0.56519341, 0.42901335, -0.20982264}};
 
         auto a = hilbert<>(5);
-        Symm_mat<double, lower_triang> ap(a);
+        Symm_mat<double, lo> ap(a);
 
         Mat<double> evec;
         Vec<double> eval(5);
