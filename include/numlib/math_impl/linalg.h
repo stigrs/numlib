@@ -444,7 +444,7 @@ void eig(double emin,
 // - Only Intel MKL is supported on Windows since OpenBLAS v0.2.14.1 gives 
 //   wrong results.
 //
-#if defined(__unix__) || defined(USE_MKL)
+#if defined(__unix__) || defined(__APPLE__) || defined(USE_MKL)
 template <Uplo_scheme Uplo>
 void eigs(Symm_mat<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
 {
