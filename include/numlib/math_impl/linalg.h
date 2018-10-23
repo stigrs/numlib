@@ -441,11 +441,10 @@ void eig(double emin,
 // packed storage.
 //
 // Note:
-// - Only Intel MKL is supported since OpenBLAS v0.2.14.1 gives wrong results.
+// - Only Intel MKL is supported on Windows since OpenBLAS v0.2.14.1 gives 
+//   wrong results.
 //
-#if defined(_MSC_VER) && !defined(USE_MKL)
-#error "Intel MKL is required"
-#endif
+#if defined(__unix__) || defined(USE_MKL)
 template <Uplo_scheme Uplo>
 void eigs(Symm_mat<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
 {
@@ -463,6 +462,7 @@ void eigs(Symm_mat<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
         throw Math_error("dspevd failed");
     }
 }
+#endif
 
 // Compute eigenvalues and eigenvectors in the interval [emin, emax] for
 // a real sparse matrix.
