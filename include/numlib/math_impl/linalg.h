@@ -443,6 +443,7 @@ void eig(double emin,
 // Note:
 // - Only Intel MKL is supported since OpenBLAS v0.2.14.1 gives wrong results.
 //
+#ifdef _MSC_VER
 #ifdef USE_MKL
 template <Uplo_scheme Uplo>
 void eigs(Symm_mat<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
@@ -461,6 +462,7 @@ void eigs(Symm_mat<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
         throw Math_error("dspevd failed");
     }
 }
+#endif
 #endif
 
 // Compute eigenvalues and eigenvectors in the interval [emin, emax] for
