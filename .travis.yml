@@ -271,7 +271,7 @@ install:
       BLAS_URL="https://github.com/xianyi/OpenBLAS/archive/v0.3.3.zip"
       mkdir -p OpenBLAS/install  
       cd OpenBLAS
-      travis_retry wget -O - ${BLAS_URL} 
+      travis_retry wget ${BLAS_URL} 
       unzip v0.3.3.zip
       cd OpenBLAS-0.3.3
       make PREFIX=${DEPS_DIR}/OpenBLAS/install install
