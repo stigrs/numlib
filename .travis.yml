@@ -271,7 +271,7 @@ install:
       BLAS_URL="http://llvm.org/releases/${LLVM_VERSION}/llvm-${LLVM_VERSION}.src.tar.xz"
       mkdir -p OpenBLAS/install  
       cd OpenBLAS
-      travis_retry wget -O - ${BLAS_URL}BLAS 
+      travis_retry wget -O - ${BLAS_URL} 
       unzip v0.3.3.zip
       cd OpenBLAS-0.3.3
       make PREFIX=${DEPS_DIR}/OpenBLAS/install install
