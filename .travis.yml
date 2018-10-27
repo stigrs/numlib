@@ -268,7 +268,7 @@ install:
   - |
     OPENBLAS_INSTALL=${DEPS_DIR}/OpenBLAS/install
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      BLAS_URL="http://llvm.org/releases/${LLVM_VERSION}/llvm-${LLVM_VERSION}.src.tar.xz"
+      BLAS_URL="https://github.com/xianyi/OpenBLAS/archive/v0.3.3.zip"
       mkdir -p OpenBLAS/install  
       cd OpenBLAS
       travis_retry wget -O - ${BLAS_URL} 
