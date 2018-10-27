@@ -66,11 +66,11 @@ matrix:
           packages:
             - clang-3.6
             - g++-5
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
@@ -85,11 +85,11 @@ matrix:
           packages:
             - clang-3.8
             - g++-5
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
@@ -104,11 +104,11 @@ matrix:
           packages:
             - clang-3.9
             - g++-5
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.9
@@ -123,11 +123,11 @@ matrix:
           packages:
             - clang-4.0
             - g++-5
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-4.0
@@ -142,11 +142,11 @@ matrix:
           packages:
             - clang-5.0
             - g++-5
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
@@ -166,11 +166,11 @@ matrix:
         apt:
           packages: 
             - g++-5
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -183,11 +183,11 @@ matrix:
         apt:
           packages: 
             - g++-6
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -200,11 +200,11 @@ matrix:
         apt:
           packages: 
             - g++-7
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -271,7 +271,7 @@ install:
       BLAS_URL="http://llvm.org/releases/${LLVM_VERSION}/llvm-${LLVM_VERSION}.src.tar.xz"
       mkdir -p OpenBLAS/install  
       cd OpenBLAS
-      travis_retry wget -O - ${LLVM_URL} 
+      travis_retry wget -O - ${BLAS_URL}BLAS 
       unzip v0.3.3.zip
       cd OpenBLAS-0.3.3
       make PREFIX=${DEPS_DIR}/OpenBLAS/install install
