@@ -70,13 +70,13 @@ else()
         else()
             set(BLAS_DIR /usr)
         endif()
-        message(${BLAS_DIR}
+        message(${BLAS_DIR})
 		find_file(BLAS_LIBRARIES libopenblas.so HINTS ${BLAS_DIR}/lib)
 	endif()
 	find_path(BLAS_INCLUDE_DIRS cblas.h HINTS ${BLAS_DIR}/include)
 	find_path(LAPACKE_INCLUDE_DIRS lapacke.h HINTS ${BLAS_DIR}/include)
-    message(${BLAS_INCLUDE_DIRS}
-    message(${LAPACKE_INCLUDE_DIRS}
+    message(${BLAS_INCLUDE_DIRS})
+    message(${LAPACKE_INCLUDE_DIRS})
 endif()
 
 install(
