@@ -463,6 +463,7 @@ void eigs(Symm_mat<double, Uplo>& ap, Mat<double>& evec, Vec<double>& eval)
 
 // Compute eigenvalues and eigenvectors in the interval [emin, emax] for
 // a real sparse matrix.
+//
 #ifdef USE_MKL
 void eig(double emin,
          double emax,
