@@ -66,6 +66,7 @@ matrix:
           packages:
             - clang-3.6
             - g++-5
+            - gfortran
               #- libblas-dev
               #- liblapacke
               #- liblapacke-dev
@@ -85,6 +86,7 @@ matrix:
           packages:
             - clang-3.8
             - g++-5
+            - gfortran
               #- libblas-dev
               #- liblapacke
               #- liblapacke-dev
@@ -104,6 +106,7 @@ matrix:
           packages:
             - clang-3.9
             - g++-5
+            - gfortran
               #- libblas-dev
               #- liblapacke
               #- liblapacke-dev
@@ -123,6 +126,7 @@ matrix:
           packages:
             - clang-4.0
             - g++-5
+            - gfortran
               #- libblas-dev
               #- liblapacke
               #- liblapacke-dev
@@ -142,6 +146,7 @@ matrix:
           packages:
             - clang-5.0
             - g++-5
+            - gfortran
               #- libblas-dev
               #- liblapacke
               #- liblapacke-dev
@@ -166,6 +171,7 @@ matrix:
         apt:
           packages: 
             - g++-5
+            - gfortran
               #- libblas-dev
               #- liblapacke
               #- liblapacke-dev
@@ -183,6 +189,7 @@ matrix:
         apt:
           packages: 
             - g++-6
+            - gfortran
               #- libblas-dev
               #- liblapacke
               #- liblapacke-dev
@@ -200,6 +207,7 @@ matrix:
         apt:
           packages: 
             - g++-7
+            - gfortran
               #- libblas-dev
               #- liblapacke
               #- liblapacke-dev
@@ -273,7 +281,7 @@ install:
       cd OpenBLAS
       travis_retry wget ${BLAS_URL} 
       unzip -q v0.3.3.zip
-      cd OpenBLAS-0.3.3 && make ONLY_CBLAS=0 
+      cd OpenBLAS-0.3.3 && make  
       make PREFIX=${DEPS_DIR}/OpenBLAS/install install 
       export BLAS_ROOT=${OPENBLAS_INSTALL}
       export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${OPENBLAS_INSTALL}/lib"
