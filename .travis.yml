@@ -272,7 +272,7 @@ install:
       mkdir -p OpenBLAS/install  
       cd OpenBLAS
       travis_retry wget ${BLAS_URL} 
-      unzip v0.3.3.zip
+      unzip -q v0.3.3.zip
       cd OpenBLAS-0.3.3 && make PREFIX=${DEPS_DIR}/OpenBLAS/install install -j2
       export BLAS_ROOT=${OPENBLAS_INSTALL}
       export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${OPENBLAS_INSTALL}/lib"
