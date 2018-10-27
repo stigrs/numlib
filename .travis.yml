@@ -284,6 +284,7 @@ install:
       cd OpenBLAS-0.3.3 && make  
       make PREFIX=${DEPS_DIR}/OpenBLAS/install install 
       export BLAS_ROOT=${OPENBLAS_INSTALL}
+      echo ${BLAS_ROOT}
       export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${OPENBLAS_INSTALL}/lib"
     fi
 
