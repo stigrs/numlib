@@ -274,7 +274,6 @@ install:
       export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${LLVM_INSTALL}/lib"
     fi
   - |
-    OPENBLAS_INSTALL=${DEPS_DIR}/OpenBLAS/install
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       BLAS_URL="https://github.com/xianyi/OpenBLAS/archive/v0.3.3.zip"
       mkdir -p OpenBLAS/install  
@@ -282,10 +281,7 @@ install:
       travis_retry wget ${BLAS_URL} 
       unzip -q v0.3.3.zip
       cd OpenBLAS-0.3.3 && make  
-      make PREFIX=${DEPS_DIR}/OpenBLAS/install install 
-      export BLAS_ROOT=${OPENBLAS_INSTALL}
-      echo ${BLAS_ROOT}
-      export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${OPENBLAS_INSTALL}/lib"
+      make install 
     fi
 
   # have CMake to generate build files
