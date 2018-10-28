@@ -41,7 +41,7 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "/std:c++14 /EHsc /W4 /WX /wd4100 /MT /GR /Zi /Od")
 endif()
 
-# BLAS and LAPACK is required.
+# BLAS and LAPACKE are required.
 if(DEFINED ENV{MKLROOT})
 	list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 	find_package(MKL)
