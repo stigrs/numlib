@@ -26,7 +26,6 @@ add_library(
 target_link_libraries(
     num 
     ${BLAS_LIBRARIES}
-    ${LAPACK_LIBRARIES}
 ) 
 
 install(

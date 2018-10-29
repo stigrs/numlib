@@ -66,11 +66,12 @@ matrix:
           packages:
             - clang-3.6
             - g++-5
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+            - gfortran
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
@@ -85,11 +86,12 @@ matrix:
           packages:
             - clang-3.8
             - g++-5
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+            - gfortran
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
@@ -104,11 +106,12 @@ matrix:
           packages:
             - clang-3.9
             - g++-5
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+            - gfortran
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.9
@@ -123,11 +126,12 @@ matrix:
           packages:
             - clang-4.0
             - g++-5
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+            - gfortran
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-4.0
@@ -142,11 +146,12 @@ matrix:
           packages:
             - clang-5.0
             - g++-5
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+            - gfortran
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
@@ -166,11 +171,12 @@ matrix:
         apt:
           packages: 
             - g++-5
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+            - gfortran
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -183,11 +189,12 @@ matrix:
         apt:
           packages: 
             - g++-6
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+            - gfortran
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -200,11 +207,12 @@ matrix:
         apt:
           packages: 
             - g++-7
-            - libblas-dev
-            - liblapacke
-            - liblapacke-dev
-            - libopenblas-base
-            - libopenblas-dev
+            - gfortran
+              #- libblas-dev
+              #- liblapacke
+              #- liblapacke-dev
+              #- libopenblas-base
+              #- libopenblas-dev
           sources:
             - ubuntu-toolchain-r-test
 
@@ -265,8 +273,17 @@ install:
       export LDFLAGS="-L ${LLVM_INSTALL}/lib -l c++ -l c++abi"
       export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${LLVM_INSTALL}/lib"
     fi
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      BLAS_URL="https://github.com/xianyi/OpenBLAS/archive/v0.3.3.zip"
+      mkdir -p OpenBLAS/install  
+      cd OpenBLAS
+      travis_retry wget ${BLAS_URL} 
+      unzip -q -o v0.3.3.zip
+      cd OpenBLAS-0.3.3 && make > /dev/null 2>&1
+      make install 
+    fi
 
-before_script:
   # have CMake to generate build files
   - cd "${TRAVIS_BUILD_DIR}"
   - mkdir build && cd build

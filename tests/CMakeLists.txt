@@ -50,7 +50,6 @@ function(add_numlib_test name)
         ${name} 
 	num
 	${BLAS_LIBRARIES}
-	${LAPACK_LIBRARIES}
         test_catch2
     ) 
     add_dependencies(${name} Catch2)

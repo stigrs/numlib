@@ -420,7 +420,7 @@ TEST_CASE("test_math_linalg")
     }
 #endif
 
-#ifdef USE_MKL
+#if defined(__unix__) || defined(__APPLE__) || defined(USE_MKL)
     // OpenBLAS v0.2.14.1 gives wrong results.
     SECTION("eigs_packed_matrix")
     {
