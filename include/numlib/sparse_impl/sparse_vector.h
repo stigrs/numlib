@@ -46,13 +46,14 @@ public:
 
     // Construct from values and indexes:
 
-    Sparse_vector(const std::vector<T>& val, const std::vector<size_type>& loc)
-        : elems(val), indx(loc)
+    Sparse_vector(const std::vector<T>& val,
+                  const std::vector<size_type>& indx_)
+        : elems(val), indx(indx_)
     {
     }
 
     template <Index n>
-    Sparse_vector(const T (&val)[n], const Index (&loc)[n]);
+    Sparse_vector(const T (&val)[n], const Index (&indx_)[n]);
 
     // Construct from initializer list.
     Sparse_vector(std::initializer_list<std::pair<size_type, T>> list);
@@ -128,12 +129,12 @@ private:
 
 template <typename T>
 template <Index n>
-Sparse_vector<T>::Sparse_vector(const T (&val)[n], const Index (&loc)[n])
+Sparse_vector<T>::Sparse_vector(const T (&val)[n], const Index (&indx_)[n])
     : elems(n), indx(n)
 {
     for (size_type i = 0; i < n; ++i) {
         elems[i] = val[i];
-        indx[i] = loc[i];
+        indx[i] = indx_[i];
     }
 }
 
