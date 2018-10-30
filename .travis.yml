@@ -277,8 +277,7 @@ install:
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       BLAS_URL="https://anaconda.org/conda-forge/openblas/0.3.3/download/linux-64/openblas-0.3.3-ha44fe06_1.tar.bz2"
       mkdir /opt/openblas
-      travis_retry wget -r ${BLAS_URL} 
-      tar -jxvf openblas-0.3.3-ha44fe06_1.tar.bz2 -C /opt/openblas
+      travis_retry wget -qO- ${BLAS_URL} | tar jxv -C /opt/openblas
     fi
 
   # have CMake to generate build files
