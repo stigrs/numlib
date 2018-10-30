@@ -43,7 +43,6 @@ endif()
 
 # BLAS and LAPACKE are required.
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-endif()
 if(DEFINED ENV{MKLROOT})
 	find_package(MKL)
 	if(MKL_FOUND)
