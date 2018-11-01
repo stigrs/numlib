@@ -63,6 +63,5 @@ find_path(LAPACKE_INCLUDE_DIRS lapacke.h HINTS ${BLAS_DIR}/include)
 
 if(BLAS_INCLUDE_DIRS AND LAPACKE_INCLUDE_DIRS AND BLAS_LIBRARIES)
     set(BLAS_FOUND ON)
-    message("-- OpenBLAS found")
 endif()
 
