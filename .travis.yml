@@ -106,6 +106,32 @@ matrix:
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0 && BUILD_TYPE=Release"
 
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-6.0
+          packages:
+            - clang-6.0
+            - g++-6
+            - gfortran
+      env:
+        - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0 && BUILD_TYPE=Debug"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-6.0
+          packages:
+            - clang-6.0
+            - g++-6
+            - gfortran
+      env:
+        - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0 && BUILD_TYPE=Release"
+
     # Clang on OSX
     - os: osx
       osx_image: xcode8
