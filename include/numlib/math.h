@@ -31,6 +31,7 @@ struct Math_error : std::runtime_error {
 #include <numlib/math_impl/euler.h>
 #include <numlib/math_impl/quaternion.h>
 #include <numlib/math_impl/signal.h>
+#include <numlib/math_impl/special_functions.h>
 #include <numlib/math_impl/statistics.h>
 
 #endif // NUMLIB_MATH_H
