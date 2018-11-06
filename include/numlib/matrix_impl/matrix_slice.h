@@ -29,7 +29,7 @@ namespace Numlib {
 template <std::size_t N>
 struct Matrix_slice {
     // Empty matrix:
-    Matrix_slice() = default;
+    Matrix_slice() : size{0}, start{0} {}
 
     // Copy semantics:
     Matrix_slice(const Matrix_slice&) = default;
