@@ -46,7 +46,7 @@ inline Enable_if<Real_type<T>(), T> comp_ellint_1(const T& m)
 template <typename T>
 inline Enable_if<Real_type<T>(), T> comp_ellint_2(const T& m)
 {
-    // Algorithm: Chapter 17.3.34 in Abramovitch and Stegun
+    // Algorithm: Chapter 17.3.36 in Abramovitch and Stegun
 
     constexpr std::array<T, 5> a = {1.0, 0.44325141463, 0.06260601220,
                                     0.04757383546, 0.01736506451};
