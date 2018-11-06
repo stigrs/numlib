@@ -1,3 +1,6 @@
+# Copyright (c) 2018 Stig Rune Sellevag. All rights reserved.
+# Released under the MIT license.
+
 language: cpp
 sudo: false
 notifications:
@@ -6,15 +9,64 @@ notifications:
 # Use Linux unless specified otherwise
 os: linux
 dist: trusty
-ruby: 2.3
-
-cache:
-  directories:
-    - ${TRAVIS_BUILD_DIR}/deps
+ruby: 2.3.4
 
 matrix:
   include:
-    # GCC on Linux
+    ############################################################################
+    # Clang on Mac OSX
+    ############################################################################
+    - os: osx
+      osx_image: xcode8
+      compiler: clang
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Debug"
+
+    - os: osx
+      osx_image: xcode8
+      compiler: clang
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Release"
+
+    - os: osx
+      osx_image: xcode9.2
+      compiler: clang
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Debug"
+
+    - os: osx
+      osx_image: xcode9.2
+      compiler: clang
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Release"
+
+    - os: osx
+      osx_image: xcode9.4
+      compiler: clang
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Debug"
+
+    - os: osx
+      osx_image: xcode9.4
+      compiler: clang
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Release"
+
+    - os: osx
+      osx_image: xcode10
+      compiler: clang
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Debug"
+
+    - os: osx
+      osx_image: xcode10
+      compiler: clang
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Release"
+
+    ############################################################################
+    # GCC on GNU/Linux
+    ############################################################################
     - os: linux
       addons: 
         apt:
@@ -81,11 +133,14 @@ matrix:
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7 && BUILD_TYPE=Release"
 
-    # Clang on Linux
+    ############################################################################
+    # Clang on GNU/Linux
+    ############################################################################
     - os: linux
       addons:
         apt:
           sources:
+            - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
@@ -98,6 +153,7 @@ matrix:
       addons:
         apt:
           sources:
+            - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
@@ -132,65 +188,11 @@ matrix:
       env:
         - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0 && BUILD_TYPE=Release"
 
-    # Clang on OSX
-    - os: osx
-      osx_image: xcode8
-      compiler: clang
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Debug"
-
-    - os: osx
-      osx_image: xcode8
-      compiler: clang
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Release"
-
-    - os: osx
-      osx_image: xcode9.2
-      compiler: clang
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Debug"
-
-    - os: osx
-      osx_image: xcode9.2
-      compiler: clang
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Release"
-
-    - os: osx
-      osx_image: xcode9.4
-      compiler: clang
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Debug"
-
-    - os: osx
-      osx_image: xcode9.4
-      compiler: clang
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Release"
-
-    - os: osx
-      osx_image: xcode10
-      compiler: clang
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Debug"
-
-    - os: osx
-      osx_image: xcode10
-      compiler: clang
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Release"
-
 before_install:
     - eval "${MATRIX_EVAL}"
 
 install:
   - ${CXX} --version
-
-  # Dependencies required by the CI are installed in ${TRAVIS_BUILD_DIR}/deps/
-  - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
-  - mkdir -p "${DEPS_DIR}"
-  - cd "${DEPS_DIR}"
 
   # Travis machines have 2 cores
   - JOBS=2
