@@ -185,6 +185,8 @@ before_install:
     - eval "${MATRIX_EVAL}"
 
 install:
+  - ${CXX} --version
+
   # Dependencies required by the CI are installed in ${TRAVIS_BUILD_DIR}/deps/
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir -p "${DEPS_DIR}"
