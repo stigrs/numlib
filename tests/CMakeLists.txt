@@ -66,7 +66,6 @@ set(PROGRAMS
     test_math_linalg
     test_math_quaternion
     test_math_signal
-    test_math_special_functions
     test_math_statistics
     test_matrix0
     test_matrix1
