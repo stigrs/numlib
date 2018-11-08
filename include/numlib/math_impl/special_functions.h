@@ -7,7 +7,7 @@
 #ifndef NUMLIB_MATH_SPECIAL_FUNCTIONS_H
 #define NUMLIB_MATH_SPECIAL_FUNCTIONS_H
 
-#include <numlib/traits.h>
+#include <numlib/traits.h> 
 #include <array>
 #include <cmath>
 #include <cassert>
