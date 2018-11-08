@@ -7,7 +7,7 @@
 #ifndef NUMLIB_MATH_SPECIAL_FUNCTIONS_H
 #define NUMLIB_MATH_SPECIAL_FUNCTIONS_H
 
-#include <numlib/traits.h> 
+#include <numlib/traits.h>
 #include <array>
 #include <cmath>
 #include <cassert>
@@ -16,58 +16,74 @@ namespace Numlib {
 
 // Compute complete elliptic integral of first kind.
 template <typename T>
-inline Enable_if<Real_type<T>(), T> comp_ellint_1(const T& m)
+inline Enable_if<Real_type<T>(), T> comp_ellint_1(const T& k)
 {
-    // Algorithm: Chapter 17.3.34 in Abramovitch and Stegun
+    // Algorithm:
+    // ----------
+    // Cody, W. J. Chebyshev approximations for the complete elliptic
+    // integrals K and E. Mathematics of Computation, 1965, vol. 19,
+    // pp. 105-112.
+    //
+    // Coefficients are taken from Table II.
 
-    constexpr std::array<T, 5> a = {1.38629436112, 0.09666344259, 0.03590092383,
-                                    0.03742563713, 0.01451196212};
-    constexpr std::array<T, 5> b = {0.5, 0.12498593597, 0.06880248576,
-                                    0.03328355346, 0.00441787012};
+    assert(k >= 0.0 && k < 1.0);
+    const T eta = 1.0 - k * k;
 
-    constexpr T zero = T{0};
-    constexpr T one = T{1};
-    const T m1 = one - m;
+    constexpr int n = 8;
+    constexpr std::array<T, n> a = {
+        9.6573590797589018e-2, 3.0885573486752694e-2, 1.4978988178704629e-2,
+        9.6587579861753112e-3, 1.1208918554644092e-2, 1.3855601247156560e-2,
+        6.6905509906897936e-3, 6.4998443329390180e-4};
+    constexpr std::array<T, n> b = {
+        1.2499999994117923e-1, 7.0312426464627361e-2, 4.8818058565403952e-2,
+        3.7068398934155422e-2, 2.7189861116788250e-2, 1.4105380776158048e-2,
+        3.1831309927862886e-3, 1.5049181783601883e-4};
 
-    assert(m >= zero && m < one);
-
-    T res = zero;
-    for (int i = 0; i < 5; ++i) {
-        res += b[i] * std::pow(m1, i);
+    T res = 0.5;
+    for (int i = 0; i < n; ++i) {
+        res += b[i] * std::pow(eta, i + 1);
     }
-    res *= std::log(one / m1);
-    for (int i = 0; i < 5; ++i) {
-        res += a[i] * std::pow(m1, i);
+    res *= std::log(1.0 / eta);
+    for (int i = 0; i < n; ++i) {
+        res += a[i] * std::pow(eta, i + 1);
     }
-    return res;
+    return res + std::log(4.0);
 }
 
 // Compute complete elliptic integral of second kind.
 template <typename T>
-inline Enable_if<Real_type<T>(), T> comp_ellint_2(const T& m)
+inline Enable_if<Real_type<T>(), T> comp_ellint_2(const T& k)
 {
-    // Algorithm: Chapter 17.3.36 in Abramovitch and Stegun
+    // Algorithm:
+    // ----------
+    // Cody, W. J. Chebyshev approximations for the complete elliptic
+    // integrals K and E. Mathematics of Computation, 1965, vol. 19,
+    // pp. 105-112.
+    //
+    // Coefficients are taken from Table III.
 
-    constexpr std::array<T, 5> a = {1.0, 0.44325141463, 0.06260601220,
-                                    0.04757383546, 0.01736506451};
-    constexpr std::array<T, 5> b = {0.0, 0.24998368310, 0.09200180037,
-                                    0.04069697526, 0.00526449639};
+    assert(m >= 0.0 && m < 1.0);
+    const T eta = 1.0 - k * k;
 
-    constexpr T zero = T{0};
-    constexpr T one = T{1};
-    const T m1 = one - m;
+    constexpr int n = 8;
+    constexpr std::array<T, n> c = {
+        4.4314718112155806e-1, 5.6805657874695358e-2, 2.1876220647186198e-2,
+        1.2510592410844644e-2, 1.3034146073731432e-2, 1.5377102528552019e-2,
+        7.3356174974290365e-3, 7.0980964089987229e-4};
+    constexpr std::array<T, n> d = {
+        2.4999999993617622e-1, 9.3749920249680113e-2, 5.8582839536559024e-2,
+        4.2382807456947900e-2, 3.0302747728412848e-2, 1.5525129948040721e-2,
+        3.4838679435896492e-3, 1.6427210797048025e-4};
 
-    assert(m >= zero && m < one);
-
-    T res = zero;
-    for (int i = 0; i < 5; ++i) {
-        res += b[i] * std::pow(m1, i);
+    T res = 0.0;
+    for (int i = 0; i < n; ++i) {
+        res += d[i] * std::pow(eta, i + 1);
     }
-    res *= std::log(one / m1);
-    for (int i = 0; i < 5; ++i) {
-        res += a[i] * std::pow(m1, i);
+    res *= std::log(1.0 / eta);
+    for (int i = 0; i < n; ++i) {
+        res += c[i] * std::pow(eta, i + 1);
     }
-    return res;
+    return res + 1.0;
 }
 
 } // namespace Numlib
