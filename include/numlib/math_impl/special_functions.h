@@ -62,7 +62,7 @@ inline Enable_if<Real_type<T>(), T> comp_ellint_2(const T& k)
     //
     // Coefficients are taken from Table III.
 
-    assert(m >= 0.0 && m < 1.0);
+    assert(k >= 0.0 && k < 1.0);
     const T eta = 1.0 - k * k;
 
     constexpr int n = 8;
