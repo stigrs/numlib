@@ -12,18 +12,20 @@ TEST_CASE("test_math_special_functions")
 {
     using namespace Numlib;
 
+    // Answers are computed with WolframAlpha:
+
     SECTION("comp_ellint_1")
     {
-        CHECK(std::abs(comp_ellint_1(0.0) - 1.5707963267948966) < 5.12e-15);
-        CHECK(std::abs(comp_ellint_1(0.5) - 1.6857503548125961) < 5.12e-15);
-        CHECK(std::abs(comp_ellint_1(0.9) - 2.2805491384227703) < 5.12e-15);
+        CHECK(std::abs(comp_ellint_1(0.0) - 1.570796326794896619) < 1.0e-15);
+        CHECK(std::abs(comp_ellint_1(0.5) - 1.685750354812596043) < 1.0e-15);
+        CHECK(std::abs(comp_ellint_1(0.9) - 2.280549138422770205) < 1.0e-15);
     }
 
     SECTION("comp_ellint_2")
     {
-        CHECK(std::abs(comp_ellint_2(0.0) - 1.5707963267948966) < 2.0e-9);
-        CHECK(std::abs(comp_ellint_2(0.5) - 1.4674622093394272) < 2.0e-9);
-        CHECK(std::abs(comp_ellint_2(0.9) - 1.1716970527816142) < 2.0e-9);
+        CHECK(std::abs(comp_ellint_2(0.0) - 1.570796326794896619) < 1.0e-15);
+        CHECK(std::abs(comp_ellint_2(0.5) - 1.467462209339427155) < 1.0e-15);
+        CHECK(std::abs(comp_ellint_2(0.9) - 1.171697052781614141) < 1.0e-15);
     }
 }
 
