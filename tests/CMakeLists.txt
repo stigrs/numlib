@@ -59,6 +59,7 @@ endfunction()
 set(PROGRAMS 
     test_band_matrix
     test_constants
+    test_grid
     test_math_core
     test_math_calculus
     test_math_euler

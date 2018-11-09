@@ -14,6 +14,7 @@ set(
     calculus.cpp
     euler.cpp
     geometry.cpp
+    grid.cpp
     linalg.cpp
     quaternion.cpp
     signal.cpp
