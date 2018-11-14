@@ -50,6 +50,7 @@ void benchmark(int n)
     }
     t2 = std::chrono::high_resolution_clock::now();
     Timer t_num = t2 - t1;
+    (void) num;
 
     std::valarray<double> va(1.0, n);
     std::valarray<double> vb(2.0, n);
@@ -61,6 +62,7 @@ void benchmark(int n)
     }
     t2 = std::chrono::high_resolution_clock::now();
     Timer t_val = t2 - t1;
+    (void) val;
 
     print(n, t_arma, t_num, t_val);
 }

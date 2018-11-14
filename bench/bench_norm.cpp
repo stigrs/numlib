@@ -45,6 +45,7 @@ void benchmark(int n)
     Timer t_numlib = t2 - t1;
 
     print(n, t_arma, t_numlib);
+    (void) nrm;
 }
 
 int main()
