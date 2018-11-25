@@ -307,6 +307,50 @@ inline Matrix<T, N> operator+(const Matrix_ref<const T, N>& a,
     return res;
 }
 
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator+(const Matrix_ref<T, N>& a,
+                              const Matrix<const T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res += b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator+(const Matrix_ref<const T, N>& a,
+                              const Matrix<T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res += b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator+(const Matrix<T, N>& a,
+                              const Matrix_ref<const T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res += b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator+(const Matrix<const T, N>& a,
+                              const Matrix_ref<T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res += b;
+    return res;
+}
+
 // Matrix subtraction:
 
 template <typename T, std::size_t N>
@@ -386,6 +430,50 @@ inline Matrix<T, N> operator-(const Matrix_ref<T, N>& a, const Matrix<T, N>& b)
 template <typename T, std::size_t N>
 inline Matrix<T, N> operator-(const Matrix_ref<const T, N>& a,
                               const Matrix<const T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res -= b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator-(const Matrix_ref<T, N>& a,
+                              const Matrix<const T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res -= b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator-(const Matrix_ref<const T, N>& a,
+                              const Matrix<T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res -= b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator-(const Matrix<T, N>& a,
+                              const Matrix_ref<const T, N>& b)
+{
+    assert(same_extents(a, b));
+
+    Matrix<T, N> res = a;
+    res -= b;
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Matrix<T, N> operator-(const Matrix<const T, N>& a,
+                              const Matrix_ref<T, N>& b)
 {
     assert(same_extents(a, b));
 
