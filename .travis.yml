@@ -17,18 +17,6 @@ matrix:
     # Clang on Mac OSX
     ############################################################################
     - os: osx
-      osx_image: xcode8
-      compiler: clang
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Debug"
-
-    - os: osx
-      osx_image: xcode8
-      compiler: clang
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++ && BUILD_TYPE=Release"
-
-    - os: osx
       osx_image: xcode9.2
       compiler: clang
       env:
