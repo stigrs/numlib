@@ -7,6 +7,10 @@
 #ifndef NUMLIB_BAND_MATRIX_BAND_MATRIX_H
 #define NUMLIB_BAND_MATRIX_BAND_MATRIX_H
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <array>
 #include <vector>
 #include <algorithm>
@@ -178,8 +182,9 @@ template <typename T>
 template <typename F>
 Band_matrix<T>& Band_matrix<T>::apply(F f)
 {
-    for (auto& x : elems) {
-        f(x);
+#pragma omp parallel for
+    for (std::size_t i = 0; i < elems.size(); ++i) {
+        f(elems[i]);
     }
     return *this;
 }

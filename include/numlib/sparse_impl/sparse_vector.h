@@ -7,6 +7,10 @@
 #ifndef NUMLIB_SPARSE_VECTOR_H
 #define NUMLIB_SPARSE_VECTOR_H
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <algorithm>
 #include <vector>
 #include <initializer_list>
@@ -201,8 +205,9 @@ template <typename T>
 template <typename F>
 inline Sparse_vector<T>& Sparse_vector<T>::apply(F f)
 {
-    for (auto& x : elems) {
-        f(x);
+#pragma omp parallel for
+    for (std::size_t i = 0; i < elems.size(); ++i) {
+        f(elems[i]);
     }
     return *this;
 }

@@ -7,6 +7,10 @@
 #ifndef NUMLIB_SPARSE_OPERATIONS_H
 #define NUMLIB_SPARSE_OPERATIONS_H
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <numlib/matrix.h>
 #include <vector>
 #include <iostream>
@@ -219,8 +223,10 @@ void mv_mul(const Sparse_matrix<T>& a, const Matrix<T, 1>& x, Matrix<T, 1>& res)
 
     res.resize(a.cols());
 
+#pragma omp parallel for shared(res, a, x)
     for (size_type i = 0; i < a.rows(); ++i) {
         T sum = T{0};
+#pragma omp parallel for reduction(+ : sum)
         for (size_type j = a.row_index()[i]; j < a.row_index()[i + 1]; ++j) {
             sum += a.values()[j] * x(a.columns()[j]);
         }

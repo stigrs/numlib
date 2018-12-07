@@ -7,6 +7,10 @@
 #ifndef NUMLIB_SPARSE_MATRIX_H
 #define NUMLIB_SPARSE_MATRIX_H
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -206,8 +210,9 @@ template <typename T>
 template <typename F>
 inline Sparse_matrix<T>& Sparse_matrix<T>::apply(F f)
 {
-    for (auto& x : elems) {
-        f(x);
+#pragma omp parallel for
+    for (std::size_t i = 0; i < elems.size(); ++i) {
+        f(elems[i]);
     }
     return *this;
 }

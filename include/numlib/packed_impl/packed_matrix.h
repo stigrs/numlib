@@ -12,6 +12,10 @@
 #pragma warning(disable : 4127) // conditional expression is constant
 #endif
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <numlib/matrix.h>
 #include <array>
 #include <vector>
@@ -200,8 +204,9 @@ template <typename T, Uplo_scheme Uplo>
 template <typename F>
 Packed_matrix<T, Uplo>& Packed_matrix<T, Uplo>::apply(F f)
 {
-    for (auto& x : elems) {
-        f(x);
+#pragma omp parallel for
+    for (std::size_t i = 0; i < elems.size(); ++i) {
+        f(elems[i]);
     }
     return *this;
 }
