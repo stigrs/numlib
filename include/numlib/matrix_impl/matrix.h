@@ -14,6 +14,10 @@
 #include <utility>
 #include <vector>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 namespace Numlib {
 
 // N-dimensional dense matrix class using row-major storage order.
@@ -357,8 +361,9 @@ template <typename T, std::size_t N>
 template <typename F>
 Matrix<T, N>& Matrix<T, N>::apply(F f)
 {
-    for (auto& x : elems) {
-        f(x);
+#pragma omp parallel for
+    for (Index i = 0; i < this->desc.size; ++i) {
+        f(elems[i]);
     }
     return *this;
 }

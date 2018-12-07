@@ -14,6 +14,10 @@
 #include <lapacke.h>
 #endif
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <numlib/traits.h>
 #include <numlib/matrix.h>
 #include <algorithm>
@@ -255,6 +259,7 @@ template <typename T>
 inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
 {
     assert(same_extents(x, y));
+#pragma omp parallel for shared(a, x, y)
     for (Index i = 0; i < x.size(); ++i) {
         y(i) = a * x(i) + y(i);
     }
@@ -488,8 +493,9 @@ norm(const M& vec)
 
     T result = T{0};
     if (!vec.empty()) {
-        for (const auto& x : vec) {
-            result += x * x;
+#pragma omp parallel for reduction(+ : result)
+        for (Index i = 0; i < vec.size(); ++i) {
+            result += vec(i) * vec(i);
         }
         result = std::sqrt(result);
     }

@@ -3,6 +3,9 @@ project(numlib CXX)
 
 include(ExternalProject)
 find_package(Git)
+if(UNIX)
+    find_package(OpenMP)
+endif()
 
 # Enforce C++14 standard.
 set(CMAKE_CXX_STANDARD 14)
@@ -39,6 +42,11 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU"
 endif()
 if(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "/std:c++14 /EHsc /W4 /WX /wd4100 /MT /GR /Zi /Od")
+endif()
+
+# Set OpenMP compiler flags.
+if(OpenMP_FOUND)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
 # BLAS and LAPACKE are required.

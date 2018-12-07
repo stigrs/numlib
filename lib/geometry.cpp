@@ -6,6 +6,10 @@
 
 #include <numlib/math.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 double Numlib::hypot(const double a, const double b)
 {
     double aa = std::abs(a);
@@ -43,6 +47,7 @@ void Numlib::pdist_matrix(Numlib::Mat<double>& dm,
 {
     dm.resize(mat.rows(), mat.rows());
 
+#pragma omp parallel for shared(dm, mat)
     for (Index i = 0; i < dm.rows(); ++i) {
         for (Index j = i; j < dm.cols(); ++j) {
             dm(i, j) = 0.0;
@@ -61,6 +66,7 @@ void Numlib::translate(Numlib::Mat<double>& xyz,
 {
     assert(xyz.cols() == 3);
 
+#pragma omp parallel for
     for (Index i = 0; i < xyz.rows(); ++i) {
         xyz(i, 0) += dx;
         xyz(i, 1) += dy;
@@ -72,6 +78,7 @@ void Numlib::rotate(Numlib::Mat<double>& xyz, const Numlib::Mat<double>& rotm)
 {
     assert(rotm.rows() == 3 && rotm.cols() == 3);
 
+#pragma omp parallel for shared(rotm, xyz)
     for (Index i = 0; i < xyz.rows(); ++i) {
         xyz.row(i) = rotm * xyz.row(i);
     }

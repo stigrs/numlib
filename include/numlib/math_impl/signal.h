@@ -14,6 +14,10 @@
 #include <mkl.h>
 #endif
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 namespace Numlib {
 
 // Vector convolution.
@@ -30,6 +34,7 @@ Enable_if<Matrix_type<M>(), Vec<typename M::value_type>> conv(const M& a,
 
     Vec<value_type> res(nc);
 
+#pragma omp parallel for shared(res, a, b)
     for (Index i = 0; i < nc; ++i) {
         res(i) = value_type{0};
         auto jmin = (i >= (nb - 1)) ? (i - (nb - 1)) : 0;

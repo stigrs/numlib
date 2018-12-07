@@ -15,6 +15,10 @@
 #include <cblas.h>
 #endif
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <algorithm>
 #include <random>
 #include <iomanip>
@@ -158,6 +162,7 @@ inline Matrix<T, 2> transpose(const Matrix<T, 2>& m)
 
     Matrix<T, 2> res(p, n);
 
+#pragma omp parallel for
     for (Index i = 0; i < p; ++i) {
         for (Index j = 0; j < n; ++j) {
             res(i, j) = m.data()[i + j * p];
@@ -742,10 +747,11 @@ mm_mul(const M1& a, const M2& b, M3& res)
 
     res.resize(n, p);
 
-    for (Index i = 0; i != n; ++i) {
-        for (Index j = 0; j != p; ++j) {
+#pragma omp parallel for shared(res, a, b)
+    for (Index i = 0; i < n; ++i) {
+        for (Index j = 0; j < p; ++j) {
             res(i, j) = value_type{0};
-            for (Index k = 0; k != m; ++k) {
+            for (Index k = 0; k < m; ++k) {
                 res(i, j) += a(i, k) * b(k, j);
             }
         }

@@ -6,6 +6,10 @@
 
 #include <numlib/math.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 double Numlib::trapz(double xlo, double xup, const Vec<double>& y)
 {
     assert(!y.empty());
@@ -13,6 +17,7 @@ double Numlib::trapz(double xlo, double xup, const Vec<double>& y)
     const double step = std::abs(xup - xlo) / (y.size() - 1);
     double ans = 0.0;
 
+#pragma omp parallel for shared(y) reduction(+ : ans)
     for (Index i = 1; i < y.size(); ++i) {
         ans += 0.5 * (y(i) + y(i - 1));
     }
