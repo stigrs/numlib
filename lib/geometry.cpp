@@ -66,7 +66,7 @@ void Numlib::translate(Numlib::Mat<double>& xyz,
 {
     assert(xyz.cols() == 3);
 
-#pragma omp parallel for
+#pragma omp parallel for shared(xyz)
     for (Index i = 0; i < xyz.rows(); ++i) {
         xyz(i, 0) += dx;
         xyz(i, 1) += dy;

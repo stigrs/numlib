@@ -867,9 +867,10 @@ mv_mul(const M1& a, const M2& x, M3& y)
 
     y.resize(a.rows());
 
-    for (Index i = 0; i != a.rows(); ++i) {
+#pragma omp parallel for shared(y, a, x)
+    for (Index i = 0; i < a.rows(); ++i) {
         y(i) = value_type{0};
-        for (Index j = 0; j != a.cols(); ++j) {
+        for (Index j = 0; j < a.cols(); ++j) {
             y(i) += a(i, j) * x(j);
         }
     }
