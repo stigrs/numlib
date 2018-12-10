@@ -3,7 +3,7 @@ project(numlib CXX)
 
 include(ExternalProject)
 find_package(Git)
-if(UNIX AND NOT APPLE)
+if(NOT APPLE)
     find_package(OpenMP)
 endif()
 

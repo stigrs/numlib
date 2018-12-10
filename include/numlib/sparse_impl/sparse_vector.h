@@ -206,7 +206,7 @@ template <typename F>
 inline Sparse_vector<T>& Sparse_vector<T>::apply(F f)
 {
 #pragma omp parallel for
-    for (std::size_t i = 0; i < elems.size(); ++i) {
+    for (size_type i = 0; i < narrow_cast<size_type>(elems.size()); ++i) {
         f(elems[i]);
     }
     return *this;
