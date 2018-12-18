@@ -265,6 +265,18 @@ inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
     }
 }
 
+// Compute vector-scalar product and add the result to a vector.
+inline void axpy(const double a, const Vec<double>& x, Vec<double>& y)
+{
+    assert(same_extents(x, y));
+
+    const BLAS_INT n = narrow_cast<BLAS_INT>(y.size());
+    const BLAS_INT incx = narrow_cast<BLAS_INT>(x.descriptor().strides[0]);
+    const BLAS_INT incy = narrow_cast<BLAS_INT>(y.descriptor().strides[0]);
+
+    cblas_daxpy(n, a, x.data(), incx, y.data(), incy);
+}
+
 // Matrix-matrix multiplication.
 inline void matmul(const Mat<double>& a, const Mat<double>& b, Mat<double>& res)
 {
