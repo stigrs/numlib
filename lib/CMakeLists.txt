@@ -13,6 +13,7 @@ set(
     SRC_FILES
     calculus.cpp
     euler.cpp
+    faddeeva.cpp
     geometry.cpp
     grid.cpp
     linalg.cpp

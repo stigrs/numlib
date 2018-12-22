@@ -12,6 +12,7 @@ and Intel MKL are supported.
 * Packed matrices (row-major storage order)
 * Sparse vectors and matrices (CSR3 storage format)
 * Selected mathematical functions not provided by the STL
+* Faddeeva package (w, erf, erfc, erfcx, erfi, Dawson)
 * Numerical derivation and integration methods
 * Linear algebra methods
 * Transformations between rotation matrix, Euler angles and quaternions
@@ -34,7 +35,8 @@ Numlib is released under the [MIT](LICENSE) license.
 ## Usage of Third Party Libraries
 
 This project makes use of the [Catch2](https://github.com/catchorg/Catch2)
-testing library and code from [origin](http://code.google.com/p/origin).
+testing library, code from [origin](http://code.google.com/p/origin), and the
+[Faddeeva package](http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package).
 Please see the [ThirdPartyNotices.txt](ThirdPartyNotices.txt) file for details
 regarding the licensing of Catch2 and origin.
 
