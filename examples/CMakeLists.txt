@@ -27,6 +27,7 @@ set(
     solve_linear_equations
     sparse_eigensolver
     sparse_linsolve
+    special_functions
     statistics
     sub_matrix_views
     subscripting_and_slicing

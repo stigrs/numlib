@@ -22,6 +22,7 @@
   + [Sparse Matrices](#sparse-matrices)
     - [Eigensolver for Sparse Matrices](#eigensolver-for-sparse-matrices)
     - [Sparse Linear System of Equations](#sparse-linear-system-of-equations)
+* [Special Functions](#special-functions)
 * [Convolution](#convolution)
 * [Discrete Fourier Transform](#discrete-fourier-transform)
 * [Statistics](#statistics)
@@ -759,6 +760,35 @@ Generated output:
              3
              4
              5 ]
+
+## Special Functions
+[back to top](#table-of-contents)
+
+Example program:
+
+    #include <iostream>
+    #include <numlib/math.h>
+    #include <complex>
+
+    int main()
+    {
+        using namespace Faddeeva;
+
+        std::complex<double> z(-1.0, 1.0);
+        std::cout << "Faddeeva function: " << w(z) << '\n';
+
+        z = {1.0, 2.0};
+        std::cout << "Error function: " << erf(z) << '\n';
+
+        z = {2.0, 1.0};
+        std::cout << "Dawson function: " << Dawson(z) << '\n';
+    }
+
+Generated output:
+
+    Faddeeva function: (0.304744,-0.208219)
+    Error function: (-0.536644,-5.04914)
+    Dawson function: (0.163539,-0.153125)
 
 ## Convolution
 [back to top](#table-of-contents)
