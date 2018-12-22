@@ -24,15 +24,12 @@
 
    Header file for Faddeeva.cpp; see that file for more information. */
 
-// Modifications by Stig Rune Sellevag:
-// - Moved functions to namespace Numlib
-
-#ifndef FADDEEVA_HH
-#define FADDEEVA_HH 1
+#ifndef FADDEEVA_H
+#define FADDEEVA_H
 
 #include <complex>
 
-namespace Numlib {
+namespace Faddeeva {
 
 // compute w(z) = exp(-z^2) erfc(-iz) [ Faddeeva / scaled complex error func ]
 extern std::complex<double> w(std::complex<double> z, double relerr = 0);
@@ -62,6 +59,6 @@ extern std::complex<double> Dawson(std::complex<double> z, double relerr = 0);
 extern double Dawson(double x); // special case for real x
 #endif
 
-} // namespace Numlib
+} // namespace Faddeeva
 
-#endif // FADDEEVA_HH
+#endif // FADDEEVA_H

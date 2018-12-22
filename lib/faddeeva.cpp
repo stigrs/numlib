@@ -179,8 +179,8 @@ typedef complex<double> cmplx;
 
 #define C(a, b) cmplx(a, b)
 
-#define FADDEEVA(name) Numlib::name
-#define FADDEEVA_RE(name) Numlib::name
+#define FADDEEVA(name) Faddeeva::name
+#define FADDEEVA_RE(name) Faddeeva::name
 
 // isnan/isinf were introduced in C++11
 #if (__cplusplus < 201103L) && (!defined(HAVE_ISNAN) || !defined(HAVE_ISINF))
@@ -230,8 +230,8 @@ static inline double my_copysign(double x, double y)
 
 typedef double complex cmplx;
 
-#define FADDEEVA(name) Numlib_##name
-#define FADDEEVA_RE(name) Numlib_##name##_re
+#define FADDEEVA(name) Faddeeva_##name
+#define FADDEEVA_RE(name) Faddeva_##name##_re
 
 /* Constructing complex numbers like 0+i*NaN is problematic in C99
    without the C11 CMPLX macro, because 0.+I*NAN may give NaN+i*NAN if

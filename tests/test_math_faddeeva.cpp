@@ -21,8 +21,8 @@ typedef complex<double> cmplx;
 #define cimag(z) imag(z)
 #define cpolar(r, t) polar(r, t)
 
-#define FADDEEVA(name) Numlib::name
-#define FADDEEVA_RE(name) Numlib::name
+#define FADDEEVA(name) Faddeeva::name
+#define FADDEEVA_RE(name) Faddeeva::name
 
 #define Inf std::numeric_limits<double>::infinity()
 #define NaN std::numeric_limits<double>::quiet_NaN()
