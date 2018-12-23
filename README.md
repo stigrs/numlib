@@ -14,6 +14,7 @@ and Intel MKL are supported.
 * Selected mathematical functions not provided by the STL
 * Faddeeva package (w, erf, erfc, erfcx, erfi, Dawson)
 * Numerical derivation and integration methods
+* Explicit fourth-order Runge-Kutta method
 * Linear algebra methods
 * Transformations between rotation matrix, Euler angles and quaternions
 * Vector convolution

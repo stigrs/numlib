@@ -13,6 +13,7 @@
 #include <limits>
 
 double f(double x) { return x * x; }
+double rate(double t, double y) { return t * std::sqrt(y); }
 
 TEST_CASE("test_math_calculus")
 {
@@ -50,5 +51,27 @@ TEST_CASE("test_math_calculus")
         double eps = std::numeric_limits<double>::epsilon();
         res = quad<16>([](double x) { return std::sin(x); }, a, b);
         CHECK(std::abs(res - 2.0) < eps);
+    }
+
+    SECTION("rk4")
+    {
+        double t0 = 0.0;
+        double t1 = 10.0;
+        double dt = 0.1;
+        int n = 1 + narrow_cast<int>((t1 - t0) / dt);
+
+        Numlib::Vec<double> y(n);
+        y(0) = 1.0;
+
+        for (int i = 1; i < n; ++i) {
+            y(i) = Numlib::rk4(rate, dt, t0 + dt * (i - 1), y(i - 1));
+        }
+
+        for (int i = 0; i < n; ++i) {
+            double t = t0 + dt * i;
+            double y2 = std::pow(t * t + 4.0, 2.0) / 16.0;
+            double err = std::abs(y(i) / y2 - 1.0);
+            CHECK(err <= 3.0e-7);
+        }
     }
 }

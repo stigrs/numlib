@@ -122,6 +122,22 @@ double quad(std::function<double(double)> f, double a, double b)
     return res;
 }
 
+//------------------------------------------------------------------------------
+//
+// Solve ordinary differential equation (ODE):
+
+// Fourth-order Runge-Kutta method.
+inline double
+rk4(std::function<double(double, double)> f, double dx, double x, double y)
+{
+    double k1 = dx * f(x, y);
+    double k2 = dx * f(x + dx / 2.0, y + k1 / 2.0);
+    double k3 = dx * f(x + dx / 2.0, y + k2 / 2.0);
+    double k4 = dx * f(x + dx, y + k3);
+
+    return y + (k1 + 2.0 * k2 + 2.0 * k3 + k4) / 6.0;
+}
+
 } // namespace Numlib
 
 #endif // NUMLIB_MATH_CALCULUS_H
