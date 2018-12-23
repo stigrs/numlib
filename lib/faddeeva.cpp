@@ -190,7 +190,7 @@ static inline bool my_isinf(double x) { return 1 / x == 0.; }
 #define isinf my_isinf
 #elif (__cplusplus >= 201103L)
 // g++ gets confused between the C and C++ isnan/isinf functions
-#ifdef __GNUC__ < 6 || __clang_major < 6
+#if __GNUC__ < 6 || __clang_major__ < 6
 #define isinf my_isinf
 #define isnan my_isnan
 #else
