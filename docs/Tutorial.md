@@ -780,8 +780,10 @@ Example program:
         z = {1.0, 2.0};
         std::cout << "Error function: " << erf(z) << '\n';
 
+    #ifndef _MSC_VER
         z = {2.0, 1.0};
         std::cout << "Dawson function: " << Dawson(z) << '\n';
+    #endif
     }
 
 Generated output:
