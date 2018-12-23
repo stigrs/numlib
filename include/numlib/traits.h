@@ -17,7 +17,6 @@
 //------------------------------------------------------------------------------
 
 // Define integer type for use with BLAS, LAPACK and Intel MKL.
-// Note: 32-bit integers are used for all architectures.
 
 #ifdef USE_MKL
 #include <mkl.h>
