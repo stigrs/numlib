@@ -23,10 +23,6 @@
 #	  link_directories(${MKL_LIBRARY_DIRS})
 #     target_link_libraries(TARGET ${MKL_LIBRARIES})
 # endif()
-#
-# Note: 
-# - Currently, the Intel LP64 interface layer is used for Intel(R) 64
-#   architecture.
 
 if(WIN32)
 	if(${CMAKE_CL_64} EQUAL 1)
