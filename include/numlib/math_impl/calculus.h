@@ -138,6 +138,13 @@ rk4(std::function<double(double, double)> f, double dx, double x, double y)
     return y + (k1 + 2.0 * k2 + 2.0 * k3 + k4) / 6.0;
 }
 
+// Fourth-order Runge-Kutta method.
+void rk4(std::function<Vec<double>(double t, const Vec<double>&)> f,
+         Vec<double>& y,
+         double t0,
+         double t1,
+         double dt);
+
 } // namespace Numlib
 
 #endif // NUMLIB_MATH_CALCULUS_H
