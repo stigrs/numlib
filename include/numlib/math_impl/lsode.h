@@ -23,6 +23,8 @@ enum Lsode_methods { nonstiff = 10, stiff_user_jac = 21, stiff_int_jac = 22 };
 // Currently,
 class Lsode {
 public:
+    Lsode() = delete;
+
     // Constructor.
     Lsode(void (*fsys)(int* neq, double* t, double* y, double* ydot),
           void (*jsys)(int* neq,
@@ -32,39 +34,31 @@ public:
                        int* mu,
                        double* pd,
                        int* nrowpd),
-          int n,
           Lsode_methods flag_ = nonstiff,
           double rtol_ = 1.0e-6,
           double atol_ = 1.0e-6)
-        : fptr(fsys), jptr(jsys), neq{n}, flag{flag_}, rtol{rtol_}, atol{atol_}
+        : fptr(fsys), jptr(jsys), flag{flag_}, rtol{rtol_}, atol{atol_}
     {
         set_defaults();
-        allocate_memory();
     }
 
     // Destructor.
-    ~Lsode()
-    {
-        if (lrw > 0) {
-            delete[] rwork;
-        }
-        if (liw > 0) {
-            delete[] iwork;
-        }
-    }
+    ~Lsode() = default;
 
     // Integrator.
     void integrate(double& t0, double& t1, Numlib::Vec<double>& y)
     {
-        yptr = y.data();
-
-        dlsode_(fptr, &neq, yptr, &t0, &t1, &itol, &rtol, &atol, &itask,
-                &istate, &iopt, rwork, &lrw, iwork, &liw, jptr, &mf);
+        if (istate == 1) {
+            allocate_memory(narrow_cast<int>(y.size()));
+        }
+        dlsode_(fptr, &neq, y.data(), &t0, &t1, &itol, &rtol, &atol, &itask,
+                &istate, &iopt, rwork.data(), &lrw, iwork.data(), &liw, jptr,
+                &mf);
     }
 
 private:
     void set_defaults();
-    void allocate_memory();
+    void allocate_memory(int neq_);
 
     void (*fptr)(int* neq, double* t, double* y, double* ydot);
     void (*jptr)(int* neq,
@@ -74,8 +68,6 @@ private:
                  int* mu,
                  double* pd,
                  int* nrowpd);
-
-    int neq;
 
     Lsode_methods flag;
 
@@ -88,12 +80,12 @@ private:
     int itol;
     int iopt;
 
+    int neq;
     int lrw;
     int liw;
 
-    double* yptr;
-    double* rwork;
-    int* iwork;
+    Vec<double> rwork;
+    Vec<int> iwork;
 };
 
 inline void Lsode::set_defaults()
@@ -104,8 +96,10 @@ inline void Lsode::set_defaults()
     iopt = 0;
 }
 
-inline void Lsode::allocate_memory()
+inline void Lsode::allocate_memory(int neq_)
 {
+    neq = neq_;
+
     switch (flag) {
     case stiff_user_jac:
         mf = 21;
@@ -123,8 +117,8 @@ inline void Lsode::allocate_memory()
         lrw = 20 + 16 * neq;
         liw = 20;
     }
-    rwork = new double[lrw];
-    iwork = new int[liw];
+    rwork.resize(lrw);
+    iwork.resize(liw);
 }
 
 } // namespace Numlib

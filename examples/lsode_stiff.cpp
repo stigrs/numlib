@@ -30,8 +30,7 @@ void my_jsys(int* /* neq */,
 int main()
 {
 #ifdef ENABLE_ODESOLVERS
-    int neq = 3;
-    Numlib::Lsode ode(my_fsys, my_jsys, neq, Numlib::stiff_user_jac);
+    Numlib::Lsode ode(my_fsys, my_jsys, Numlib::stiff_user_jac);
 
     Numlib::Vec<double> y = {1.0, 0.0, 0.0};
 
