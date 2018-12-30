@@ -23,6 +23,20 @@ option(BUILD_TESTS "Build tests." ON)
 option(BUILD_BENCH "Build benchmarks." OFF)
 option(BUILD_EXAMPLES "Build examples." ON)
 
+# Build external ODESOLVERS if Fortran compiler is available.
+include(CMakeDetermineFortranCompiler)
+if(NOT CMAKE_Fortran_COMPILER)
+    option(BUILD_ODESOLVERS "Build external ODE solvers." OFF)
+else()
+    option(BUILD_ODESOLVERS "Build external ODE solvers." ON)
+    if(WIN32) 
+        set(ODESOLVERS_DEFINITIONS /DENABLE_ODESOLVERS)
+    else()
+        set(ODESOLVERS_DEFINITIONS -DENABLE_ODESOLVERS)
+    endif()
+    add_definitions(${ODESOLVERS_DEFINITIONS})
+endif()
+
 # Set default MSVC compiler options to avoid D9025 error.
 if(MSVC)
     set(CMAKE_CXX_FLAGS "/DWIN32 /D_WINDOWS")
@@ -69,6 +83,11 @@ install(
 )
 
 add_subdirectory(lib)
+
+if(BUILD_ODESOLVERS)
+    set(LSODE_LIBRARIES lsode)
+    add_subdirectory(odesolvers)
+endif()
 
 if(BUILD_TESTS)
     enable_testing()

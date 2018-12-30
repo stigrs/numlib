@@ -7,6 +7,9 @@ include_directories(${LAPACKE_INCLUDE_DIRS})
 if(MKL_FOUND)
     link_directories(${MKL_LIBRARY_DIRS})
 endif()
+if(BUILD_ODESOLVERS)
+    link_directories(${CMAKE_BINARY_DIR}/odesolvers)
+endif()
 
 set(
     PROGRAMS 
@@ -20,6 +23,7 @@ set(
     integration
     linear_algebra
     linear_least_squares
+    lsode_stiff
     matrix_decomposition 
     matrix_inversion 
     matrix_properties 
@@ -40,5 +44,6 @@ foreach(program ${PROGRAMS})
 	    num
 	    ${BLAS_LIBRARIES}
 	    ${LAPACK_LIBRARIES}
+        ${LSODE_LIBRARIES}
 	) 
 endforeach()

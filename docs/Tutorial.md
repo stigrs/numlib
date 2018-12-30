@@ -11,6 +11,7 @@
 * [Calculus](#calculus)
   + [Numerical Derivation](#numerical-derivation)
   + [Numerical Integration](#numerical-integration)
+  + [Solve Ordinary Differential Equations](#solve-ordinary-differential-equations)
 * [Linear Algebra](#linear-algebra)
   + [Basic Linear Algebra](#basic-linear-algebra)
   + [Matrix Inversion](#matrix-inversion)
@@ -308,10 +309,78 @@ Example program:
                   << '\n';
     }
 
- Generated output:
+Generated output:
 
     trapezoidal: 5.22
     5-point gaussian quadrature: 2
+
+### Solve Ordinary Differential Equations
+[back to top](#table-of-contents)
+
+Example program:
+
+    #include <numlib/math.h>
+    #include <iostream>
+
+
+    void fsys(int* /* neq */, double* /* t */, double* y, double* ydot)
+    {
+        ydot[0] = -0.04 * y[0] + 1.0e4 * y[1] * y[2];
+        ydot[2] = 3.0e7 * y[1] * y[1];
+        ydot[1] = -ydot[0] - ydot[2];
+    }
+
+    void jsys(
+        int* /* neq */, double* /* t */, double* y, int* /* ml */, 
+        int* /* mu */, double* pd, int* /* nrowpd */)
+    {
+        pd[0] = -0.04;
+        pd[1] = 0.04;
+        pd[2] = 0.0;
+        pd[3] = 1.0e4 * y[2];
+        pd[5] = 6.0e7 * y[1];
+        pd[4] = -pd[3] - pd[5];
+        pd[6] = 1.0e4 * y[1];
+        pd[7] = -pd[6];
+        pd[8] = 0.0;
+    }
+
+    int main()
+    {
+    #ifdef ENABLE_ODESOLVERS
+        int neq = 3;
+        Numlib::Lsode ode(my_fsys, my_jsys, neq, Numlib::stiff_user_jac);
+
+        Numlib::Vec<double> y = {1.0, 0.0, 0.0};
+
+        double t0 = 0.0;
+        double t1 = 0.4;
+
+        for (int i = 0; i < 12; ++i) {
+            ode.integrate(t0, t1, y);
+            std::cout << "At t = " << t0 << ", y = " << y(0) << " " 
+                      << y(1) << " " << y(2) << '\n';
+            t1 *= 10.0;
+        }
+    #else
+        std::cout << "Fortran compiler is needed\n";
+    #endif
+    }
+
+Generated output:
+
+    At t = 0.4, y = 0.985173 3.38641e-05 0.0147936
+    At t = 4, y = 0.905514 2.24042e-05 0.0944634
+    At t = 40, y = 0.715805 9.18462e-06 0.284186
+    At t = 400, y = 0.450485 3.22243e-06 0.549512
+    At t = 4000, y = 0.18317 8.94038e-07 0.816829
+    At t = 40000, y = 0.0389702 1.62119e-07 0.96103
+    At t = 400000, y = 0.00493521 1.98376e-08 0.995065
+    At t = 4e+06, y = 0.000515927 2.06476e-09 0.999484
+    At t = 4e+07, y = 5.30641e-05 2.12268e-10 0.999947
+    At t = 4e+08, y = 5.49453e-06 2.19782e-11 0.999995
+    At t = 4e+09, y = 5.12946e-07 2.05178e-12 0.999999
+    At t = 4e+10, y = -7.17056e-08 -2.86822e-13 1
 
 ## Linear Algebra
  
