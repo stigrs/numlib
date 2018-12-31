@@ -16,6 +16,7 @@ void my_jsys(int* /* neq */,
              double* pd,
              int* /* nrowpd */)
 {
+    // Column-major storage:
     pd[0] = -0.04;
     pd[1] = 0.04;
     pd[2] = 0.0;
@@ -29,8 +30,8 @@ void my_jsys(int* /* neq */,
 
 int main()
 {
-#ifdef ENABLE_ODESOLVERS
-    Numlib::Lsode ode(my_fsys, my_jsys, Numlib::stiff_user_jac);
+#ifdef ENABLE_LSODE
+    Numlib::Lsode ode(my_fsys, my_jsys);
 
     Numlib::Vec<double> y = {1.0, 0.0, 0.0};
 

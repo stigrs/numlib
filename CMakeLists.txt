@@ -23,18 +23,18 @@ option(BUILD_TESTS "Build tests." ON)
 option(BUILD_BENCH "Build benchmarks." OFF)
 option(BUILD_EXAMPLES "Build examples." ON)
 
-# Build external ODESOLVERS if Fortran compiler is available.
+# Build external LSODE library if Fortran compiler is available.
 include(CMakeDetermineFortranCompiler)
 if(NOT CMAKE_Fortran_COMPILER)
-    option(BUILD_ODESOLVERS "Build external ODE solvers." OFF)
+    option(BUILD_LSODE "Build external LSODE library." OFF)
 else()
-    option(BUILD_ODESOLVERS "Build external ODE solvers." ON)
+    option(BUILD_LSODE "Build external LSODE library." ON)
     if(WIN32) 
-        set(ODESOLVERS_DEFINITIONS /DENABLE_ODESOLVERS)
+        set(LSODE_DEFINITIONS /DENABLE_LSODE)
     else()
-        set(ODESOLVERS_DEFINITIONS -DENABLE_ODESOLVERS)
+        set(LSODE_DEFINITIONS -DENABLE_LSODE)
     endif()
-    add_definitions(${ODESOLVERS_DEFINITIONS})
+    add_definitions(${LSODE_DEFINITIONS})
 endif()
 
 # Set default MSVC compiler options to avoid D9025 error.
@@ -84,9 +84,9 @@ install(
 
 add_subdirectory(lib)
 
-if(BUILD_ODESOLVERS)
+if(BUILD_LSODE)
     set(LSODE_LIBRARIES lsode)
-    add_subdirectory(odesolvers)
+    add_subdirectory(liblsode)
 endif()
 
 if(BUILD_TESTS)

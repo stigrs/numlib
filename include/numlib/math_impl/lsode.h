@@ -9,12 +9,16 @@
 
 #include <numlib/math_impl/dlsode.h>
 
-#ifdef ENABLE_ODESOLVERS
+#ifdef ENABLE_LSODE
 
 namespace Numlib {
 
 // Enumeration of Lsode method flags.
-enum Lsode_methods { nonstiff = 10, stiff_user_jac = 21, stiff_int_jac = 22 };
+enum Lsode_method {
+    ode_nonstiff = 10,
+    ode_stiff_user_jac = 21,
+    ode_stiff_int_jac = 22
+};
 
 // Class providing Livermore Solver for Ordinary Differential Equations.
 //
@@ -25,7 +29,19 @@ class Lsode {
 public:
     Lsode() = delete;
 
-    // Constructor.
+    // Constructor for nonstiff ODEs or stiff ODEs with generated Jacobian.
+    Lsode(void (*fsys)(int* neq, double* t, double* y, double* ydot),
+          Lsode_method flag_ = ode_nonstiff,
+          double rtol_ = 1.0e-6,
+          double atol_ = 1.0e-6)
+        : fptr(fsys), flag{flag_}, rtol{rtol_}, atol{atol_}
+    {
+        jptr = jdummy;
+        flag = ode_stiff_user_jac;
+        set_defaults();
+    }
+
+    // Constructor for stiff ODEs with user-supplied Jacobian.
     Lsode(void (*fsys)(int* neq, double* t, double* y, double* ydot),
           void (*jsys)(int* neq,
                        double* t,
@@ -34,11 +50,11 @@ public:
                        int* mu,
                        double* pd,
                        int* nrowpd),
-          Lsode_methods flag_ = nonstiff,
           double rtol_ = 1.0e-6,
           double atol_ = 1.0e-6)
-        : fptr(fsys), jptr(jsys), flag{flag_}, rtol{rtol_}, atol{atol_}
+        : fptr(fsys), jptr(jsys), rtol{rtol_}, atol{atol_}
     {
+        flag = ode_stiff_user_jac;
         set_defaults();
     }
 
@@ -57,6 +73,17 @@ public:
     }
 
 private:
+    static void jdummy(int* /* neq */,
+                       double* /* t */,
+                       double* /* y */,
+                       int* /* ml */,
+                       int* /* mu */,
+                       double* /* pd */,
+                       int* /* nrowpd */)
+    {
+        // do nothing
+    }
+
     void set_defaults();
     void allocate_memory(int neq_);
 
@@ -69,7 +96,7 @@ private:
                  double* pd,
                  int* nrowpd);
 
-    Lsode_methods flag;
+    Lsode_method flag;
 
     double rtol;
     double atol;
@@ -101,17 +128,17 @@ inline void Lsode::allocate_memory(int neq_)
     neq = neq_;
 
     switch (flag) {
-    case stiff_user_jac:
+    case ode_stiff_user_jac:
         mf = 21;
         lrw = 22 + 9 * neq + neq * neq;
         liw = 20 + neq;
         break;
-    case stiff_int_jac:
+    case ode_stiff_int_jac:
         mf = 22;
         lrw = 22 + 9 * neq + neq * neq;
         liw = 20 + neq;
         break;
-    case nonstiff:
+    case ode_nonstiff:
     default:
         mf = 10;
         lrw = 20 + 16 * neq;
@@ -123,6 +150,6 @@ inline void Lsode::allocate_memory(int neq_)
 
 } // namespace Numlib
 
-#endif // ENABLE_ODESOLVERS
+#endif // ENABLE_LSODE
 
 #endif // NUMLIB_MATH_LSODE_H

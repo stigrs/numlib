@@ -26,6 +26,7 @@ struct Math_error : std::runtime_error {
 // Note: Do not change this order.
 #include <numlib/math_impl/core.h>
 #include <numlib/math_impl/calculus.h>
+#include <numlib/math_impl/dlsode.h>
 #include <numlib/math_impl/lsode.h>
 #include <numlib/math_impl/linalg.h>
 #include <numlib/math_impl/geometry.h>

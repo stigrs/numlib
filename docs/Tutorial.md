@@ -317,7 +317,52 @@ Generated output:
 ### Solve Ordinary Differential Equations
 [back to top](#table-of-contents)
 
-Example program:
+Example program for nonstiff ODEs:
+
+    #include <numlib/math.h>
+    #include <iostream>
+
+    void lorenz(int* /* neq */, double* /* t */, double* y, double* ydot)
+    {
+        const double sigma = 10.0;
+        const double R = 28.0;
+        const double b = 8.0 / 3.0;
+
+        ydot[0] = sigma * (y[1] - y[0]);
+        ydot[1] = R * y[0] - y[1] - y[0] * y[2];
+        ydot[2] = -b * y[2] + y[0] * y[1];
+    }
+
+    int main()
+    {
+    #ifdef ENABLE_LSODE
+        Numlib::Lsode ode(lorenz);
+
+        Numlib::Vec<double> y = {10.0, 1.0, 1.0};
+
+        double t0 = 0.0;
+        double t1 = 0.1;
+
+        for (int i = 0; i < 5; ++i) {
+            ode.integrate(t0, t1, y);
+            std::cout << "At t = " << t0 << ", y = " << y(0) << " " 
+                      << y(1) << " " << y(2) << '\n';
+            t1 += 0.1;
+        }
+    #else
+        std::cout << "Fortran compiler is needed\n";
+    #endif
+    }
+
+Generated output:
+
+    At t = 0.1, y = 12.4201 22.1327 11.9964
+    At t = 0.2, y = 19.5002 16.2246 45.2589
+    At t = 0.3, y = 6.61347 -7.93178 37.7356
+    At t = 0.4, y = -2.96415 -8.25069 28.2875
+    At t = 0.5, y = -6.21718 -8.27855 25.1687
+
+Example program for stiff ODEs with user-supplied Jacobian:
 
     #include <numlib/math.h>
     #include <iostream>
@@ -334,6 +379,7 @@ Example program:
         int* /* neq */, double* /* t */, double* y, int* /* ml */, 
         int* /* mu */, double* pd, int* /* nrowpd */)
     {
+        // Colum-major storage:
         pd[0] = -0.04;
         pd[1] = 0.04;
         pd[2] = 0.0;
@@ -347,8 +393,8 @@ Example program:
 
     int main()
     {
-    #ifdef ENABLE_ODESOLVERS
-        Numlib::Lsode ode(my_fsys, my_jsys, Numlib::stiff_user_jac);
+    #ifdef ENABLE_LSODE
+        Numlib::Lsode ode(my_fsys, my_jsys);
 
         Numlib::Vec<double> y = {1.0, 0.0, 0.0};
 

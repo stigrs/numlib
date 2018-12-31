@@ -7,8 +7,8 @@ include_directories(${LAPACKE_INCLUDE_DIRS})
 if(MKL_FOUND)
     link_directories(${MKL_LIBRARY_DIRS})
 endif()
-if(BUILD_ODESOLVERS)
-    link_directories(${CMAKE_BINARY_DIR}/odesolvers)
+if(BUILD_LSODE)
+    link_directories(${CMAKE_BINARY_DIR}/liblsode)
 endif()
 
 set(
@@ -23,6 +23,7 @@ set(
     integration
     linear_algebra
     linear_least_squares
+    lsode_lorenz
     lsode_stiff
     matrix_decomposition 
     matrix_inversion 
