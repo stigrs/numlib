@@ -20,4 +20,9 @@ int main()
 
     std::cout << "5-point gaussian quadrature: "
               << quad<5>([](double x) { return std::sin(x); }, a, b) << '\n';
+
+#ifdef ENABLE_QUADPACK
+    std::cout << "qags: "
+              << qags([](double* x) { return std::sin(x[0]); }, a, b) << '\n';
+#endif
 }

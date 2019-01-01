@@ -13,6 +13,8 @@
 #include <limits>
 
 double f(double x) { return x * x; }
+double sinf(double* x) { return std::sin(x[0]); }
+double invexp(double* x) { return std::exp(-x[0]); }
 double rate(double t, double y) { return t * std::sqrt(y); }
 
 TEST_CASE("test_math_calculus")
@@ -52,6 +54,31 @@ TEST_CASE("test_math_calculus")
         res = quad<16>([](double x) { return std::sin(x); }, a, b);
         CHECK(std::abs(res - 2.0) < eps);
     }
+
+#ifdef ENABLE_QUADPACK
+    SECTION("qags")
+    {
+        using namespace Numlib;
+
+        double a = 0.0;
+        double b = Constants::pi;
+
+        double res = qags(sinf, a, b);
+        double eps = std::numeric_limits<double>::epsilon();
+        CHECK(std::abs(res - 2.0) < eps);
+    }
+
+    SECTION("qagi")
+    {
+        using namespace Numlib;
+
+        double bound = 0.0;
+        int inf = 1; // +infinity
+
+        double res = qagi(invexp, bound, inf);
+        CHECK(std::abs(res - 1.0) < 1.0e-15);
+    }
+#endif // ENABLE_QUADPACK
 
     SECTION("rk4")
     {

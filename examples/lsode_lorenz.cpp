@@ -14,7 +14,7 @@ void lorenz(int* /* neq */, double* /* t */, double* y, double* ydot)
 
 int main()
 {
-#ifdef ENABLE_LSODE
+#ifdef ENABLE_ODEPACK
     Numlib::Lsode ode(lorenz);
 
     Numlib::Vec<double> y = {10.0, 1.0, 1.0};

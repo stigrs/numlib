@@ -10,9 +10,15 @@
 #include <numlib/matrix.h>
 #include <numlib/traits.h>
 #include <array>
+#include <cassert>
 #include <cmath>
 #include <functional>
 #include <limits>
+#include <string>
+
+#ifdef ENABLE_QUADPACK
+#include <numlib/math_impl/quadpack.h>
+#endif
 
 namespace Numlib {
 
@@ -121,6 +127,64 @@ double quad(std::function<double(double)> f, double a, double b)
     }
     return res;
 }
+
+#ifdef ENABLE_QUADPACK
+// Wrapper to the QAGS subroutine from QUADPACK.
+inline double qags(quadpack_fptr f,
+                   double a,
+                   double b,
+                   double epsabs = 1.0e-15,
+                   double epsrel = 1.0e-12,
+                   int limit = 1000)
+{
+    int neval;
+    int ier;
+    int lenw = limit * 4;
+    int last;
+
+    Vec<int> iwork(limit);
+    Vec<double> work(lenw);
+
+    double result;
+    double abserr;
+
+    dqags_(f, &a, &b, &epsabs, &epsrel, &result, &abserr, &neval, &ier, &limit,
+           &lenw, &last, iwork.data(), work.data());
+    if (ier != 0) {
+        throw Math_error("dqags_ failed with error " + std::to_string(ier));
+    }
+    return result;
+}
+
+// Wrapper to the QAGI subroutine from QUADPACK.
+inline double qagi(quadpack_fptr f,
+                   double bound,
+                   int inf,
+                   double epsabs = 1.0e-15,
+                   double epsrel = 1.0e-12,
+                   int limit = 1000)
+{
+    assert(inf == 1 || inf == -1 || inf == 2); // see description for dqagi
+
+    int neval;
+    int ier;
+    int lenw = limit * 4;
+    int last;
+
+    Vec<int> iwork(limit);
+    Vec<double> work(lenw);
+
+    double result;
+    double abserr;
+
+    dqagi_(f, &bound, &inf, &epsabs, &epsrel, &result, &abserr, &neval, &ier,
+           &limit, &lenw, &last, iwork.data(), work.data());
+    if (ier != 0) {
+        throw Math_error("dqagi_ failed with error " + std::to_string(ier));
+    }
+    return result;
+}
+#endif // ENABLE_QUADPACK
 
 //------------------------------------------------------------------------------
 //

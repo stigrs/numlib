@@ -13,7 +13,8 @@ and Intel MKL are supported.
 * Sparse vectors and matrices (CSR3 storage format)
 * Selected mathematical functions not provided by the STL
 * Faddeeva package (w, erf, erfc, erfcx, erfi, Dawson)
-* Numerical derivation and integration methods
+* Numerical derivation and integration methods (including QAGS and QAGI from 
+  QUADPACK)
 * Solvers for ordinary differential equations (RK4 and LSODE)
 * Linear algebra methods
 * Transformations between rotation matrix, Euler angles and quaternions
@@ -23,7 +24,8 @@ and Intel MKL are supported.
 * Mathematical constants, metric prefixes, physical constants, and
   conversion factors
 
-_Note: Some features are only available when linking with Intel MKL._
+_Note: Some features are only available if a Fortran compiler is available 
+and Intel MKL is used._
 
 ## Code of Conduct
 

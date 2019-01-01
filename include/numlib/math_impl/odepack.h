@@ -5,13 +5,20 @@
  * and conditions.
  */
 
-/* This file provides a C/C++ interface to the Livermore Solver for Ordinary
- * Differential Equations (DLSODE).
- *
- * Description:
- * ------------
- *
- **DECK DLSODE
+/* This file provides a C/C++ interface to ODEPACK. */
+
+#ifndef NUMLIB_MATH_ODEPACK_H
+#define NUMLIB_MATH_ODEPACK_H
+
+typedef void (*lsode_fptr)(int* neq, double* t, double* y, double* ydot);
+typedef void (*lsode_jptr)(
+    int* neq, double* t, double* y, int* ml, int* mu, double* pd, int* nrowpd);
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**DECK DLSODE
  *      SUBROUTINE DLSODE (F, NEQ, Y, T, TOUT, ITOL, RTOL, ATOL, ITASK,
  *     1                  ISTATE, IOPT, RWORK, LRW, IWORK, LIW, JAC, MF)
  *      EXTERNAL F, JAC
@@ -1186,18 +1193,6 @@
  *
  ****END PROLOGUE  DLSODE
  */
-
-#ifndef NUMLIB_MATH_DLSODE_H
-#define NUMLIB_MATH_DLSODE_H
-
-typedef void (*lsode_fptr)(int* neq, double* t, double* y, double* ydot);
-typedef void (*lsode_jptr)(
-    int* neq, double* t, double* y, int* ml, int* mu, double* pd, int* nrowpd);
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void dlsode_(lsode_fptr f,
              int* neq,
              double* y,
@@ -1220,4 +1215,4 @@ void dlsode_(lsode_fptr f,
 }
 #endif
 
-#endif /* NUMLIB_MATH_DLSODE_H */
+#endif /* NUMLIB_MATH_ODEPACK_H */

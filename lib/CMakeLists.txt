@@ -8,6 +8,9 @@ link_directories(${numlib_BINARY_DIR})
 if(MKL_FOUND)
     link_directories(${MKL_LIBRARY_DIRS})
 endif()
+if(ENABLE_QUADPACK)
+    link_directories(${CMAKE_BINARY_DIR}/quadpack)
+endif()
 
 set(
     SRC_FILES
@@ -28,6 +31,7 @@ add_library(
 target_link_libraries(
     num 
     ${BLAS_LIBRARIES}
+    ${QUADPACK_LIBRARIES}
 ) 
 
 install(

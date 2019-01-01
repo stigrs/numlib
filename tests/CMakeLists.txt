@@ -7,6 +7,9 @@ include_directories(${LAPACKE_INCLUDE_DIRS})
 if(MKL_FOUND)
 	link_directories(${MKL_LIBRARY_DIRS})
 endif()
+if(BUILD_QUADPACK)
+    link_directories(${CMAKE_BINARY_DIR}/quadpack)
+endif()
 
 if(GIT_FOUND)
     # Add catch
@@ -48,8 +51,9 @@ function(add_numlib_test name)
     add_executable(${name} ${name}.cpp)
     target_link_libraries (
         ${name} 
-	num
-	${BLAS_LIBRARIES}
+	    num
+	    ${BLAS_LIBRARIES}
+        ${QUADPACK_LIBRARIES}
         test_catch2
     ) 
     add_dependencies(${name} Catch2)

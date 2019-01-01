@@ -7,8 +7,8 @@ include_directories(${LAPACKE_INCLUDE_DIRS})
 if(MKL_FOUND)
     link_directories(${MKL_LIBRARY_DIRS})
 endif()
-if(BUILD_LSODE)
-    link_directories(${CMAKE_BINARY_DIR}/liblsode)
+if(BUILD_ODEPACK)
+    link_directories(${CMAKE_BINARY_DIR}/odepack)
 endif()
 
 set(
@@ -45,6 +45,6 @@ foreach(program ${PROGRAMS})
 	    num
 	    ${BLAS_LIBRARIES}
 	    ${LAPACK_LIBRARIES}
-        ${LSODE_LIBRARIES}
+        ${ODEPACK_LIBRARIES}
 	) 
 endforeach()

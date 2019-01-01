@@ -30,7 +30,7 @@ void my_jsys(int* /* neq */,
 
 int main()
 {
-#ifdef ENABLE_LSODE
+#ifdef ENABLE_ODEPACK
     Numlib::Lsode ode(my_fsys, my_jsys);
 
     Numlib::Vec<double> y = {1.0, 0.0, 0.0};

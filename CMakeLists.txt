@@ -23,18 +23,23 @@ option(BUILD_TESTS "Build tests." ON)
 option(BUILD_BENCH "Build benchmarks." OFF)
 option(BUILD_EXAMPLES "Build examples." ON)
 
-# Build external LSODE library if Fortran compiler is available.
+# Build external Fortran libraries if Fortran compiler is available.
 include(CMakeDetermineFortranCompiler)
 if(NOT CMAKE_Fortran_COMPILER)
-    option(BUILD_LSODE "Build external LSODE library." OFF)
+    option(BUILD_ODEPACK "Build external ODEPACK library." OFF)
+    option(BUILD_QUADPACK "Build external QUADPACK library." OFF)
 else()
-    option(BUILD_LSODE "Build external LSODE library." ON)
+    option(BUILD_ODEPACK "Build external ODEPACK library." ON)
+    option(BUILD_QUADPACK "Build external QUADPACK library." ON)
     if(WIN32) 
-        set(LSODE_DEFINITIONS /DENABLE_LSODE)
+        set(ODEPACK_DEFINITIONS /DENABLE_ODEPACK)
+        set(QUADPACK_DEFINITIONS /DENABLE_QUADPACK)
     else()
-        set(LSODE_DEFINITIONS -DENABLE_LSODE)
+        set(ODEPACK_DEFINITIONS -DENABLE_ODEPACK)
+        set(QUADPACK_DEFINITIONS -DENABLE_QUADPACK)
     endif()
-    add_definitions(${LSODE_DEFINITIONS})
+    add_definitions(${ODEPACK_DEFINITIONS})
+    add_definitions(${QUADPACK_DEFINITIONS})
 endif()
 
 # Set default MSVC compiler options to avoid D9025 error.
@@ -82,12 +87,16 @@ install(
     FILES_MATCHING PATTERN "*.h"
 )
 
-add_subdirectory(lib)
-
-if(BUILD_LSODE)
-    set(LSODE_LIBRARIES lsode)
-    add_subdirectory(liblsode)
+if(BUILD_ODEPACK)
+    set(ODEPACK_LIBRARIES odepack)
+    add_subdirectory(odepack)
 endif()
+if(BUILD_QUADPACK)
+    set(QUADPACK_LIBRARIES quadpack)
+    add_subdirectory(quadpack)
+endif()
+
+add_subdirectory(lib)
 
 if(BUILD_TESTS)
     enable_testing()

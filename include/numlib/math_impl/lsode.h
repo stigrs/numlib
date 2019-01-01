@@ -7,9 +7,8 @@
 #ifndef NUMLIB_MATH_LSODE_H
 #define NUMLIB_MATH_LSODE_H
 
-#include <numlib/math_impl/dlsode.h>
-
-#ifdef ENABLE_LSODE
+#ifdef ENABLE_ODEPACK
+#include <numlib/math_impl/odepack.h>
 
 namespace Numlib {
 
@@ -24,7 +23,9 @@ enum Lsode_method {
 //
 // Note:
 // -----
-// Currently,
+// Currently, only default options are supported as well as dense
+// Jacobians.
+//
 class Lsode {
 public:
     Lsode() = delete;
@@ -150,6 +151,6 @@ inline void Lsode::allocate_memory(int neq_)
 
 } // namespace Numlib
 
-#endif // ENABLE_LSODE
+#endif // ENABLE_ODEPACK
 
 #endif // NUMLIB_MATH_LSODE_H
