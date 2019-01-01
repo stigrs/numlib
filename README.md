@@ -37,11 +37,16 @@ Numlib is released under the [MIT](LICENSE) license.
 
 ## Usage of Third Party Libraries
 
-This project makes use of the [Catch2](https://github.com/catchorg/Catch2)
-testing library, code from [origin](http://code.google.com/p/origin), and the
-[Faddeeva package](http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package).
+This project makes use of code from the following third-party libraries:
+
+* [Catch2](https://github.com/catchorg/Catch2)
+* [origin](http://code.google.com/p/origin)
+* [Faddeeva package](http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package) 
+* [ODEPACK](https://computation.llnl.gov/casc/odepack/)
+* [QUADPACK](http://www.netlib.org/quadpack/) 
+
 Please see the [ThirdPartyNotices.txt](ThirdPartyNotices.txt) file for details
-regarding the licensing of Catch2 and origin.
+regarding the licensing of these libraries.
 
 ## Quick Start
 
