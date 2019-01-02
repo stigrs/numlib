@@ -10,9 +10,9 @@
 #ifndef NUMLIB_MATH_ODEPACK_H
 #define NUMLIB_MATH_ODEPACK_H
 
-typedef void (*lsode_fptr)(int* neq, double* t, double* y, double* ydot);
+typedef void (*lsode_fptr)(int& neq, double& t, double* y, double* ydot);
 typedef void (*lsode_jptr)(
-    int* neq, double* t, double* y, int* ml, int* mu, double* pd, int* nrowpd);
+    int& neq, double& t, double* y, int& ml, int& mu, double* pd, int& nrowpd);
 
 #ifdef __cplusplus
 extern "C" {
@@ -1194,22 +1194,22 @@ extern "C" {
  ****END PROLOGUE  DLSODE
  */
 void dlsode_(lsode_fptr f,
-             int* neq,
+             int& neq,
              double* y,
-             double* t,
-             double* tout,
-             int* itol,
+             double& t,
+             double& tout,
+             int& itol,
              double* rtol,
              double* atol,
-             int* itask,
-             int* istate,
-             int* iopt,
+             int& itask,
+             int& istate,
+             int& iopt,
              double* rwork,
-             int* lrw,
+             int& lrw,
              int* iwork,
-             int* liw,
+             int& liw,
              lsode_jptr jac,
-             int* mf);
+             int& mf);
 
 #ifdef __cplusplus
 }

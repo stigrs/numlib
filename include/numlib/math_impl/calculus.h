@@ -148,8 +148,8 @@ inline double qags(quadpack_fptr f,
     double result;
     double abserr;
 
-    dqags_(f, &a, &b, &epsabs, &epsrel, &result, &abserr, &neval, &ier, &limit,
-           &lenw, &last, iwork.data(), work.data());
+    dqags_(f, a, b, epsabs, epsrel, result, abserr, neval, ier, limit, lenw,
+           last, iwork.data(), work.data());
     if (ier != 0) {
         throw Math_error("dqags_ failed with error " + std::to_string(ier));
     }
@@ -177,8 +177,8 @@ inline double qagi(quadpack_fptr f,
     double result;
     double abserr;
 
-    dqagi_(f, &bound, &inf, &epsabs, &epsrel, &result, &abserr, &neval, &ier,
-           &limit, &lenw, &last, iwork.data(), work.data());
+    dqagi_(f, bound, inf, epsabs, epsrel, result, abserr, neval, ier, limit,
+           lenw, last, iwork.data(), work.data());
     if (ier != 0) {
         throw Math_error("dqagi_ failed with error " + std::to_string(ier));
     }

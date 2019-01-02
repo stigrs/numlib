@@ -31,7 +31,7 @@ public:
     Lsode() = delete;
 
     // Constructor for nonstiff ODEs or stiff ODEs with generated Jacobian.
-    Lsode(void (*fsys)(int* neq, double* t, double* y, double* ydot),
+    Lsode(void (*fsys)(int& neq, double& t, double* y, double* ydot),
           Lsode_method flag_ = ode_nonstiff,
           double rtol_ = 1.0e-6,
           double atol_ = 1.0e-6)
@@ -43,14 +43,14 @@ public:
     }
 
     // Constructor for stiff ODEs with user-supplied Jacobian.
-    Lsode(void (*fsys)(int* neq, double* t, double* y, double* ydot),
-          void (*jsys)(int* neq,
-                       double* t,
+    Lsode(void (*fsys)(int& neq, double& t, double* y, double* ydot),
+          void (*jsys)(int& neq,
+                       double& t,
                        double* y,
-                       int* ml,
-                       int* mu,
+                       int& ml,
+                       int& mu,
                        double* pd,
-                       int* nrowpd),
+                       int& nrowpd),
           double rtol_ = 1.0e-6,
           double atol_ = 1.0e-6)
         : fptr(fsys), jptr(jsys), rtol{rtol_}, atol{atol_}
@@ -68,19 +68,18 @@ public:
         if (istate == 1) {
             allocate_memory(narrow_cast<int>(y.size()));
         }
-        dlsode_(fptr, &neq, y.data(), &t0, &t1, &itol, &rtol, &atol, &itask,
-                &istate, &iopt, rwork.data(), &lrw, iwork.data(), &liw, jptr,
-                &mf);
+        dlsode_(fptr, neq, y.data(), t0, t1, itol, &rtol, &atol, itask, istate,
+                iopt, rwork.data(), lrw, iwork.data(), liw, jptr, mf);
     }
 
 private:
-    static void jdummy(int* /* neq */,
-                       double* /* t */,
+    static void jdummy(int& /* neq */,
+                       double& /* t */,
                        double* /* y */,
-                       int* /* ml */,
-                       int* /* mu */,
+                       int& /* ml */,
+                       int& /* mu */,
                        double* /* pd */,
-                       int* /* nrowpd */)
+                       int& /* nrowpd */)
     {
         // do nothing
     }
@@ -88,14 +87,14 @@ private:
     void set_defaults();
     void allocate_memory(int neq_);
 
-    void (*fptr)(int* neq, double* t, double* y, double* ydot);
-    void (*jptr)(int* neq,
-                 double* t,
+    void (*fptr)(int& neq, double& t, double* y, double* ydot);
+    void (*jptr)(int& neq,
+                 double& t,
                  double* y,
-                 int* ml,
-                 int* mu,
+                 int& ml,
+                 int& mu,
                  double* pd,
-                 int* nrowpd);
+                 int& nrowpd);
 
     Lsode_method flag;
 

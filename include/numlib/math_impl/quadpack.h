@@ -10,7 +10,7 @@
 #ifndef NUMLIB_MATH_QUADPACK_H
 #define NUMLIB_MATH_QUADPACK_H
 
-typedef double (*quadpack_fptr)(double* x);
+typedef double (*quadpack_fptr)(double& x);
 
 #ifdef __cplusplus
 extern "C" {
@@ -172,17 +172,17 @@ extern "C" {
  ****end prologue  dqags
  */
 void dqags_(quadpack_fptr f,
-            double* a,
-            double* b,
-            double* epsabs,
-            double* epsrel,
-            double* result,
-            double* abserr,
-            int* neval,
-            int* ier,
-            int* limit,
-            int* lenw,
-            int* last,
+            double& a,
+            double& b,
+            double& epsabs,
+            double& epsrel,
+            double& result,
+            double& abserr,
+            int& neval,
+            int& ier,
+            int& limit,
+            int& lenw,
+            int& last,
             int* iwork,
             double* work);
 
@@ -346,17 +346,17 @@ void dqags_(quadpack_fptr f,
  ****end prologue  dqagi
  */
 void dqagi_(quadpack_fptr f,
-            double* bound,
-            int* inf,
-            double* epsabs,
-            double* epsrel,
-            double* result,
-            double* abserr,
-            int* neval,
-            int* ier,
-            int* limit,
-            int* lenw,
-            int* last,
+            double& bound,
+            int& inf,
+            double& epsabs,
+            double& epsrel,
+            double& result,
+            double& abserr,
+            int& neval,
+            int& ier,
+            int& limit,
+            int& lenw,
+            int& last,
             int* iwork,
             double* work);
 

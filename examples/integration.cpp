@@ -22,7 +22,7 @@ int main()
               << quad<5>([](double x) { return std::sin(x); }, a, b) << '\n';
 
 #ifdef ENABLE_QUADPACK
-    std::cout << "qags: "
-              << qags([](double* x) { return std::sin(x[0]); }, a, b) << '\n';
+    std::cout << "qags: " << qags([](double& x) { return std::sin(x); }, a, b)
+              << '\n';
 #endif
 }

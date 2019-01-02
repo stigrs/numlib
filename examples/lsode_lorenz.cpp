@@ -1,7 +1,7 @@
 #include <numlib/math.h>
 #include <iostream>
 
-void lorenz(int* /* neq */, double* /* t */, double* y, double* ydot)
+void lorenz(int& /* neq */, double& /* t */, double* y, double* ydot)
 {
     const double sigma = 10.0;
     const double R = 28.0;

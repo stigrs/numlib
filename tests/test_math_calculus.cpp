@@ -13,8 +13,8 @@
 #include <limits>
 
 double f(double x) { return x * x; }
-double sinf(double* x) { return std::sin(x[0]); }
-double invexp(double* x) { return std::exp(-x[0]); }
+double sinf(double& x) { return std::sin(x); }
+double invexp(double& x) { return std::exp(-x); }
 double rate(double t, double y) { return t * std::sqrt(y); }
 
 TEST_CASE("test_math_calculus")

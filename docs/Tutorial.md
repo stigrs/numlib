@@ -310,7 +310,7 @@ Example program:
 
     #ifdef ENABLE_QUADPACK
         std::cout << "qags: " 
-                  << qags([](double* x) { return std::sin(x[0]); }, a, b) 
+                  << qags([](double& x) { return std::sin(x); }, a, b) 
                   << '\n';
     #endif
     }
@@ -329,7 +329,7 @@ Example program for nonstiff ODEs:
     #include <numlib/math.h>
     #include <iostream>
 
-    void lorenz(int* /* neq */, double* /* t */, double* y, double* ydot)
+    void lorenz(int& /* neq */, double& /* t */, double* y, double* ydot)
     {
         const double sigma = 10.0;
         const double R = 28.0;
@@ -375,7 +375,7 @@ Example program for stiff ODEs with user-supplied Jacobian:
     #include <iostream>
 
 
-    void fsys(int* /* neq */, double* /* t */, double* y, double* ydot)
+    void fsys(int& /* neq */, double& /* t */, double* y, double* ydot)
     {
         ydot[0] = -0.04 * y[0] + 1.0e4 * y[1] * y[2];
         ydot[2] = 3.0e7 * y[1] * y[1];
@@ -383,8 +383,8 @@ Example program for stiff ODEs with user-supplied Jacobian:
     }
 
     void jsys(
-        int* /* neq */, double* /* t */, double* y, int* /* ml */, 
-        int* /* mu */, double* pd, int* /* nrowpd */)
+        int& /* neq */, double& /* t */, double* y, int& /* ml */, 
+        int& /* mu */, double* pd, int& /* nrowpd */)
     {
         // Colum-major storage:
         pd[0] = -0.04;
