@@ -4,6 +4,7 @@ project(libodepack Fortran)
 set(
     SRC_FILES
     dlsode.f
+    rkf45.f
 )
 add_library(
     ${ODEPACK_LIBRARIES}

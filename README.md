@@ -15,7 +15,7 @@ and Intel MKL are supported.
 * Faddeeva package (w, erf, erfc, erfcx, erfi, Dawson)
 * Numerical derivation and integration methods (including QAGS and QAGI from 
   QUADPACK)
-* Solvers for ordinary differential equations (RK4 and LSODE)
+* Solvers for ordinary differential equations (RK4, RKF45 and LSODE)
 * Linear algebra methods
 * Transformations between rotation matrix, Euler angles and quaternions
 * Vector convolution

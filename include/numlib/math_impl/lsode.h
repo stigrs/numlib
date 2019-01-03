@@ -63,7 +63,7 @@ public:
     ~Lsode() = default;
 
     // Integrator.
-    void integrate(double& t0, double& t1, Numlib::Vec<double>& y)
+    void integrate(Numlib::Vec<double>& y, double& t0, double& t1)
     {
         if (istate == 1) {
             allocate_memory(narrow_cast<int>(y.size()));

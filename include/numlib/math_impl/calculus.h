@@ -20,6 +20,10 @@
 #include <numlib/math_impl/quadpack.h>
 #endif
 
+#ifdef ENABLE_ODEPACK
+#include <numlib/math_impl/odepack.h>
+#endif
+
 namespace Numlib {
 
 //------------------------------------------------------------------------------
@@ -192,7 +196,7 @@ inline double qagi(quadpack_fptr f,
 
 // Fourth-order Runge-Kutta method.
 inline double
-rk4(std::function<double(double, double)> f, double dx, double x, double y)
+rk4(std::function<double(double, double)> f, double y, double x, double dx)
 {
     double k1 = dx * f(x, y);
     double k2 = dx * f(x + dx / 2.0, y + k1 / 2.0);
@@ -205,9 +209,38 @@ rk4(std::function<double(double, double)> f, double dx, double x, double y)
 // Fourth-order Runge-Kutta method.
 void rk4(std::function<Vec<double>(double t, const Vec<double>&)> f,
          Vec<double>& y,
-         double t0,
+         double& t0,
          double t1,
          double dt);
+
+// Fourth-order Runge-Kutta method.
+void rk4(std::function<Vec<double>(double t, const Vec<double>&)> f,
+         Vec<double>& y,
+         double& t0,
+         double t1,
+         int nsteps = 20);
+
+#ifdef ENABLE_ODEPACK
+// Runge-Kutta-Fehlberg 4(5) method.
+inline void rkf45(rkf45_fptr f,
+                  Vec<double>& y,
+                  double& t0,
+                  double& t1,
+                  double relerr = 1.0e-6,
+                  double abserr = 1.0e-6)
+{
+    int neqn = narrow_cast<int>(y.size());
+    int iflag = 1;
+    int iwork[5];
+    Vec<double> work(3 + 6 * neqn);
+
+    rkf45_(f, neqn, y.data(), t0, t1, relerr, abserr, iflag, work.data(),
+           iwork);
+    if (iflag != 2) {
+        throw Math_error("rkf45 failed with error " + std::to_string(iflag));
+    }
+}
+#endif // ENABLE_ODEPACK
 
 } // namespace Numlib
 

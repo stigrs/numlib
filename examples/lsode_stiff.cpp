@@ -39,7 +39,7 @@ int main()
     double t1 = 0.4;
 
     for (int i = 0; i < 12; ++i) {
-        ode.integrate(t0, t1, y);
+        ode.integrate(y, t0, t1);
         std::cout << "At t = " << t0 << ", y = " << y(0) << " " << y(1) << " "
                   << y(2) << '\n';
         t1 *= 10.0;

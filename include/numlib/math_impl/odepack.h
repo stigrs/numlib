@@ -13,6 +13,7 @@
 typedef void (*lsode_fptr)(int& neq, double& t, double* y, double* ydot);
 typedef void (*lsode_jptr)(
     int& neq, double& t, double* y, int& ml, int& mu, double* pd, int& nrowpd);
+typedef void (*rkf45_fptr)(double& t, double* y, double* ydot);
 
 #ifdef __cplusplus
 extern "C" {
@@ -1210,6 +1211,197 @@ void dlsode_(lsode_fptr f,
              int& liw,
              lsode_jptr jac,
              int& mf);
+
+/**DECK RKF45
+ *    subroutine rkf45(f,neqn,y,t,tout,relerr,abserr,iflag,work,iwork)
+ *
+ *     fehlberg fourth-fifth order runge-kutta method
+ *
+ *     written by h.a.watts and l.f.shampine
+ *                   sandia laboratories
+ *                  albuquerque,new mexico
+ *
+ *    rkf45 is primarily designed to solve non-stiff and mildly stiff
+ *    differential equations when derivative evaluations are inexpensive.
+ *    rkf45 should generally not be used when the user is demanding
+ *    high accuracy.
+ *
+ * abstract
+ *
+ *    subroutine  rkf45  integrates a system of neqn first order
+ *    ordinary differential equations of the form
+ *             dy(i)/dt = f(t,y(1),y(2),...,y(neqn))
+ *              where the y(i) are given at t .
+ *    typically the subroutine is used to integrate from t to tout but it
+ *    can be used as a one-step integrator to advance the solution a
+ *    single step in the direction of tout.  on return the parameters in
+ *    the call list are set for continuing the integration. the user has
+ *    only to call rkf45 again (and perhaps define a new value for tout).
+ *    actually, rkf45 is an interfacing routine which calls subroutine
+ *    rkfs for the solution.  rkfs in turn calls subroutine  fehl which
+ *    computes an approximate solution over one step.
+ *
+ *    rkf45  uses the runge-kutta-fehlberg (4,5)  method described
+ *    in the reference
+ *    e.fehlberg , low-order classical runge-kutta formulas with stepsize
+ *                 control , nasa tr r-315
+ *
+ *    the performance of rkf45 is illustrated in the reference
+ *    l.f.shampine,h.a.watts,s.davenport, solving non-stiff ordinary
+ *                 differential equations-the state of the art ,
+ *                 sandia laboratories report sand75-0182 ,
+ *                 to appear in siam review.
+ *
+ *
+ *    the parameters represent-
+ *      f -- subroutine f(t,y,yp) to evaluate derivatives yp(i)=dy(i)/dt
+ *      neqn -- number of equations to be integrated
+ *      y(*) -- solution vector at t
+ *      t -- independent variable
+ *      tout -- output point at which solution is desired
+ *      relerr,abserr -- relative and absolute error tolerances for local
+ *            error test. at each step the code requires that
+ *                 abs(local error) .le. relerr*abs(y) + abserr
+ *            for each component of the local error and solution vectors
+ *      iflag -- indicator for status of integration
+ *      work(*) -- array to hold information internal to rkf45 which is
+ *            necessary for subsequent calls. must be dimensioned
+ *            at least  3+6*neqn
+ *      iwork(*) -- integer array used to hold information internal to
+ *            rkf45 which is necessary for subsequent calls. must be
+ *            dimensioned at least  5
+ *
+ *
+ *  first call to rkf45
+ *
+ *    the user must provide storage in his calling program for the arrays
+ *    in the call list  -      y(neqn) , work(3+6*neqn) , iwork(5)  ,
+ *    declare f in an external statement, supply subroutine f(t,y,yp) and
+ *    initialize the following parameters-
+ *
+ *      neqn -- number of equations to be integrated.  (neqn .ge. 1)
+ *      y(*) -- vector of initial conditions
+ *      t -- starting point of integration , must be a variable
+ *      tout -- output point at which solution is desired.
+ *            t=tout is allowed on the first call only, in which case
+ *            rkf45 returns with iflag=2 if continuation is possible.
+ *      relerr,abserr -- relative and absolute local error tolerances
+ *            which must be non-negative. relerr must be a variable while
+ *            abserr may be a constant. the code should normally not be
+ *            used with relative error control smaller than about 1.e-8 .
+ *            to avoid limiting precision difficulties the code requires
+ *            relerr to be larger than an internally computed relative
+ *            error parameter which is machine dependent. in particular,
+ *            pure absolute error is not permitted. if a smaller than
+ *            allowable value of relerr is attempted, rkf45 increases
+ *            relerr appropriately and returns control to the user before
+ *            continuing the integration.
+ *      iflag -- +1,-1  indicator to initialize the code for each new
+ *            problem. normal input is +1. the user should set iflag=-1
+ *            only when one-step integrator control is essential. in this
+ *            case, rkf45 attempts to advance the solution a single step
+ *            in the direction of tout each time it is called. since this
+ *            mode of operation results in extra computing overhead, it
+ *            should be avoided unless needed.
+ *
+ *
+ *  output from rkf45
+ *
+ *      y(*) -- solution at t
+ *      t -- last point reached in integration.
+ *      iflag = 2 -- integration reached tout. indicates successful retur
+ *                   and is the normal mode for continuing integration.
+ *            =-2 -- a single successful step in the direction of tout
+ *                   has been taken. normal mode for continuing
+ *                   integration one step at a time.
+ *            = 3 -- integration was not completed because relative error
+ *                   tolerance was too small. relerr has been increased
+ *                   appropriately for continuing.
+ *            = 4 -- integration was not completed because more than
+ *                   3000 derivative evaluations were needed. this
+ *                   is approximately 500 steps.
+ *            = 5 -- integration was not completed because solution
+ *                   vanished making a pure relative error test
+ *                   impossible. must use non-zero abserr to continue.
+ *                   using the one-step integration mode for one step
+ *                   is a good way to proceed.
+ *            = 6 -- integration was not completed because requested
+ *                   accuracy could not be achieved using smallest
+ *                   allowable stepsize. user must increase the error
+ *                   tolerance before continued integration can be
+ *                   attempted.
+ *            = 7 -- it is likely that rkf45 is inefficient for solving
+ *                   this problem. too much output is restricting the
+ *                   natural stepsize choice. use the one-step integrator
+ *                   mode.
+ *            = 8 -- invalid input parameters
+ *                   this indicator occurs if any of the following is
+ *                   satisfied -   neqn .le. 0
+ *                                 t=tout  and  iflag .ne. +1 or -1
+ *                                 relerr or abserr .lt. 0.
+ *                                 iflag .eq. 0  or  .lt. -2  or  .gt. 8
+ *      work(*),iwork(*) -- information which is usually of no interest
+ *                   to the user but necessary for subsequent calls.
+ *                   work(1),...,work(neqn) contain the first derivatives
+ *                   of the solution vector y at t. work(neqn+1) contains
+ *                   the stepsize h to be attempted on the next step.
+ *                   iwork(1) contains the derivative evaluation counter.
+ *
+ *
+ *  subsequent calls to rkf45
+ *
+ *    subroutine rkf45 returns with all information needed to continue
+ *    the integration. if the integration reached tout, the user need onl
+ *    define a new tout and call rkf45 again. in the one-step integrator
+ *    mode (iflag=-2) the user must keep in mind that each step taken is
+ *    in the direction of the current tout. upon reaching tout (indicated
+ *    by changing iflag to 2),the user must then define a new tout and
+ *    reset iflag to -2 to continue in the one-step integrator mode.
+ *
+ *    if the integration was not completed but the user still wants to
+ *    continue (iflag=3,4 cases), he just calls rkf45 again. with iflag=3
+ *    the relerr parameter has been adjusted appropriately for continuing
+ *    the integration. in the case of iflag=4 the function counter will
+ *    be reset to 0 and another 3000 function evaluations are allowed.
+ *
+ *    however,in the case iflag=5, the user must first alter the error
+ *    criterion to use a positive value of abserr before integration can
+ *    proceed. if he does not,execution is terminated.
+ *
+ *    also,in the case iflag=6, it is necessary for the user to reset
+ *    iflag to 2 (or -2 when the one-step integration mode is being used)
+ *    as well as increasing either abserr,relerr or both before the
+ *    integration can be continued. if this is not done, execution will
+ *    be terminated. the occurrence of iflag=6 indicates a trouble spot
+ *    (solution is changing rapidly,singularity may be present) and it
+ *    often is inadvisable to continue.
+ *
+ *    if iflag=7 is encountered, the user should use the one-step
+ *    integration mode with the stepsize determined by the code or
+ *    consider switching to the adams codes de/step,intrp. if the user
+ *    insists upon continuing the integration with rkf45, he must reset
+ *    iflag to 2 before calling rkf45 again. otherwise,execution will be
+ *    terminated.
+ *
+ *    if iflag=8 is obtained, integration can not be continued unless
+ *    the invalid input parameters are corrected.
+ *
+ *    it should be noted that the arrays work,iwork contain information
+ *    required for subsequent integration. accordingly, work and iwork
+ *    should not be altered.
+ *
+ *
+ */
+void rkf45_(rkf45_fptr f,
+            int& neqn,
+            double* y,
+            double& t,
+            double& tout,
+            double& relerr,
+            double& abserr,
+            int& iflag,
+            double* work,
+            int* iwork);
 
 #ifdef __cplusplus
 }

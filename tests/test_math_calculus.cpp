@@ -91,7 +91,7 @@ TEST_CASE("test_math_calculus")
         y(0) = 1.0;
 
         for (int i = 1; i < n; ++i) {
-            y(i) = Numlib::rk4(rate, dt, t0 + dt * (i - 1), y(i - 1));
+            y(i) = Numlib::rk4(rate, y(i - 1), t0 + dt * (i - 1), dt);
         }
 
         for (int i = 0; i < n; ++i) {
