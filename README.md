@@ -44,6 +44,7 @@ This project makes use of code from the following third-party libraries:
 * [Faddeeva package](http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package) 
 * [ODEPACK](https://computation.llnl.gov/casc/odepack/)
 * [QUADPACK](http://www.netlib.org/quadpack/) 
+* [RKF45](https://www.netlib.org/ode/rkf45.f)
 
 Please see the [ThirdPartyNotices.txt](ThirdPartyNotices.txt) file for details
 regarding the licensing of these libraries.
