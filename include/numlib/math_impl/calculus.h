@@ -207,18 +207,25 @@ rk4(std::function<double(double, double)> f, double y, double x, double dx)
 }
 
 // Fourth-order Runge-Kutta method.
-void rk4(std::function<Vec<double>(double t, const Vec<double>&)> f,
+void rk4(std::function<void(double t, const Vec<double>&, Vec<double>&)> f,
          Vec<double>& y,
          double& t0,
          double t1,
          double dt);
 
 // Fourth-order Runge-Kutta method.
-void rk4(std::function<Vec<double>(double t, const Vec<double>&)> f,
+void rk4(std::function<void(double t, const Vec<double>&, Vec<double>&)> f,
          Vec<double>& y,
          double& t0,
          double t1,
-         int nsteps = 20);
+         int nsteps = 100);
+
+void ode45(std::function<void(double t, const Vec<double>&, Vec<double>&)> f,
+           Vec<double>& y,
+           double& t0,
+           double t1,
+           double atol = 1.0e-6,
+           double rtol = 1.0e-6);
 
 #ifdef ENABLE_ODEPACK
 // Runge-Kutta-Fehlberg 4(5) method.
