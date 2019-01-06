@@ -114,7 +114,7 @@ void Numlib::rk4(
     }
 }
 
-void Numlib::ode45(
+void Numlib::dopri5(
     std::function<
         void(double t, const Numlib::Vec<double>&, Numlib::Vec<double>&)> f,
     Numlib::Vec<double>& y,
@@ -145,21 +145,21 @@ void Numlib::ode45(
     const double a75 = -2187.0 / 6784.0;
     const double a76 = 11.0 / 84.0;
 
-    const double b1 = 35.0 / 384.0;
-    const double b2 = 0.0;
-    const double b3 = 500.0 / 1113.0;
-    const double b4 = 125.0 / 192.0;
-    const double b5 = -2187.0 / 6784.0;
-    const double b6 = 11.0 / 84.0;
-    const double b7 = 0.0;
-
-    const double b1p = 5179.0 / 57600.0;
+    const double b1p = 35.0 / 384.0;
     const double b2p = 0.0;
-    const double b3p = 7571.0 / 16695.0;
-    const double b4p = 393.0 / 640.0;
-    const double b5p = -92097.0 / 339200.0;
-    const double b6p = 187.0 / 2100.0;
-    const double b7p = 1.0 / 40.0;
+    const double b3p = 500.0 / 1113.0;
+    const double b4p = 125.0 / 192.0;
+    const double b5p = -2187.0 / 6784.0;
+    const double b6p = 11.0 / 84.0;
+    const double b7p = 0.0;
+
+    const double b1 = 5179.0 / 57600.0;
+    const double b2 = 0.0;
+    const double b3 = 7571.0 / 16695.0;
+    const double b4 = 393.0 / 640.0;
+    const double b5 = -92097.0 / 339200.0;
+    const double b6 = 187.0 / 2100.0;
+    const double b7 = 1.0 / 40.0;
 
     const double c1 = 0.0;
     const double c2 = 1.0 / 5.0;
@@ -173,8 +173,7 @@ void Numlib::ode45(
 
     const double eps = std::numeric_limits<double>::epsilon();
     const double hmin = 2.0 * eps;
-
-    double hmax = t1 - t0;
+    const double hmax = t1 - t0;
 
     double h = std::max(hmin, hmax);
 
@@ -235,22 +234,22 @@ void Numlib::ode45(
         }
         // Compute error:
 
-        double err = 0.0;
-        double tol = 0.0;
+        double maxerr = 0.0;
+        double maxtol = 0.0;
         for (Index i = 0; i < y.size(); ++i) {
             double ei = std::abs((b1 - b1p) * k1(i) + (b2 - b2p) * k2(i) +
                                  (b3 - b3p) * k3(i) + (b4 - b4p) * k4(i) +
                                  (b5 - b5p) * k5(i) + (b6 - b6p) * k6(i) +
                                  (b7 - b7p) * k7(i));
-            double ti = rtol * yn(i) + atol;
-            err += ei * ei;
-            tol += ti * ti;
+            double di = std::abs(rtol * yn(i) + atol);
+            if (ei > maxerr) {
+                maxerr = ei;
+            }
+            if (di > maxtol) {
+                maxtol = di;
+            }
         }
-        err = std::sqrt(err / y.size());
-        tol = std::sqrt(tol / y.size());
-        std::cout << "tol = " << tol << std::endl;
-
-        if (err <= tol) { // accept solution
+        if (maxerr <= maxtol) { // accept solution
             y = yn;
             t0 += h;
             istep = 0;
@@ -258,7 +257,7 @@ void Numlib::ode45(
 
         // Adjust stepsize (https://en.wikipedia.org/wiki/Adaptive_stepsize):
 
-        double s = 0.9 * std::pow(tol / err, 0.2);
+        double s = 0.9 * std::pow(maxtol / maxerr, 0.2);
 
         h *= std::min(std::max(s, 0.3), 2.0);
 

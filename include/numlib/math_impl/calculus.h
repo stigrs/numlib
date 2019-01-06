@@ -220,12 +220,12 @@ void rk4(std::function<void(double t, const Vec<double>&, Vec<double>&)> f,
          double t1,
          int nsteps = 100);
 
-void ode45(std::function<void(double t, const Vec<double>&, Vec<double>&)> f,
-           Vec<double>& y,
-           double& t0,
-           double t1,
-           double atol = 1.0e-6,
-           double rtol = 1.0e-6);
+void dopri5(std::function<void(double t, const Vec<double>&, Vec<double>&)> f,
+            Vec<double>& y,
+            double& t0,
+            double t1,
+            double atol = 1.0e-6,
+            double rtol = 1.0e-6);
 
 #ifdef ENABLE_ODEPACK
 // Runge-Kutta-Fehlberg 4(5) method.
