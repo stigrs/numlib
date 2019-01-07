@@ -121,7 +121,8 @@ void Numlib::dopri5(
     double& t0,
     double t1,
     double atol,
-    double rtol)
+    double rtol,
+    int maxstep)
 {
     const double a21 = 1.0 / 5.0;
     const double a31 = 3.0 / 40.0;
@@ -168,8 +169,6 @@ void Numlib::dopri5(
     const double c5 = 8.0 / 9.0;
     const double c6 = 1.0;
     const double c7 = 1.0;
-
-    const int maxstep = 500;
 
     const double eps = std::numeric_limits<double>::epsilon();
     const double hmin = 2.0 * eps;
@@ -241,7 +240,7 @@ void Numlib::dopri5(
                                  (b3 - b3p) * k3(i) + (b4 - b4p) * k4(i) +
                                  (b5 - b5p) * k5(i) + (b6 - b6p) * k6(i) +
                                  (b7 - b7p) * k7(i));
-            double di = std::abs(rtol * yn(i) + atol);
+            double di = std::max(rtol * std::abs(yn(i)), atol);
             if (ei > maxerr) {
                 maxerr = ei;
             }

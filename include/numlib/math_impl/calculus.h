@@ -220,12 +220,14 @@ void rk4(std::function<void(double t, const Vec<double>&, Vec<double>&)> f,
          double t1,
          int nsteps = 100);
 
+// Dormand-Prince 5(4) method.
 void dopri5(std::function<void(double t, const Vec<double>&, Vec<double>&)> f,
             Vec<double>& y,
             double& t0,
             double t1,
             double atol = 1.0e-6,
-            double rtol = 1.0e-6);
+            double rtol = 1.0e-6,
+            int maxstep = 500);
 
 #ifdef ENABLE_ODEPACK
 // Runge-Kutta-Fehlberg 4(5) method.
