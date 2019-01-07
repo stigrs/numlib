@@ -221,12 +221,17 @@ void rk4(std::function<void(double t, const Vec<double>&, Vec<double>&)> f,
          int nsteps = 100);
 
 // Dormand-Prince 5(4) method.
+//
+// Algorithm:
+// ----------
+// Dormand, J. R.; Prince, P. J. A family of embedded Runge-Kutta formulae.
+// Journal of Computational and Applied Mathematics, 1980, vol. 6, pp. 19-26.
+//
 void dopri5(std::function<void(double t, const Vec<double>&, Vec<double>&)> f,
             Vec<double>& y,
             double& t0,
             double t1,
-            double atol = 1.0e-6,
-            double rtol = 1.0e-6,
+            double tol = 1.0e-6,
             int maxstep = 500);
 
 #ifdef ENABLE_ODEPACK

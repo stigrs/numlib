@@ -44,25 +44,21 @@ void Numlib::rk4(
 
     for (int it = 0; it < nsteps; ++it) {
         f(t0, y, k1);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             yn(i) = y(i) + 0.5 * dt * k1(i);
         }
 
         f(t0 + dt / 2.0, yn, k2);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             yn(i) = y(i) + 0.5 * dt * k2(i);
         }
 
         f(t0 + dt / 2.0, yn, k3);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             yn(i) = y(i) + dt * k3(i);
         }
 
         f(t0 + dt, yn, k4);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             y(i) += dt * (k1(i) + 2.0 * k2(i) + 2.0 * k3(i) + k4(i)) / 6.0;
         }
@@ -88,25 +84,21 @@ void Numlib::rk4(
 
     for (int it = 0; it < nsteps; ++it) {
         f(t0, y, k1);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             yn(i) = y(i) + 0.5 * dt * k1(i);
         }
 
         f(t0 + dt / 2.0, yn, k2);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             yn(i) = y(i) + 0.5 * dt * k2(i);
         }
 
         f(t0 + dt / 2.0, yn, k3);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             yn(i) = y(i) + dt * k3(i);
         }
 
         f(t0 + dt, yn, k4);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             y(i) += dt * (k1(i) + 2.0 * k2(i) + 2.0 * k3(i) + k4(i)) / 6.0;
         }
@@ -120,8 +112,7 @@ void Numlib::dopri5(
     Numlib::Vec<double>& y,
     double& t0,
     double t1,
-    double atol,
-    double rtol,
+    double tol,
     int maxstep)
 {
     const double a21 = 1.0 / 5.0;
@@ -171,8 +162,8 @@ void Numlib::dopri5(
     const double c7 = 1.0;
 
     const double eps = std::numeric_limits<double>::epsilon();
-    const double hmin = 2.0 * eps;
-    const double hmax = t1 - t0;
+    const double hmin = 16.0 * eps;
+    const double hmax = 0.5 * (t1 - t0);
 
     double h = std::max(hmin, hmax);
 
@@ -189,34 +180,28 @@ void Numlib::dopri5(
     while (istep < maxstep) {
         // Compute function values:
         f(t0 + c1 * h, y, k1);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             yn(i) = y(i) + h * (a21 * k1(i));
         }
         f(t0 + c2 * h, yn, k2);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             yn(i) = y(i) + h * (a31 * k2(i) + a32 * k2(i));
         }
         f(t0 + c3 * h, yn, k3);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             yn(i) = y(i) + h * (a41 * k3(i) + a42 * k3(i) + a43 * k3(i));
         }
         f(t0 + c4 * h, yn, k4);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             yn(i) = y(i) +
                     h * (a51 * k4(i) + a52 * k4(i) + a53 * k4(i) + a54 * k4(i));
         }
         f(t0 + c5 * h, yn, k5);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             yn(i) = y(i) + h * (a61 * k5(i) + a62 * k5(i) + a63 * k5(i) +
                                 a64 * k5(i) + a65 * k5(i));
         }
         f(t0 + c6 * h, yn, k6);
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             yn(i) = y(i) + h * (a71 * k6(i) + a72 * k6(i) + a73 * k6(i) +
                                 a74 * k6(i) + a75 * k6(i) + a76 * k6(i));
@@ -225,7 +210,6 @@ void Numlib::dopri5(
 
         // Compute solution:
 
-#pragma omp parallel for
         for (Index i = 0; i < y.size(); ++i) {
             yn(i) =
                 y(i) + h * (b1 * k1(i) + b2 * k2(i) + b3 * k3(i) + b4 * k4(i) +
@@ -234,21 +218,16 @@ void Numlib::dopri5(
         // Compute error:
 
         double maxerr = 0.0;
-        double maxtol = 0.0;
         for (Index i = 0; i < y.size(); ++i) {
             double ei = std::abs((b1 - b1p) * k1(i) + (b2 - b2p) * k2(i) +
                                  (b3 - b3p) * k3(i) + (b4 - b4p) * k4(i) +
                                  (b5 - b5p) * k5(i) + (b6 - b6p) * k6(i) +
                                  (b7 - b7p) * k7(i));
-            double di = std::max(rtol * std::abs(yn(i)), atol);
             if (ei > maxerr) {
                 maxerr = ei;
             }
-            if (di > maxtol) {
-                maxtol = di;
-            }
         }
-        if (maxerr <= maxtol) { // accept solution
+        if (maxerr <= tol) { // accept solution
             y = yn;
             t0 += h;
             istep = 0;
@@ -256,7 +235,7 @@ void Numlib::dopri5(
 
         // Adjust stepsize (https://en.wikipedia.org/wiki/Adaptive_stepsize):
 
-        double s = 0.9 * std::pow(maxtol / maxerr, 0.2);
+        double s = 0.9 * std::pow(tol / maxerr, 0.2);
 
         h *= std::min(std::max(s, 0.3), 2.0);
 
@@ -269,7 +248,7 @@ void Numlib::dopri5(
         else if (h < hmin) {
             h = hmin;
         }
-        if (t0 >= t1) { // integration succeeded
+        if (t0 >= t1) { // integration completed
             break;
         }
         ++istep;
