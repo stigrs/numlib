@@ -6,7 +6,6 @@
 
 #include <numlib/math.h>
 #include <algorithm>
-#include <limits>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -112,9 +111,14 @@ void Numlib::dopri5(
     Numlib::Vec<double>& y,
     double& t0,
     double t1,
-    double tol,
+    double atol,
+    double rtol,
     int maxstep)
 {
+    assert(atol > 0.0);
+    assert(rtol > 0.0);
+    assert(maxstep > 0);
+
     const double a21 = 1.0 / 5.0;
     const double a31 = 3.0 / 40.0;
     const double a32 = 9.0 / 40.0;
@@ -163,7 +167,7 @@ void Numlib::dopri5(
 
     const double eps = std::numeric_limits<double>::epsilon();
     const double hmin = 16.0 * eps;
-    const double hmax = 0.5 * (t1 - t0);
+    const double hmax = t1 - t0;
 
     double h = std::max(hmin, hmax);
 
@@ -177,7 +181,7 @@ void Numlib::dopri5(
     Numlib::Vec<double> yn(y.size());
 
     int istep = 0;
-    while (istep < maxstep) {
+    while (t0 < t1) {
         // Compute function values:
         f(t0 + c1 * h, y, k1);
         for (Index i = 0; i < y.size(); ++i) {
@@ -215,27 +219,31 @@ void Numlib::dopri5(
                 y(i) + h * (b1 * k1(i) + b2 * k2(i) + b3 * k3(i) + b4 * k4(i) +
                             b5 * k5(i) + b6 * k6(i) + b7 * k7(i));
         }
-        // Compute error:
+        // Compute local error:
 
         double maxerr = 0.0;
+        double maxtol = 0.0;
         for (Index i = 0; i < y.size(); ++i) {
-            double ei = std::abs((b1 - b1p) * k1(i) + (b2 - b2p) * k2(i) +
-                                 (b3 - b3p) * k3(i) + (b4 - b4p) * k4(i) +
-                                 (b5 - b5p) * k5(i) + (b6 - b6p) * k6(i) +
-                                 (b7 - b7p) * k7(i));
-            if (ei > maxerr) {
-                maxerr = ei;
+            double locerr = std::abs((b1 - b1p) * k1(i) + (b2 - b2p) * k2(i) +
+                                     (b3 - b3p) * k3(i) + (b4 - b4p) * k4(i) +
+                                     (b5 - b5p) * k5(i) + (b6 - b6p) * k6(i) +
+                                     (b7 - b7p) * k7(i));
+            double loctol = rtol * std::abs(yn(i)) + atol;
+            if (locerr > maxerr) {
+                maxerr = locerr;
+            }
+            if (loctol > maxtol) {
+                maxtol = loctol;
             }
         }
-        if (maxerr <= tol) { // accept solution
-            y = yn;
+        if (maxerr <= maxtol || h <= hmin) { // close enough or step cannot be
+            y = yn;                          // reduced any more
             t0 += h;
             istep = 0;
         }
-
         // Adjust stepsize (https://en.wikipedia.org/wiki/Adaptive_stepsize):
 
-        double s = 0.9 * std::pow(tol / maxerr, 0.2);
+        double s = 0.9 * std::pow(maxtol / std::max(maxerr, eps), 0.2);
 
         h *= std::min(std::max(s, 0.3), 2.0);
 
@@ -248,13 +256,9 @@ void Numlib::dopri5(
         else if (h < hmin) {
             h = hmin;
         }
-        if (t0 >= t1) { // integration completed
-            break;
-        }
         ++istep;
-    }
-    if (t0 < t1) {
-        throw Math_error("integration failed to converge");
+        if (istep >= maxstep) {
+            throw Math_error("dopri5: integration failed to converge");
+        }
     }
 }
-

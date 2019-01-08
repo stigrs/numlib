@@ -135,7 +135,7 @@ TEST_CASE("test_math_calculus")
         for (int i = 0; i < 5; ++i) {
             dopri5(lorenz, y, t0, t1);
             for (int j = 0; j < y.size(); ++j) {
-                CHECK(std::abs(y(j) - ans(i, j)) < 1.0e-5);
+                CHECK(std::abs(y(j) - ans(i, j)) < 1.4e-5);
             }
             t1 += 0.1;
         }
