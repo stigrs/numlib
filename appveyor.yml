@@ -13,9 +13,6 @@ configuration:
 image:
   - Visual Studio 2017
 
-environment:
-  BOOST_ROOT: "C:/Libraries/boost_1_67_0"
-
 cache:
   - C:\cmake-3.8.0-win32-x86
   - C:\local
@@ -28,6 +25,8 @@ install:
       }
       nuget install OpenBLAS -o "C:\local\"
       nuget install armadillo-code -o "C:\local\"
+      nuget install boost -Version 1.68.0 -o "C:\local\"
+      $env:BOOST_ROOT="C:\local\boost.1.68.0.0\lib\native"
       $env:PATH="C:\cmake-3.8.0-win32-x86\bin;C:\local\OpenBLAS.0.2.14.1\lib\native\win32\bin;C:\local\OpenBLAS.0.2.14.1\lib\native\x64\bin;$env:PATH"
 
 before_build:
