@@ -326,48 +326,45 @@ Generated output:
 
 Example program for nonstiff ODEs:
 
+    #include <numlib/matrix.h>
     #include <numlib/math.h>
     #include <iostream>
 
-    void lorenz(int& /* neq */, double& /* t */, double* y, double* ydot)
+    void lorenz(const Numlib::Vec<double>& x,
+                Numlib::Vec<double>& dxdt,
+                const double /* t */)
     {
-        const double sigma = 10.0;
-        const double R = 28.0;
-        const double b = 8.0 / 3.0;
+        const double sigma(10.0);
+        const double R(28.0);
+        const double b(8.0 / 3.0);
 
-        ydot[0] = sigma * (y[1] - y[0]);
-        ydot[1] = R * y[0] - y[1] - y[0] * y[2];
-        ydot[2] = -b * y[2] + y[0] * y[1];
+        dxdt(0) = sigma * (x(1) - x(0));
+        dxdt(1) = R * x(0) - x(1) - x(0) * x(2);
+        dxdt(2) = -b * x(2) + x(0) * x(1);
     }
 
     int main()
     {
-    #ifdef ENABLE_LSODE
-        Numlib::Lsode ode(lorenz);
-
-        Numlib::Vec<double> y = {10.0, 1.0, 1.0};
+        Numlib::Vec<double> x = {10.0, 1.0, 1.0};
 
         double t0 = 0.0;
         double t1 = 0.1;
 
         for (int i = 0; i < 5; ++i) {
-            ode.integrate(t0, t1, y);
-            std::cout << "At t = " << t0 << ", y = " << y(0) << " " 
-                      << y(1) << " " << y(2) << '\n';
+            Numlib::solve_ivp(lorenz, x, t0, t1);
             t1 += 0.1;
+            std::cout << "At t = " << t0 << ", y = " << x(0) << " " 
+                      << x(1) << " " << x(2) << '\n';
         }
-    #else
-        std::cout << "Fortran compiler is needed\n";
-    #endif
     }
 
 Generated output:
 
-    At t = 0.1, y = 12.4201 22.1327 11.9964
-    At t = 0.2, y = 19.5002 16.2246 45.2589
-    At t = 0.3, y = 6.61347 -7.93178 37.7356
-    At t = 0.4, y = -2.96415 -8.25069 28.2875
-    At t = 0.5, y = -6.21718 -8.27855 25.1687
+    At t = 0.1, y = 12.4201 22.1327 11.9965
+    At t = 0.2, y = 19.5001 16.2247 45.2586
+    At t = 0.3, y = 6.6136 -7.93158 37.7357
+    At t = 0.4, y = -2.96399 -8.25055 28.2875
+    At t = 0.5, y = -6.21703 -8.27847 25.1686
 
 Example program for stiff ODEs with user-supplied Jacobian:
 

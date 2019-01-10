@@ -15,7 +15,7 @@ and Intel MKL are supported.
 * Faddeeva package (w, erf, erfc, erfcx, erfi, Dawson)
 * Numerical derivation and integration methods (including QAGS and QAGI from 
   QUADPACK)
-* Solvers for ordinary differential equations (RK4, RKF45, DOPRI5 and LSODE)
+* Solvers for ordinary differential equations (DOPRI5 and LSODE)
 * Linear algebra methods
 * Transformations between rotation matrix, Euler angles and quaternions
 * Vector convolution
@@ -44,7 +44,6 @@ This project makes use of code from the following third-party libraries:
 * [Faddeeva package](http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package) 
 * [ODEPACK](https://computation.llnl.gov/casc/odepack/)
 * [QUADPACK](http://www.netlib.org/quadpack/) 
-* [RKF45](https://www.netlib.org/ode/rkf45.f)
 
 Please see the [ThirdPartyNotices.txt](ThirdPartyNotices.txt) file for details
 regarding the licensing of these libraries.
@@ -54,6 +53,7 @@ regarding the licensing of these libraries.
 ### Requirements
 
 * [CMake](https://cmake.org) 3.4.3
+* [Boost](https://www.boost.org) 1.55.0
 * [OpenBLAS](https://www.openblas.net/) 0.3.3 (Intel MKL is recommended)
 * [Armadillo](http://arma.sourceforge.net) 7.900.1 (for benchmarking)
 

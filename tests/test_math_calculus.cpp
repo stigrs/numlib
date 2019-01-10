@@ -15,11 +15,10 @@
 double f(double x) { return x * x; }
 double sinf(double& x) { return std::sin(x); }
 double invexp(double& x) { return std::exp(-x); }
-double rate(double t, double y) { return t * std::sqrt(y); }
 
-void lorenz(double /* t */,
-            const Numlib::Vec<double>& y,
-            Numlib::Vec<double>& ydot)
+void lorenz(const Numlib::Vec<double>& y,
+            Numlib::Vec<double>& ydot,
+            const double /* t */)
 {
     const double sigma = 10.0;
     const double R = 28.0;
@@ -93,29 +92,7 @@ TEST_CASE("test_math_calculus")
     }
 #endif // ENABLE_QUADPACK
 
-    SECTION("rk4")
-    {
-        double t0 = 0.0;
-        double t1 = 10.0;
-        double dt = 0.1;
-        int n = 1 + narrow_cast<int>((t1 - t0) / dt);
-
-        Numlib::Vec<double> y(n);
-        y(0) = 1.0;
-
-        for (int i = 1; i < n; ++i) {
-            y(i) = Numlib::rk4(rate, y(i - 1), t0 + dt * (i - 1), dt);
-        }
-
-        for (int i = 0; i < n; ++i) {
-            double t = t0 + dt * i;
-            double y2 = std::pow(t * t + 4.0, 2.0) / 16.0;
-            double err = std::abs(y(i) / y2 - 1.0);
-            CHECK(err <= 3.0e-7);
-        }
-    }
-
-    SECTION("dopri5")
+    SECTION("solve_ivp")
     {
         using namespace Numlib;
 
@@ -133,9 +110,9 @@ TEST_CASE("test_math_calculus")
         double t1 = 0.1;
 
         for (int i = 0; i < 5; ++i) {
-            dopri5(lorenz, y, t0, t1);
+            solve_ivp(lorenz, y, t0, t1);
             for (int j = 0; j < y.size(); ++j) {
-                CHECK(std::abs(y(j) - ans(i, j)) < 1.4e-5);
+                CHECK(std::abs(y(j) - ans(i, j)) < 6.0e-6);
             }
             t1 += 0.1;
         }

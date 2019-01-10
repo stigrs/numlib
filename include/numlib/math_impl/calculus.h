@@ -9,6 +9,7 @@
 
 #include <numlib/matrix.h>
 #include <numlib/traits.h>
+#include <boost/numeric/odeint.hpp>
 #include <array>
 #include <cassert>
 #include <cmath>
@@ -23,6 +24,19 @@
 #ifdef ENABLE_ODEPACK
 #include <numlib/math_impl/odepack.h>
 #endif
+
+namespace boost {
+namespace numeric {
+    namespace odeint {
+
+        template <typename T>
+        struct is_resizeable<Numlib::Vec<T>> {
+            using type = boost::true_type;
+            static const bool value = type::value;
+        };
+    } // namespace odeint
+} // namespace numeric
+} // namespace boost
 
 namespace Numlib {
 
@@ -192,70 +206,35 @@ inline double qagi(quadpack_fptr f,
 
 //------------------------------------------------------------------------------
 //
-// Solve ordinary differential equation (ODE):
+// Ordinary Differential Equation (ODE) Solvers:
 
-// Fourth-order Runge-Kutta method.
-inline double
-rk4(std::function<double(double, double)> f, double y, double x, double dx)
-{
-    double k1 = dx * f(x, y);
-    double k2 = dx * f(x + dx / 2.0, y + k1 / 2.0);
-    double k3 = dx * f(x + dx / 2.0, y + k2 / 2.0);
-    double k4 = dx * f(x + dx, y + k3);
-
-    return y + (k1 + 2.0 * k2 + 2.0 * k3 + k4) / 6.0;
-}
-
-// Fourth-order Runge-Kutta method.
-void rk4(std::function<void(double t, const Vec<double>&, Vec<double>&)> f,
-         Vec<double>& y,
-         double& t0,
-         double t1,
-         double dt);
-
-// Fourth-order Runge-Kutta method.
-void rk4(std::function<void(double t, const Vec<double>&, Vec<double>&)> f,
-         Vec<double>& y,
-         double& t0,
-         double t1,
-         int nsteps = 100);
-
-// Seven-stage Dormand-Prince 5(4) method.
+// Solve an initial value problem for a system of ODEs.
 //
-// Algorithm:
-// ----------
-// Dormand, J. R.; Prince, P. J. A family of embedded Runge-Kutta formulae.
-// Journal of Computational and Applied Mathematics, 1980, vol. 6, pp. 19-26.
+// This is a wrapper to the Runge-Kutta DOPRI5 method provided by Boost Odeint.
 //
-void dopri5(std::function<void(double t, const Vec<double>&, Vec<double>&)> f,
-            Vec<double>& y,
-            double& t0,
-            double t1,
-            double atol = 1.0e-6,
-            double rtol = 1.0e-6,
-            int maxstep = 500);
-
-#ifdef ENABLE_ODEPACK
-// Runge-Kutta-Fehlberg 4(5) method.
-inline void rkf45(rkf45_fptr f,
-                  Vec<double>& y,
-                  double& t0,
-                  double& t1,
-                  double relerr = 1.0e-6,
-                  double abserr = 1.0e-6)
+inline void
+solve_ivp(std::function<void(const Vec<double>&, Vec<double>&, const double)> f,
+          Vec<double>& y,
+          double& t0,
+          double t1,
+          double dt = 0.0,
+          double atol = 1.0e-6,
+          double rtol = 1.0e-6)
 {
-    int neqn = narrow_cast<int>(y.size());
-    int iflag = 1;
-    int iwork[5];
-    Vec<double> work(3 + 6 * neqn);
+    using namespace boost::numeric::odeint;
+    using state_t = Vec<double>;
+    using error_stepper_t = runge_kutta_dopri5<state_t>;
 
-    rkf45_(f, neqn, y.data(), t0, t1, relerr, abserr, iflag, work.data(),
-           iwork);
-    if (iflag != 2) {
-        throw Math_error("rkf45 failed with error " + std::to_string(iflag));
+    BOOST_STATIC_ASSERT(is_resizeable<state_t>::value == true);
+
+    if (dt == 0.0) {
+        dt = std::max(0.01 * (t1 - t0),
+                      100.0 * std::numeric_limits<double>::epsilon());
     }
+    integrate_adaptive(make_controlled<error_stepper_t>(atol, rtol), f, y, t0,
+                       t1, dt);
+    t0 = t1;
 }
-#endif // ENABLE_ODEPACK
 
 } // namespace Numlib
 

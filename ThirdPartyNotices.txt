@@ -129,18 +129,3 @@ D. Kahaner (Nation. Bur. of Standards- Washington D.C., U.S.A.).
 QUADPACK is in the public domain.
 ================================================================
 END OF QUADPACK NOTICES, INFORMATION, AND LICENSE
-
-
-6.	RKF45 (https://www.netlib.org/ode/rkf45.f)
-
-
-%% RKF45 NOTICES, INFORMATION, AND LICENSE BEGIN HERE
-================================================================
-Written by h.a.watts and l.f.shampine
-              sandia laboratories
-             albuquerque,new mexico
-
-RKF45 is in the public domain.
-================================================================
-END OF RKF45 NOTICES, INFORMATION, AND LICENSE
-
