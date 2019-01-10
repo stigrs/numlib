@@ -7,6 +7,12 @@
 #ifndef NUMLIB_MATH_CALCULUS_H
 #define NUMLIB_MATH_CALCULUS_H
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996) // caused by boost/numeric/odeint.hpp
+#pragma warning(disable : 4127) // caused by boost/numeric/odeint.hpp
+#endif
+
 #include <numlib/matrix.h>
 #include <numlib/traits.h>
 #include <boost/numeric/odeint.hpp>
@@ -16,6 +22,10 @@
 #include <functional>
 #include <limits>
 #include <string>
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #ifdef ENABLE_QUADPACK
 #include <numlib/math_impl/quadpack.h>
