@@ -88,7 +88,7 @@ else()
 endif()
 
 # Boost is required.
-find_package(Boost 1.55.0 REQUIRED)
+find_package(Boost 1.54.0 REQUIRED)
 
 install(
     DIRECTORY include/numlib

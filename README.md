@@ -53,7 +53,7 @@ regarding the licensing of these libraries.
 ### Requirements
 
 * [CMake](https://cmake.org) 3.4.3
-* [Boost](https://www.boost.org) 1.55.0
+* [Boost](https://www.boost.org) 1.54.0
 * [OpenBLAS](https://www.openblas.net/) 0.3.3 (Intel MKL is recommended)
 * [Armadillo](http://arma.sourceforge.net) 7.900.1 (for benchmarking)
 
