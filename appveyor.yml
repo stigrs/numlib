@@ -36,7 +36,7 @@ before_build:
           $env:generator="$env:generator Win64"
       }
       echo generator="$env:generator"
-      cmake .. -G "$env:generator"
+      cmake -DBOOST_ROOT=C:\Libraries\boost_1_67_0 .. -G "$env:generator"
 
 build_script:
   - cmake --build . --config %CONFIGURATION% -- /m /v:minimal

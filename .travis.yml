@@ -63,6 +63,7 @@ matrix:
           packages:
             - g++-6
             - gfortran
+            - libboost-all-dev
       env:
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6 && BUILD_TYPE=Debug"
 
@@ -74,6 +75,7 @@ matrix:
           packages:
             - g++-6
             - gfortran
+            - libboost-all-dev
       env:
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6 && BUILD_TYPE=Release"
 
@@ -85,6 +87,7 @@ matrix:
           packages:
             - g++-7
             - gfortran
+            - libboost-all-dev
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7 && BUILD_TYPE=Debug"
 
@@ -96,6 +99,7 @@ matrix:
           packages:
             - g++-7
             - gfortran
+            - libboost-all-dev
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7 && BUILD_TYPE=Release"
 
@@ -112,6 +116,7 @@ matrix:
             - clang-6.0
             - g++-6
             - gfortran
+            - libboost-all-dev
       env:
         - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0 && BUILD_TYPE=Debug"
 
@@ -125,6 +130,7 @@ matrix:
             - clang-6.0
             - g++-6
             - gfortran
+            - libboost-all-dev
       env:
         - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0 && BUILD_TYPE=Release"
 
