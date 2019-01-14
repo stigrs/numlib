@@ -53,7 +53,8 @@ std::size_t Numlib::Lsoda::idamax1(const std::vector<double>& dx,
                                    const std::size_t offset = 0)
 {
 
-    std::size_t v = 0, vmax = 0;
+    std::size_t v = 0;
+    std::size_t vmax = 0;
     std::size_t idmax = 1;
     for (std::size_t i = 1; i <= n; i++) {
         v = std::abs(dx[i + offset]);
@@ -113,7 +114,8 @@ void Numlib::Lsoda::dgesl(const std::vector<std::vector<double>>& a,
                           std::vector<double>& b,
                           const std::size_t job)
 {
-    std::size_t k, j;
+    std::size_t k;
+    std::size_t j;
     double t;
 
     /*
@@ -171,7 +173,9 @@ void Numlib::Lsoda::dgefa(std::vector<std::vector<double>>& a,
                           std::vector<int>& ipvt,
                           std::size_t* const info)
 {
-    std::size_t j = 0, k = 0, i = 0;
+    std::size_t j = 0;
+    std::size_t k = 0;
+    std::size_t i = 0;
     double t = 0.0;
 
     /* Gaussian elimination with partial pivoting.   */
@@ -296,13 +300,30 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
 {
     assert(tout > *t);
 
-    int mxstp0 = 500, mxhnl0 = 10;
+    int mxstp0 = 500;
+    int mxhnl0 = 10;
 
-    int iflag = 0, lenyh = 0, ihit = 0;
+    int iflag = 0;
+    int lenyh = 0;
+    int ihit = 0;
 
-    double atoli = 0, ayi = 0, big = 0, h0 = 0, hmax = 0, hmx = 0, rh = 0,
-           rtoli = 0, tcrit = 0, tdist = 0, tnext = 0, tol = 0, tolsf = 0,
-           tp = 0, size = 0, sum = 0, w0 = 0;
+    double atoli = 0.0;
+    double ayi = 0.0;
+    double big = 0.0;
+    double h0 = 0.0;
+    double hmax = 0.0;
+    double hmx = 0.0;
+    double rh = 0.0;
+    double rtoli = 0.0;
+    double tcrit = 0.0;
+    double tdist = 0.0;
+    double tnext = 0.0;
+    double tol = 0.0;
+    double tolsf = 0.0;
+    double tp = 0.0;
+    double size = 0.0;
+    double sum = 0.0;
+    double w0 = 0.0;
 
     /*
        Block a.
@@ -314,18 +335,17 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
     */
 
     if (*istate < 1 || *istate > 3) {
-        // fprintf(stderr, "[lsoda] illegal istate = %d\n", *istate);
         std::cerr << "[lsoda] illegal istate = " << *istate << std::endl;
         terminate(istate);
         return;
     }
     if (itask < 1 || itask > 5) {
-        fprintf(stderr, "[lsoda] illegal itask = %d\n", itask);
+        std::cerr << "[lsoda] illegal itask = " << itask << std::endl;
         terminate(istate);
         return;
     }
     if (init == 0 && (*istate == 2 || *istate == 3)) {
-        fprintf(stderr, "[lsoda] istate > 1 but lsoda not initialized\n");
+        std::cerr << "[lsoda] istate > 1 but lsoda not initialized\n";
         terminate(istate);
         return;
     }
@@ -393,10 +413,10 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
             ixpr = 0;
             mxstep = mxstp0;
             mxhnil = mxhnl0;
-            hmxi = 0.;
-            hmin = 0.;
+            hmxi = 0.0;
+            hmin = 0.0;
             if (*istate == 1) {
-                h0 = 0.;
+                h0 = 0.0;
                 mxordn = mord[0];
                 mxords = mord[1];
             }
@@ -495,13 +515,15 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
                 rtoli = rtol_[i];
             if (itol_ == 2 || itol_ == 4)
                 atoli = atol_[i];
-            if (rtoli < 0.) {
-                fprintf(stderr, "[lsoda] rtol = %g is less than 0.\n", rtoli);
+            if (rtoli < 0.0) {
+                std::cerr << "[lsoda] rtol = " << rtoli
+                          << " is less than 0.0\n";
                 terminate(istate);
                 return;
             }
-            if (atoli < 0.) {
-                fprintf(stderr, "[lsoda] atol = %g is less than 0.\n", atoli);
+            if (atoli < 0.0) {
+                std::cerr << "[lsoda] atol = " << atoli
+                          << " is less than 0.0\n";
                 terminate(istate);
                 return;
             }
@@ -526,12 +548,11 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
         if (itask == 4 || itask == 5) {
             tcrit = rworks[0];
             if ((tcrit - tout) * (tout - *t) < 0.) {
-                fprintf(stderr,
-                        "[lsoda] itask = 4 or 5 and tcrit behind tout\n");
+                std::cerr << "[lsoda] itask = 4 or 5 and tcrit behind tout\n";
                 terminate(istate);
                 return;
             }
-            if (h0 != 0. && (*t + h0 - tcrit) * h0 > 0.)
+            if (h0 != 0.0 && (*t + h0 - tcrit) * h0 > 0.0)
                 h0 = tcrit - *t;
         }
 
@@ -562,17 +583,17 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
 
         /* Load and invert the ewt array.  ( h_ is temporarily set to 1. ) */
         nq = 1;
-        h_ = 1.;
+        h_ = 1.0;
         ewset(y);
         for (std::size_t i = 1; i <= n; i++) {
-            if (ewt[i] <= 0.) {
+            if (ewt[i] <= 0.0) {
                 std::cerr << "[lsoda] ewt[" << i << "] = " << ewt[i]
                           << " <= 0.\n"
                           << std::endl;
                 terminate2(y, t);
                 return;
             }
-            ewt[i] = 1. / ewt[i];
+            ewt[i] = 1.0 / ewt[i];
         }
 
         /*
@@ -598,9 +619,9 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
         if (h0 == 0.) {
             tdist = fabs(tout - *t);
             w0 = std::max(fabs(*t), fabs(tout));
-            if (tdist < 2. * ETA * w0) {
-                fprintf(stderr,
-                        "[lsoda] tout too close to t to start integration\n ");
+            if (tdist < 2.0 * ETA * w0) {
+                std::cerr
+                    << "[lsoda] tout too close to t to start integration\n";
                 terminate(istate);
                 return;
             }
@@ -609,29 +630,29 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
                 for (std::size_t i = 2; i <= n; i++)
                     tol = std::max(tol, rtol_[i]);
             }
-            if (tol <= 0.) {
+            if (tol <= 0.0) {
                 atoli = atol_[1];
                 for (std::size_t i = 1; i <= n; i++) {
                     if (itol_ == 2 || itol_ == 4)
                         atoli = atol_[i];
                     ayi = fabs(y[i]);
-                    if (ayi != 0.)
+                    if (ayi != 0.0)
                         tol = std::max(tol, atoli / ayi);
                 }
             }
-            tol = std::max(tol, 100. * ETA);
+            tol = std::max(tol, 100.0 * ETA);
             tol = std::min(tol, 0.001);
             sum = vmnorm(n, yh_[2], ewt);
-            sum = 1. / (tol * w0 * w0) + tol * sum * sum;
-            h0 = 1. / sqrt(sum);
+            sum = 1.0 / (tol * w0 * w0) + tol * sum * sum;
+            h0 = 1.0 / sqrt(sum);
             h0 = std::min(h0, tdist);
-            h0 = h0 * ((tout - *t >= 0.) ? 1. : -1.);
+            h0 = h0 * ((tout - *t >= 0.0) ? 1.0 : -1.0);
         } /* end if ( h0 == 0. )   */
         /*
            Adjust h0 if necessary to meet hmax bound.
         */
         rh = fabs(h0) * hmxi;
-        if (rh > 1.)
+        if (rh > 1.0)
             h0 /= rh;
 
         /*
@@ -653,10 +674,8 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
             if ((tn_ - tout) * h_ >= 0.) {
                 intdy(tout, 0, y, &iflag);
                 if (iflag != 0) {
-                    fprintf(
-                        stderr,
-                        "[lsoda] trouble from intdy, itask = %d, tout = %g\n",
-                        itask, tout);
+                    std::cerr << "[lsoda] trouble from intdy, itask = " << itask
+                              << ", tout = " << tout << std::endl;
                     terminate(istate);
                     return;
                 }
@@ -669,39 +688,34 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
         case 2:
             break;
         case 3:
-            tp = tn_ - hu * (1. + 100. * ETA);
-            if ((tp - tout) * h_ > 0.) {
-                fprintf(stderr,
-                        "[lsoda] itask = %d and tout behind tcur - hu\n",
-                        itask);
+            tp = tn_ - hu * (1.0 + 100.0 * ETA);
+            if ((tp - tout) * h_ > 0.0) {
+                std::cerr << "[lsoda] itask = " << itask
+                          << " and tout behind tcur - hu\n";
                 terminate(istate);
                 return;
             }
-            if ((tn_ - tout) * h_ < 0.)
+            if ((tn_ - tout) * h_ < 0.0)
                 break;
             successreturn(y, t, itask, ihit, tcrit, istate);
             return;
         case 4:
             tcrit = rworks[0];
-            if ((tn_ - tcrit) * h_ > 0.) {
-                fprintf(stderr,
-                        "[lsoda] itask = 4 or 5 and tcrit behind tcur\n");
+            if ((tn_ - tcrit) * h_ > 0.0) {
+                std::cerr << "[lsoda] itask = 4 or 5 and tcrit behind tcur\n";
                 terminate(istate);
                 return;
             }
-            if ((tcrit - tout) * h_ < 0.) {
-                fprintf(stderr,
-                        "[lsoda] itask = 4 or 5 and tcrit behind tout\n");
+            if ((tcrit - tout) * h_ < 0.0) {
+                std::cerr << "[lsoda] itask = 4 or 5 and tcrit behind tout\n";
                 terminate(istate);
                 return;
             }
-            if ((tn_ - tout) * h_ >= 0.) {
+            if ((tn_ - tout) * h_ >= 0.0) {
                 intdy(tout, 0, y, &iflag);
                 if (iflag != 0) {
-                    fprintf(
-                        stderr,
-                        "[lsoda] trouble from intdy, itask = %d, tout = %g\n",
-                        itask, tout);
+                    std::cerr << "[lsoda] trouble from intdy, itask = " << itask
+                              << ", tout = " << tout << std::endl;
                     terminate(istate);
                     return;
                 }
@@ -714,24 +728,24 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
         case 5:
             if (itask == 5) {
                 tcrit = rworks[0];
-                if ((tn_ - tcrit) * h_ > 0.) {
-                    fprintf(stderr,
-                            "[lsoda] itask = 4 or 5 and tcrit behind tcur\n");
+                if ((tn_ - tcrit) * h_ > 0.0) {
+                    std::cerr
+                        << "[lsoda] itask = 4 or 5 and tcrit behind tcur\n";
                     terminate(istate);
                     return;
                 }
             }
-            hmx = fabs(tn_) + fabs(h_);
-            ihit = fabs(tn_ - tcrit) <= (100. * ETA * hmx);
+            hmx = std::abs(tn_) + std::abs(h_);
+            ihit = std::abs(tn_ - tcrit) <= (100.0 * ETA * hmx);
             if (ihit) {
                 *t = tcrit;
                 successreturn(y, t, itask, ihit, tcrit, istate);
                 return;
             }
-            tnext = tn_ + h_ * (1. + 4. * ETA);
-            if ((tnext - tcrit) * h_ <= 0.)
+            tnext = tn_ + h_ * (1.0 + 4.0 * ETA);
+            if ((tnext - tcrit) * h_ <= 0.0)
                 break;
-            h_ = (tcrit - tn_) * (1. - 4. * ETA);
+            h_ = (tcrit - tn_) * (1.0 - 4.0 * ETA);
             if (*istate == 2)
                 jstart = -2;
             break;
@@ -767,26 +781,25 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
                     terminate2(y, t);
                     return;
                 }
-                ewt[i] = 1. / ewt[i];
+                ewt[i] = 1.0 / ewt[i];
             }
         }
         tolsf = ETA * vmnorm(n, yh_[1], ewt);
         if (tolsf > 0.01) {
-            tolsf = tolsf * 200.;
+            tolsf = tolsf * 200.0;
             if (nst == 0) {
-                fprintf(stderr,
-                        "lsoda -- at start of problem, too much accuracy\n");
-                fprintf(stderr,
-                        "         requested for precision of machine,\n");
-                fprintf(stderr, "         suggested scaling factor = %g\n",
-                        tolsf);
+                std::cerr << "lsoda -- at start of problem, too much accuracy\n"
+                          << "         requested for precision of machine,\n"
+                          << "         suggested scaling factor = " << tolsf
+                          << std::endl;
                 terminate(istate);
                 return;
             }
-            fprintf(stderr, "lsoda -- at t = %g, too much accuracy requested\n",
-                    *t);
-            fprintf(stderr, "         for precision of machine, suggested\n");
-            fprintf(stderr, "         scaling factor = %g\n", tolsf);
+            // clang-format off
+            std::cerr << "lsoda -- at t = " << *t << ", too much accuracy requested\n"
+                      << "         for precision of machine, suggested\n"
+                      << "         scaling factor = " << tolsf << std::endl;
+            // clang-format on
             *istate = -2;
             terminate2(y, t);
             return;
@@ -795,18 +808,16 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
         if ((tn_ + h_) == tn_) {
             nhnil++;
             if (nhnil <= mxhnil) {
-                fprintf(stderr,
-                        "lsoda -- warning..internal t = %g and h_ = %g are\n",
-                        tn_, h_);
-                fprintf(stderr, "         such that in the machine, t + h_ = t "
-                                "on the next step\n");
-                fprintf(stderr, "         solver will continue anyway.\n");
+                // clang-format off
+                std::cerr << "lsoda -- warning...internal t = " << tn_ << " and h_ = " << h_ << " are\n"
+                          << "         such that in the machine, t + h_ = t on the next step\n"
+                          << "         solver will continue anyway.\n";
+                // clang-format on
                 if (nhnil == mxhnil) {
-                    std::cerr
-                        << "lsoda -- above warning has been issued " << nhnil
-                        << " times, " << std::endl
-                        << "       it will not be issued again for this problem"
-                        << std::endl;
+                    // clang-format off
+                    std::cerr << "lsoda -- above warning has been issued " << nhnil << " times\n"
+                              << "         it will not be issued again for this problem\n";
+                    // clang-format on
                 }
             }
         }
