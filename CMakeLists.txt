@@ -106,6 +106,7 @@ if(BUILD_QUADPACK)
 endif()
 
 add_subdirectory(lib)
+add_subdirectory(libsoda)
 
 if(BUILD_TESTS)
     enable_testing()
