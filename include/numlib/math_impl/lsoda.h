@@ -121,7 +121,6 @@ private:
                        int ihit,
                        double tcrit,
                        int* istate);
-    void _freevectors(void);
     void ewset(const std::vector<double>& ycur);
     void resetcoeff(void);
     void solsy(std::vector<double>& y);
