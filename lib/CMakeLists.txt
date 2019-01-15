@@ -21,6 +21,7 @@ set(
     geometry.cpp
     grid.cpp
     linalg.cpp
+    lsoda.cpp
     quaternion.cpp
     signal.cpp
     statistics.cpp

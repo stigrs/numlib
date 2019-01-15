@@ -29,7 +29,7 @@
 
 #define ETA 2.2204460492503131e-16
 
-Numlib::Lsoda::Lsoda(Lsoda_sys_t f, double atol, double rtol) : fsys(f),
+Numlib::Lsoda::Lsoda(Lsoda_sys_t f, double atol, double rtol) : fsys(f)
 {
     // Initialize arrays.
     mord = {{12, 5}};
@@ -40,8 +40,6 @@ Numlib::Lsoda::Lsoda(Lsoda_sys_t f, double atol, double rtol) : fsys(f),
     cm2 = {{0}};
 }
 
-Numlib::Lsoda::~LSODA() {}
-
 bool Numlib::Lsoda::abs_compare(double a, double b)
 {
     return (std::abs(a) < std::abs(b));
@@ -49,15 +47,15 @@ bool Numlib::Lsoda::abs_compare(double a, double b)
 
 /* Purpose : Find largest component of double vector dx */
 std::size_t Numlib::Lsoda::idamax1(const std::vector<double>& dx,
-                                   const std::size_t n,
+                                   const std::size_t nn,
                                    const std::size_t offset = 0)
 {
 
     std::size_t v = 0;
     std::size_t vmax = 0;
     std::size_t idmax = 1;
-    for (std::size_t i = 1; i <= n; i++) {
-        v = std::abs(dx[i + offset]);
+    for (std::size_t i = 1; i <= nn; i++) {
+        v = static_cast<std::size_t>(std::abs(dx[i + offset]));
         if (v > vmax) {
             vmax = v;
             idmax = i;
@@ -75,7 +73,7 @@ std::size_t Numlib::Lsoda::idamax1(const std::vector<double>& dx,
 */
 void Numlib::Lsoda::dscal1(const double da,
                            std::vector<double>& dx,
-                           const std::size_t n,
+                           const std::size_t /* n */,
                            const std::size_t offset = 0)
 {
     std::transform(dx.begin() + 1 + offset, dx.end(), dx.begin() + 1 + offset,
@@ -85,12 +83,12 @@ void Numlib::Lsoda::dscal1(const double da,
 /* Purpose : Inner product dx . dy */
 double Numlib::Lsoda::ddot1(const std::vector<double>& a,
                             const std::vector<double>& b,
-                            const std::size_t n,
+                            const std::size_t nn,
                             const std::size_t offsetA = 0,
                             const std::size_t offsetB = 0)
 {
     double sum = 0.0;
-    for (std::size_t i = 1; i <= n; i++)
+    for (std::size_t i = 1; i <= nn; i++)
         sum += a[i + offsetA] * b[i + offsetB];
     return sum;
 }
@@ -98,19 +96,19 @@ double Numlib::Lsoda::ddot1(const std::vector<double>& a,
 void Numlib::Lsoda::daxpy1(const double da,
                            const std::vector<double>& dx,
                            std::vector<double>& dy,
-                           const std::size_t n,
+                           const std::size_t nn,
                            const std::size_t offsetX = 0,
                            const std::size_t offsetY = 0)
 {
 
-    for (std::size_t i = 1; i <= n; i++)
+    for (std::size_t i = 1; i <= nn; i++)
         dy[i + offsetY] = da * dx[i + offsetX] + dy[i + offsetY];
 }
 
 // See BLAS documentation. The first argument has been changed to vector.
 void Numlib::Lsoda::dgesl(const std::vector<std::vector<double>>& a,
-                          const std::size_t n,
-                          std::vector<int>& ipvt,
+                          const std::size_t nn,
+                          std::vector<int>& ipvt_,
                           std::vector<double>& b,
                           const std::size_t job)
 {
@@ -125,16 +123,16 @@ void Numlib::Lsoda::dgesl(const std::vector<std::vector<double>>& a,
         /*
            First solve L * y = b.
         */
-        for (k = 1; k <= n; k++) {
+        for (k = 1; k <= nn; k++) {
             t = ddot1(a[k], b, k - 1);
             b[k] = (b[k] - t) / a[k][k];
         }
         /*
            Now solve U * x = y.
         */
-        for (k = n - 1; k >= 1; k--) {
-            b[k] = b[k] + ddot1(a[k], b, n - k, k, k);
-            j = ipvt[k];
+        for (k = nn - 1; k >= 1; k--) {
+            b[k] = b[k] + ddot1(a[k], b, nn - k, k, k);
+            j = ipvt_[k];
             if (j != k) {
                 t = b[j];
                 b[j] = b[k];
@@ -148,19 +146,19 @@ void Numlib::Lsoda::dgesl(const std::vector<std::vector<double>>& a,
 
        First solve Transpose(U) * y = b.
     */
-    for (k = 1; k <= n - 1; k++) {
-        j = ipvt[k];
+    for (k = 1; k <= nn - 1; k++) {
+        j = ipvt_[k];
         t = b[j];
         if (j != k) {
             b[j] = b[k];
             b[k] = t;
         }
-        daxpy1(t, a[k], b, n - k, k, k);
+        daxpy1(t, a[k], b, nn - k, k, k);
     }
     /*
        Now solve Transpose(L) * x = y.
     */
-    for (k = n; k >= 1; k--) {
+    for (k = nn; k >= 1; k--) {
         b[k] = b[k] / a[k][k];
         t = -b[k];
         daxpy1(t, a[k], b, k - 1);
@@ -169,8 +167,8 @@ void Numlib::Lsoda::dgesl(const std::vector<std::vector<double>>& a,
 
 // See BLAS documentation. All double* has been changed to std::vector .
 void Numlib::Lsoda::dgefa(std::vector<std::vector<double>>& a,
-                          const std::size_t n,
-                          std::vector<int>& ipvt,
+                          const std::size_t nn,
+                          std::vector<int>& ipvt_,
                           std::size_t* const info)
 {
     std::size_t j = 0;
@@ -181,13 +179,13 @@ void Numlib::Lsoda::dgefa(std::vector<std::vector<double>>& a,
     /* Gaussian elimination with partial pivoting.   */
 
     *info = 0;
-    for (k = 1; k <= n - 1; k++) {
+    for (k = 1; k <= nn - 1; k++) {
         /*
            Find j = pivot index.  Note that a[k]+k-1 is the address of
            the 0-th element of the row vector whose 1st element is a[k][k].
         */
-        j = idamax1(a[k], n - k + 1, k - 1) + k - 1;
-        ipvt[k] = j;
+        j = idamax1(a[k], nn - k + 1, k - 1) + k - 1;
+        ipvt_[k] = static_cast<int>(j);
         /*
            Zero pivot implies this row already triangularized.
         */
@@ -207,24 +205,24 @@ void Numlib::Lsoda::dgefa(std::vector<std::vector<double>>& a,
            Compute multipliers.
         */
         t = -1. / a[k][k];
-        dscal1(t, a[k], n - k, k);
+        dscal1(t, a[k], nn - k, k);
 
         /*
            Column elimination with row indexing.
         */
-        for (i = k + 1; i <= n; i++) {
+        for (i = k + 1; i <= nn; i++) {
             t = a[i][j];
             if (j != k) {
                 a[i][j] = a[i][k];
                 a[i][k] = t;
             }
-            daxpy1(t, a[k], a[i], n - k, k, k);
+            daxpy1(t, a[k], a[i], nn - k, k, k);
         }
     } /* end k-loop  */
 
-    ipvt[n] = n;
-    if (a[n][n] == 0.0)
-        *info = n;
+    ipvt_[nn] = static_cast<int>(nn);
+    if (a[nn][nn] == 0.0)
+        *info = nn;
 }
 
 /* Terminate lsoda due to illegal input. */
@@ -285,7 +283,7 @@ c     stiff and nonstiff systems of ordinary differential equations,
 c     siam j. sci. stat. comput. 4 (1983), pp. 136-148.
 c-----------------------------------------------------------------------
 */
-void Numlib::Lsoda::lsoda(LSODA_system_t f,
+void Numlib::Lsoda::lsoda(Lsoda_sys_t f,
                           const std::size_t neq,
                           std::vector<double>& y,
                           double* t,
@@ -495,14 +493,14 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
         meth_ = 1;
 
         nyh = n;
-        lenyh = 1 + std::max(mxordn, mxords);
+        lenyh = static_cast<int>(1 + std::max(mxordn, mxords));
 
         yh_.resize(lenyh + 1, std::vector<double>(nyh + 1, 0.0));
         wm_.resize(nyh + 1, std::vector<double>(nyh + 1, 0.0));
         ewt.resize(1 + nyh, 0);
         savf.resize(1 + nyh, 0);
         acor.resize(nyh + 1, 0.0);
-        ipvt.resize(nyh + 1, 0.0);
+        ipvt.resize(nyh + 1, 0);
     }
     /*
        Check rtol and atol for legality.
@@ -928,9 +926,8 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
         */
         if (kflag == -1 || kflag == -2) {
             std::cerr << "lsoda -- at t = " << tn_
-                      << " and step size h_ = " << h_
-                      << ", the\n" if (kflag == -1)
-            {
+                      << " and step size h_ = " << h_ << ", the\n";
+            if (kflag == -1) {
                 std::cerr << "         error test failed repeatedly or\n"
                           << "         with fabs(h_) = hmin\n";
                 *istate = -4;
@@ -958,7 +955,7 @@ void Numlib::Lsoda::lsoda(LSODA_system_t f,
 
 void Numlib::Lsoda::stoda(const std::size_t neq,
                           std::vector<double>& y,
-                          LSODA_system_t f,
+                          Lsoda_sys_t f,
                           void* _data)
 {
     assert(neq + 1 == y.size());
@@ -1076,7 +1073,7 @@ void Numlib::Lsoda::stoda(const std::size_t neq,
         if (ialth == 1)
             ialth = 2;
         if (meth_ != mused) {
-            cfode(meth_);
+            cfode(static_cast<int>(meth_));
             ialth = l;
             resetcoeff();
         }
@@ -1110,8 +1107,8 @@ void Numlib::Lsoda::stoda(const std::size_t neq,
             if (nst >= nslp + msbp)
                 ipup = miter;
             tn_ += h_;
-            for (std::size_t j = nq; j >= 1; j--)
-                for (std::size_t i1 = j; i1 <= nq; i1++)
+            for (j = nq; j >= 1; j--)
+                for (i1 = j; i1 <= nq; i1++)
                     for (i = 1; i <= n; i++)
                         yh_[i1][i] += yh_[i1 + 1][i];
 
@@ -1163,7 +1160,7 @@ void Numlib::Lsoda::stoda(const std::size_t neq,
             hu = h_;
             nqu = nq;
             mused = meth_;
-            for (std::size_t j = 1; j <= l; j++) {
+            for (j = 1; j <= l; j++) {
                 r = el[j];
                 for (i = 1; i <= n; i++)
                     yh_[j][i] += r * acor[i];
@@ -1230,7 +1227,7 @@ void Numlib::Lsoda::stoda(const std::size_t neq,
                 break;
             }
 
-            for (std::size_t i = 1; i <= n; i++)
+            for (i = 1; i <= n; i++)
                 yh_[lmax][i] = acor[i];
 
             endstoda();
@@ -1387,16 +1384,16 @@ void Numlib::Lsoda::intdy(double t, int k, std::vector<double>& dky, int* iflag)
     s = (t - tn_) / h_;
     ic = 1;
     for (std::size_t jj = l - k; jj <= nq; jj++)
-        ic *= jj;
+        ic *= static_cast<int>(jj);
     c = (double) ic;
     for (std::size_t i = 1; i <= n; i++)
         dky[i] = c * yh_[l][i];
 
-    for (int j = nq - 1; j >= k; j--) {
-        jp1 = j + 1;
+    for (std::size_t j = nq - 1; j >= k; j--) {
+        jp1 = static_cast<int>(j + 1);
         ic = 1;
-        for (int jj = jp1 - k; jj <= j; jj++)
-            ic *= jj;
+        for (std::size_t jj = jp1 - k; jj <= j; jj++)
+            ic *= static_cast<int>(jj);
         c = (double) ic;
 
         for (std::size_t i = 1; i <= n; i++)
@@ -1411,14 +1408,23 @@ void Numlib::Lsoda::intdy(double t, int k, std::vector<double>& dky, int* iflag)
 
 } /* end intdy   */
 
-void Numlib::Lsoda::cfode(int meth_)
+void Numlib::Lsoda::cfode(int meth__)
 {
     int i;
-    int nq;
+    int nq_;
     int nqm1;
     int nqp1;
-    // CONTINUE HERE
-    double agamq, fnq, fnqm1, pc[13], pint, ragq, rqfac, rq1fac, tsign, xpin;
+
+    double agamq;
+    double fnq;
+    double fnqm1;
+    double pc[13];
+    double pint;
+    double ragq;
+    double rqfac;
+    double rq1fac;
+    double tsign;
+    double xpin;
     /*
        cfode is called by the integrator routine to set coefficients
        needed there.  The coefficients for the current method, as
@@ -1451,16 +1457,16 @@ void Numlib::Lsoda::cfode(int meth_)
        size at order nq-1 if k = 1, at order nq if k = 2, and at order
        nq+1 if k = 3.
     */
-    if (meth_ == 1) {
-        elco[1][1] = 1.;
-        elco[1][2] = 1.;
-        tesco[1][1] = 0.;
-        tesco[1][2] = 2.;
-        tesco[2][1] = 1.;
-        tesco[12][3] = 0.;
-        pc[1] = 1.;
-        rqfac = 1.;
-        for (nq = 2; nq <= 12; nq++) {
+    if (meth__ == 1) {
+        elco[1][1] = 1.0;
+        elco[1][2] = 1.0;
+        tesco[1][1] = 0.0;
+        tesco[1][2] = 2.0;
+        tesco[2][1] = 1.0;
+        tesco[12][3] = 0.0;
+        pc[1] = 1.0;
+        rqfac = 1.0;
+        for (nq_ = 2; nq_ <= 12; nq_++) {
             /*
                The pc array will contain the coefficients of the polynomial
 
@@ -1469,15 +1475,15 @@ void Numlib::Lsoda::cfode(int meth_)
                Initially, p(x) = 1.
             */
             rq1fac = rqfac;
-            rqfac = rqfac / (double) nq;
-            nqm1 = nq - 1;
+            rqfac = rqfac / (double) nq_;
+            nqm1 = nq_ - 1;
             fnqm1 = (double) nqm1;
-            nqp1 = nq + 1;
+            nqp1 = nq_ + 1;
             /*
                Form coefficients of p(x)*(x+nq-1).
             */
-            pc[nq] = 0.;
-            for (i = nq; i >= 2; i--)
+            pc[nq_] = 0.;
+            for (i = nq_; i >= 2; i--)
                 pc[i] = pc[i - 1] + fnqm1 * pc[i];
             pc[1] = fnqm1 * pc[1];
             /*
@@ -1485,8 +1491,8 @@ void Numlib::Lsoda::cfode(int meth_)
             */
             pint = pc[1];
             xpin = pc[1] / 2.;
-            tsign = 1.;
-            for (i = 2; i <= nq; i++) {
+            tsign = 1.0;
+            for (i = 2; i <= nq_; i++) {
                 tsign = -tsign;
                 pint += tsign * pc[i] / (double) i;
                 xpin += tsign * pc[i] / (double) (i + 1);
@@ -1494,14 +1500,14 @@ void Numlib::Lsoda::cfode(int meth_)
             /*
                Store coefficients in elco and tesco.
             */
-            elco[nq][1] = pint * rq1fac;
-            elco[nq][2] = 1.;
-            for (i = 2; i <= nq; i++)
-                elco[nq][i + 1] = rq1fac * pc[i] / (double) i;
+            elco[nq_][1] = pint * rq1fac;
+            elco[nq_][2] = 1.0;
+            for (i = 2; i <= nq_; i++)
+                elco[nq_][i + 1] = rq1fac * pc[i] / (double) i;
             agamq = rqfac * xpin;
-            ragq = 1. / agamq;
+            ragq = 1.0 / agamq;
             tesco[nq][2] = ragq;
-            if (nq < 12)
+            if (nq_ < 12)
                 tesco[nqp1][1] = ragq * rqfac / (double) nqp1;
             tesco[nqm1][3] = ragq;
         } /* end for   */
@@ -1509,22 +1515,22 @@ void Numlib::Lsoda::cfode(int meth_)
     } /* end if ( meth_ == 1 )   */
 
     /* meth_ = 2. */
-    pc[1] = 1.;
-    rq1fac = 1.;
+    pc[1] = 1.0;
+    rq1fac = 1.0;
 
     /*
        The pc array will contain the coefficients of the polynomial
           p(x) = (x+1)*(x+2)*...*(x+nq).
        Initially, p(x) = 1.
     */
-    for (nq = 1; nq <= 5; nq++) {
-        fnq = (double) nq;
-        nqp1 = nq + 1;
+    for (nq_ = 1; nq_ <= 5; nq_++) {
+        fnq = (double) nq_;
+        nqp1 = nq_ + 1;
         /*
            Form coefficients of p(x)*(x+nq).
         */
-        pc[nqp1] = 0.;
-        for (i = nq + 1; i >= 2; i--)
+        pc[nqp1] = 0.0;
+        for (i = nq_ + 1; i >= 2; i--)
             pc[i] = pc[i - 1] + fnq * pc[i];
         pc[1] *= fnq;
         /*
@@ -1532,10 +1538,10 @@ void Numlib::Lsoda::cfode(int meth_)
         */
         for (i = 1; i <= nqp1; i++)
             elco[nq][i] = pc[i] / pc[2];
-        elco[nq][2] = 1.;
-        tesco[nq][1] = rq1fac;
-        tesco[nq][2] = ((double) nqp1) / elco[nq][1];
-        tesco[nq][3] = ((double) (nq + 2)) / elco[nq][1];
+        elco[nq_][2] = 1.0;
+        tesco[nq_][1] = rq1fac;
+        tesco[nq_][2] = ((double) nqp1) / elco[nq_][1];
+        tesco[nq_][3] = ((double) (nq_ + 2)) / elco[nq_][1];
         rq1fac /= fnq;
     }
     return;
@@ -1566,7 +1572,7 @@ void Numlib::Lsoda::scaleh(double* rh, double* pdh)
             irflag = 1;
         }
     }
-    r = 1.;
+    r = 1.0;
     for (std::size_t j = 2; j <= l; j++) {
         r *= *rh;
         for (std::size_t i = 1; i <= n; i++)
@@ -1580,11 +1586,17 @@ void Numlib::Lsoda::scaleh(double* rh, double* pdh)
 
 void Numlib::Lsoda::prja(const std::size_t neq,
                          std::vector<double>& y,
-                         LSODA_system_t f,
+                         Lsoda_sys_t f,
                          void* _data)
 {
-    std::size_t i = 0, ier = 0, j = 0;
-    double fac = 0.0, hl0 = 0.0, r = 0.0, r0 = 0.0, yj = 0.0;
+    std::size_t i = 0;
+    std::size_t ier = 0;
+    std::size_t j = 0;
+    double fac = 0.0;
+    double hl0 = 0.0;
+    double r = 0.0;
+    double r0 = 0.0;
+    double yj = 0.0;
     /*
        prja is called by stoda to compute and process the matrix
        P = I - h_ * el[1] * J, where J is an approximation to the Jacobian.
@@ -1604,14 +1616,14 @@ void Numlib::Lsoda::prja(const std::size_t neq,
        If miter = 2, make n calls to f to approximate J.
     */
     if (miter != 2) {
-        fprintf(stderr, "[prja] miter != 2\n");
+        std::cerr << "[prja] miter != 2\n";
         return;
     }
     if (miter == 2) {
         fac = vmnorm(n, savf, ewt);
-        r0 = 1000. * fabs(h_) * ETA * ((double) n) * fac;
-        if (r0 == 0.)
-            r0 = 1.;
+        r0 = 1000.0 * fabs(h_) * ETA * ((double) n) * fac;
+        if (r0 == 0.0)
+            r0 = 1.0;
         for (j = 1; j <= n; j++) {
             yj = y[j];
             r = std::max(sqrteta * fabs(yj), r0 / ewt[j]);
@@ -1626,12 +1638,12 @@ void Numlib::Lsoda::prja(const std::size_t neq,
         /*
            Compute norm of Jacobian.
         */
-        pdnorm = fnorm(n, wm_, ewt) / fabs(hl0);
+        pdnorm = fnorm(static_cast<int>(n), wm_, ewt) / fabs(hl0);
         /*
            Add identity matrix.
         */
         for (i = 1; i <= n; i++)
-            wm_[i][i] += 1.;
+            wm_[i][i] += 1.0;
         /*
            Do LU decomposition on P.
         */
@@ -1649,17 +1661,17 @@ void Numlib::Lsoda::prja(const std::size_t neq,
 
    vmnorm = max( i = 1, ..., n ) fabs( v[i] ) * w[i].
 */
-double Numlib::Lsoda::vmnorm(const std::size_t n,
+double Numlib::Lsoda::vmnorm(const std::size_t nn,
                              const std::vector<double>& v,
                              const std::vector<double>& w)
 {
-    double vm = 0.;
-    for (std::size_t i = 1; i <= n; i++)
+    double vm = 0.0;
+    for (std::size_t i = 1; i <= nn; i++)
         vm = std::max(vm, fabs(v[i]) * w[i]);
     return vm;
 }
 
-double Numlib::Lsoda::fnorm(int n,
+double Numlib::Lsoda::fnorm(int nn,
                             const std::vector<std::vector<double>>& a,
                             const std::vector<double>& w)
 
@@ -1672,11 +1684,12 @@ double Numlib::Lsoda::fnorm(int n,
 */
 
 {
-    double an = 0, sum = 0;
+    double an = 0.0;
+    double sum = 0.0;
 
-    for (std::size_t i = 1; i <= (std::size_t) n; i++) {
-        sum = 0.;
-        for (std::size_t j = 1; j <= (std::size_t) n; j++)
+    for (std::size_t i = 1; i <= (std::size_t) nn; i++) {
+        sum = 0.0;
+        for (std::size_t j = 1; j <= (std::size_t) nn; j++)
             sum += fabs(a[i][j]) / w[j];
         an = std::max(an, sum * w[i]);
     }
@@ -1690,7 +1703,7 @@ double Numlib::Lsoda::fnorm(int n,
 */
 void Numlib::Lsoda::correction(const std::size_t neq,
                                std::vector<double>& y,
-                               LSODA_system_t f,
+                               Lsoda_sys_t f,
                                std::size_t* corflag,
                                double pnorm,
                                double* del,
@@ -1701,7 +1714,9 @@ void Numlib::Lsoda::correction(const std::size_t neq,
                                std::size_t* m,
                                void* _data)
 {
-    double rm = 0.0, rate = 0.0, dcon = 0.0;
+    double rm = 0.0;
+    double rate = 0.0;
+    double dcon = 0.0;
 
     /*
        Up to maxcor corrector iterations are taken.  A convergence test is
@@ -1712,7 +1727,7 @@ void Numlib::Lsoda::correction(const std::size_t neq,
 
     *m = 0;
     *corflag = 0;
-    *del = 0.;
+    *del = 0.0;
 
     for (std::size_t i = 1; i <= n; i++)
         y[i] = yh_[1][i];
@@ -1730,7 +1745,7 @@ void Numlib::Lsoda::correction(const std::size_t neq,
             if (ipup > 0) {
                 prja(neq, y, f, _data);
                 ipup = 0;
-                rc = 1.;
+                rc = 1.0;
                 nslp = nst;
                 crate = 0.7;
                 if (ierpj != 0) {
@@ -1739,7 +1754,7 @@ void Numlib::Lsoda::correction(const std::size_t neq,
                 }
             }
             for (std::size_t i = 1; i <= n; i++)
-                acor[i] = 0.;
+                acor[i] = 0.0;
         } /* end if ( *m == 0 )   */
         if (miter == 0) {
             /*
@@ -1786,20 +1801,20 @@ void Numlib::Lsoda::correction(const std::size_t neq,
            On convergence, form pdest = local maximum Lipschitz constant
            estimate.  pdlast is the most recent nonzero estimate.
         */
-        if (*del <= 100. * pnorm * ETA)
+        if (*del <= 100.0 * pnorm * ETA)
             break;
         if (*m != 0 || meth_ != 1) {
             if (*m != 0) {
                 rm = 1024.0;
-                if (*del <= (1024. * *delp))
+                if (*del <= (1024.0 * *delp))
                     rm = *del / *delp;
                 rate = std::max(rate, rm);
                 crate = std::max(0.2 * crate, rm);
             }
-            dcon = *del * std::min(1., 1.5 * crate) / (tesco[nq][2] * conit);
-            if (dcon <= 1.) {
+            dcon = *del * std::min(1.0, 1.5 * crate) / (tesco[nq][2] * conit);
+            if (dcon <= 1.0) {
                 pdest = std::max(pdest, rate / fabs(h_ * el[1]));
-                if (pdest != 0.)
+                if (pdest != 0.0)
                     pdlast = pdest;
                 break;
             }
@@ -1812,7 +1827,7 @@ void Numlib::Lsoda::correction(const std::size_t neq,
            reduced or mxncf failures have occured, exit with corflag = 2.
         */
         (*m)++;
-        if (*m == maxcor || (*m >= 2 && *del > 2. * *delp)) {
+        if (*m == maxcor || (*m >= 2 && *del > 2.0 * *delp)) {
             if (miter == 0 || jcur == 1) {
                 corfailure(told, rh, ncf, corflag);
                 return;
@@ -1822,8 +1837,8 @@ void Numlib::Lsoda::correction(const std::size_t neq,
                Restart corrector if Jacobian is recomputed.
             */
             *m = 0;
-            rate = 0.;
-            *del = 0.;
+            rate = 0.0;
+            *del = 0.0;
             for (std::size_t i = 1; i <= n; i++)
                 y[i] = yh_[1][i];
 
@@ -1848,7 +1863,7 @@ void Numlib::Lsoda::corfailure(double* told,
                                std::size_t* corflag)
 {
     ncf++;
-    rmax = 2.;
+    rmax = 2.0;
     tn_ = *told;
     for (std::size_t j = nq; j >= 1; j--)
         for (std::size_t i1 = j; i1 <= nq; i1++)
@@ -1877,7 +1892,7 @@ void Numlib::Lsoda::solsy(std::vector<double>& y)
 {
     iersl = 0;
     if (miter != 2) {
-        printf("solsy -- miter != 2\n");
+        std::cerr << "solsy -- miter != 2\n";
         return;
     }
     if (miter == 2)
@@ -1890,8 +1905,21 @@ void Numlib::Lsoda::methodswitch(double dsm,
                                  double* pdh,
                                  double* rh)
 {
-    int lm1, lm1p1, lm2, lm2p1, nqm1, nqm2;
-    double rh1, rh2, rh1it, exm2, dm2, exm1, dm1, alpha, exsm;
+    int lm1;
+    int lm1p1;
+    int lm2;
+    int lm2p1;
+    int nqm1;
+    int nqm2;
+    double rh1;
+    double rh2;
+    double rh1it;
+    double exm2;
+    double dm2;
+    double exm1;
+    double dm1;
+    double alpha;
+    double exsm;
 
     /*
        We are current using an Adams method.  Consider switching to bdf.
@@ -1914,32 +1942,32 @@ void Numlib::Lsoda::methodswitch(double dsm,
     if (meth_ == 1) {
         if (nq > 5)
             return;
-        if (dsm <= (100. * pnorm * ETA) || pdest == 0.) {
+        if (dsm <= (100.0 * pnorm * ETA) || pdest == 0.0) {
             if (irflag == 0)
                 return;
-            rh2 = 2.;
-            nqm2 = std::min(nq, mxords);
+            rh2 = 2.0;
+            nqm2 = static_cast<int>(std::min(nq, mxords));
         }
         else {
-            exsm = 1. / (double) l;
-            rh1 = 1. / (1.2 * pow(dsm, exsm) + 0.0000012);
-            rh1it = 2. * rh1;
+            exsm = 1.0 / (double) l;
+            rh1 = 1.0 / (1.2 * pow(dsm, exsm) + 0.0000012);
+            rh1it = 2.0 * rh1;
             *pdh = pdlast * fabs(h_);
             if ((*pdh * rh1) > 0.00001)
                 rh1it = sm1[nq] / *pdh;
             rh1 = std::min(rh1, rh1it);
             if (nq > mxords) {
-                nqm2 = mxords;
-                lm2 = mxords + 1;
-                exm2 = 1. / (double) lm2;
+                nqm2 = static_cast<int>(mxords);
+                lm2 = static_cast<int>(mxords + 1);
+                exm2 = 1.0 / (double) lm2;
                 lm2p1 = lm2 + 1;
                 dm2 = vmnorm(n, yh_[lm2p1], ewt) / cm2[mxords];
-                rh2 = 1. / (1.2 * pow(dm2, exm2) + 0.0000012);
+                rh2 = 1.0 / (1.2 * pow(dm2, exm2) + 0.0000012);
             }
             else {
                 dm2 = dsm * (cm1[nq] / cm2[nq]);
-                rh2 = 1. / (1.2 * pow(dm2, exsm) + 0.0000012);
-                nqm2 = nq;
+                rh2 = 1.0 / (1.2 * pow(dm2, exsm) + 0.0000012);
+                nqm2 = static_cast<int>(nq);
             }
             if (rh2 < ratio * rh1)
                 return;
@@ -1951,7 +1979,7 @@ void Numlib::Lsoda::methodswitch(double dsm,
         icount = 20;
         meth_ = 2;
         miter = jtyp;
-        pdlast = 0.;
+        pdlast = 0.0;
         nq = nqm2;
         l = nq + 1;
         return;
@@ -1967,32 +1995,32 @@ void Numlib::Lsoda::methodswitch(double dsm,
        If the step size for Adams would be so small as to cause
        roundoff pollution, we stay with bdf.
     */
-    exsm = 1. / (double) l;
+    exsm = 1.0 / (double) l;
     if (mxordn < nq) {
-        nqm1 = mxordn;
-        lm1 = mxordn + 1;
-        exm1 = 1. / (double) lm1;
+        nqm1 = static_cast<int>(mxordn);
+        lm1 = static_cast<int>(mxordn + 1);
+        exm1 = 1.0 / (double) lm1;
         lm1p1 = lm1 + 1;
         dm1 = vmnorm(n, yh_[lm1p1], ewt) / cm1[mxordn];
-        rh1 = 1. / (1.2 * pow(dm1, exm1) + 0.0000012);
+        rh1 = 1.0 / (1.2 * pow(dm1, exm1) + 0.0000012);
     }
     else {
         dm1 = dsm * (cm2[nq] / cm1[nq]);
-        rh1 = 1. / (1.2 * pow(dm1, exsm) + 0.0000012);
-        nqm1 = nq;
+        rh1 = 1.0 / (1.2 * pow(dm1, exsm) + 0.0000012);
+        nqm1 = static_cast<int>(nq);
         exm1 = exsm;
     }
-    rh1it = 2. * rh1;
+    rh1it = 2.0 * rh1;
     *pdh = pdnorm * fabs(h_);
     if ((*pdh * rh1) > 0.00001)
         rh1it = sm1[nqm1] / *pdh;
     rh1 = std::min(rh1, rh1it);
-    rh2 = 1. / (1.2 * pow(dsm, exsm) + 0.0000012);
-    if ((rh1 * ratio) < (5. * rh2))
+    rh2 = 1.0 / (1.2 * pow(dsm, exsm) + 0.0000012);
+    if ((rh1 * ratio) < (5.0 * rh2))
         return;
     alpha = std::max(0.001, rh1);
     dm1 *= pow(alpha, exm1);
-    if (dm1 <= 1000. * ETA * pnorm)
+    if (dm1 <= 1000.0 * ETA * pnorm)
         return;
     /*
        The switch test passed.  Reset relevant quantities for Adams.
@@ -2001,7 +2029,7 @@ void Numlib::Lsoda::methodswitch(double dsm,
     icount = 20;
     meth_ = 1;
     miter = 0;
-    pdlast = 0.;
+    pdlast = 0.0;
     nq = nqm1;
     l = nq + 1;
 } /* end methodswitch   */
@@ -2012,7 +2040,7 @@ void Numlib::Lsoda::methodswitch(double dsm,
 */
 void Numlib::Lsoda::endstoda()
 {
-    double r = 1. / tesco[nqu][2];
+    double r = 1.0 / tesco[nqu][2];
     for (std::size_t i = 1; i <= n; i++)
         acor[i] *= r;
     hold = h_;
@@ -2040,14 +2068,14 @@ void Numlib::Lsoda::orderswitch(
 
     *orderflag = 0;
 
-    exsm = 1. / (double) l;
-    rhsm = 1. / (1.2 * pow(dsm, exsm) + 0.0000012);
+    exsm = 1.0 / (double) l;
+    rhsm = 1.0 / (1.2 * pow(dsm, exsm) + 0.0000012);
 
-    rhdn = 0.;
+    rhdn = 0.0;
     if (nq != 1) {
         ddn = vmnorm(n, yh_[l], ewt) / tesco[nq][1];
-        exdn = 1. / (double) nq;
-        rhdn = 1. / (1.3 * pow(ddn, exdn) + 0.0000013);
+        exdn = 1.0 / (double) nq;
+        rhdn = 1.0 / (1.3 * pow(ddn, exdn) + 0.0000013);
     }
     /*
        If meth_ = 1, limit rh accordinfg to the stability region also.
@@ -2059,7 +2087,7 @@ void Numlib::Lsoda::orderswitch(
         rhsm = std::min(rhsm, sm1[nq] / *pdh);
         if (nq > 1)
             rhdn = std::min(rhdn, sm1[nq - 1] / *pdh);
-        pdest = 0.;
+        pdest = 0.0;
     }
     if (rhsm >= *rhup) {
         if (rhsm >= rhdn) {
@@ -2069,16 +2097,16 @@ void Numlib::Lsoda::orderswitch(
         else {
             newq = nq - 1;
             *rh = rhdn;
-            if (kflag < 0 && *rh > 1.)
-                *rh = 1.;
+            if (kflag < 0 && *rh > 1.0)
+                *rh = 1.0;
         }
     }
     else {
         if (*rhup <= rhdn) {
             newq = nq - 1;
             *rh = rhdn;
-            if (kflag < 0 && *rh > 1.)
-                *rh = 1.;
+            if (kflag < 0 && *rh > 1.0)
+                *rh = 1.0;
         }
         else {
             *rh = *rhup;
@@ -2162,21 +2190,23 @@ void Numlib::Lsoda::resetcoeff()
  * @Param atol, absolute tolerance.
  */
 /* ----------------------------------------------------------------------------*/
-void Numlib::Lsoda::lsoda_update(LSODA_system_t f,
-                                 const std::size_t neq,
-                                 std::vector<double>& y,
-                                 std::vector<double>& yout,
-                                 double* t,
-                                 const double tout,
-                                 int* istate,
-                                 void* _data,
-                                 double rtol,
-                                 double atol)
+void Numlib::Lsoda::integrate(Lsoda_sys_t f,
+                              const std::size_t neq,
+                              std::vector<double>& y,
+                              std::vector<double>& yout,
+                              double* t,
+                              const double tout,
+                              int* istate,
+                              void* _data,
+                              double rtol,
+                              double atol)
 {
     std::array<int, 7> iworks = {{0}};
     std::array<double, 4> rworks = {{0.0}};
 
-    int itask, iopt, jt;
+    int itask;
+    int iopt;
+    int jt;
 
     // cout << "Debug : rtol " << rtol << ". atol " << atol << endl;
 

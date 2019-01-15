@@ -9,6 +9,7 @@
 #ifndef NUMLIB_MATH_LSODA_H
 #define NUMLIB_MATH_LSODA_H
 
+#include <numlib/matrix.h>
 #include <array>
 #include <cmath>
 #include <memory>
@@ -40,8 +41,20 @@ public:
 
     ~Lsoda() = default;
 
+    void integrate(Lsoda_sys_t f,
+                   const std::size_t neq,
+                   std::vector<double>& y,
+                   std::vector<double>& yout,
+                   double* t,
+                   const double tout,
+                   int* istate,
+                   void* _data,
+                   double rtol,
+                   double atol);
+#if 0
     void
     integrate(Vec<double>& y, double& t, double tout, void* data = nullptr);
+#endif
 
 private:
     std::size_t idamax1(const std::vector<double>& dx,
@@ -204,7 +217,7 @@ private:
 
     double ccmax;
     double el0;
-    double h_ = .0;
+    double h_ = 0.0;
     double hmin;
     double hmxi;
     double hu;
@@ -243,4 +256,3 @@ private:
 } // namespace Numlib
 
 #endif // NUMLIB_MATH_LSODA_H
-
