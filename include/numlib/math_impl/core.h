@@ -157,7 +157,7 @@ template <typename T, std::size_t N>
 inline Enable_if<Real_type<T>(), Matrix<T, N>> tan(const Matrix<T, N>& m)
 {
     Matrix<T, N> res(m);
-    res.apply([](tan& x) { x = std::tan(x); });
+    res.apply([](T& x) { x = std::tan(x); });
     return res;
 }
 
@@ -181,7 +181,7 @@ template <typename T, std::size_t N>
 inline Enable_if<Real_type<T>(), Matrix<T, N>> atan(const Matrix<T, N>& m)
 {
     Matrix<T, N> res(m);
-    res.apply([](tan& x) { x = std::atan(x); });
+    res.apply([](T& x) { x = std::atan(x); });
     return res;
 }
 
@@ -205,7 +205,7 @@ template <typename T, std::size_t N>
 inline Enable_if<Real_type<T>(), Matrix<T, N>> tanh(const Matrix<T, N>& m)
 {
     Matrix<T, N> res(m);
-    res.apply([](tan& x) { x = std::tanh(x); });
+    res.apply([](T& x) { x = std::tanh(x); });
     return res;
 }
 
@@ -229,7 +229,7 @@ template <typename T, std::size_t N>
 inline Enable_if<Real_type<T>(), Matrix<T, N>> atanh(const Matrix<T, N>& m)
 {
     Matrix<T, N> res(m);
-    res.apply([](tan& x) { x = std::atanh(x); });
+    res.apply([](T& x) { x = std::atanh(x); });
     return res;
 }
 
