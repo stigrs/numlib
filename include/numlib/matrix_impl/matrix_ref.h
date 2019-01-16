@@ -150,6 +150,10 @@ public:
     template <typename F>
     Matrix_ref& apply(F f);
 
+    // Apply f(x, val) for every element x:
+    template <typename F>
+    Matrix_ref& apply(F f, const T& val);
+
     // Apply f(x, mx) for corresponding elements *this and m:
     template <typename M, typename F>
     Enable_if<Matrix_type<M>(), Matrix_ref&> apply(const M& m, F f);
@@ -337,6 +341,16 @@ Matrix_ref<T, N>& Matrix_ref<T, N>::apply(F f)
 {
     for (auto i = begin(); i != end(); ++i) {
         f(*i);
+    }
+    return *this;
+}
+
+template <typename T, std::size_t N>
+template <typename F>
+Matrix_ref<T, N>& Matrix_ref<T, N>::apply(F f, const T& val)
+{
+    for (auto i = begin(); i != end(); ++i) {
+        f(*i, val);
     }
     return *this;
 }

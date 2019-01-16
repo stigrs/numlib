@@ -170,6 +170,10 @@ public:
     template <typename F>
     Matrix& apply(F f);
 
+    // Apply f(x, val) for every element x.
+    template <typename F>
+    Matrix& apply(F f, const T& val);
+
     // Apply f(x, mx) for corresponding elements *this and m.
     template <typename M, typename F>
     Enable_if<Matrix_type<M>(), Matrix&> apply(const M& m, F f);
@@ -364,6 +368,17 @@ Matrix<T, N>& Matrix<T, N>::apply(F f)
 #pragma omp parallel for
     for (Index i = 0; i < this->desc.size; ++i) {
         f(elems[i]);
+    }
+    return *this;
+}
+
+template <typename T, std::size_t N>
+template <typename F>
+Matrix<T, N>& Matrix<T, N>::apply(F f, const T& val)
+{
+#pragma omp parallel for
+    for (Index i = 0; i < this->desc.size; ++i) {
+        f(elems[i], val);
     }
     return *this;
 }
