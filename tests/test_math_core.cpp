@@ -5,6 +5,7 @@
 // and conditions.
 
 #include <numlib/math.h>
+#include <numlib/constants.h>
 #include <catch2/catch.hpp>
 
 TEST_CASE("test_math_core")
@@ -59,5 +60,57 @@ TEST_CASE("test_math_core")
     {
         int x = 2;
         CHECK(sqr(x) == 4);
+    }
+
+    SECTION("abs")
+    {
+        Vec<int> v = {-1, -2, -3};
+        Vec<int> ans = {1, 2, 3};
+        auto res = abs(v);
+        CHECK(res == ans);
+    }
+
+    SECTION("pow")
+    {
+        Vec<double> v = {1.0, 2.0, 3.0};
+        Vec<double> ans = {1.0, 4.0, 9.0};
+        auto res = pow(v, 2.0);
+        for (Index i = 0; i < v.size(); ++i) {
+            CHECK(res(i) == ans(i));
+        }
+    }
+
+    SECTION("sqrt")
+    {
+        Vec<double> ans = {1.0, 2.0, 3.0};
+        Vec<double> v = {1.0, 4.0, 9.0};
+        auto res = sqrt(v);
+        for (Index i = 0; i < v.size(); ++i) {
+            CHECK(res(i) == ans(i));
+        }
+    }
+
+    SECTION("sin")
+    {
+        using namespace Constants;
+
+        Vec<double> ans = {0.0, 0.0, 0.0};
+        Vec<double> v = {pi, pi, pi};
+        auto res = sin(v);
+        for (Index i = 0; i < v.size(); ++i) {
+            CHECK(std::abs(res(i) - ans(i)) < 1.0e-15);
+        }
+    }
+
+    SECTION("cos")
+    {
+        using namespace Constants;
+
+        Vec<double> ans = {-1.0, -1.0, -1.0};
+        Vec<double> v = {pi, pi, pi};
+        auto res = cos(v);
+        for (Index i = 0; i < v.size(); ++i) {
+            CHECK(std::abs(res(i) - ans(i)) < 1.0e-15);
+        }
     }
 }
