@@ -138,6 +138,14 @@ inline Enable_if<Real_type<T>(), Matrix<T, N>> tgamma(const Matrix<T, N>& m)
 }
 
 template <typename T, std::size_t N>
+inline Enable_if<Real_type<T>(), Matrix<T, N>> lgamma(const Matrix<T, N>& m)
+{
+    Matrix<T, N> res(m);
+    res.apply([](T& x) { x = std::lgamma(x); });
+    return res;
+}
+
+template <typename T, std::size_t N>
 inline Enable_if<Real_type<T>(), Matrix<T, N>> sin(const Matrix<T, N>& m)
 {
     Matrix<T, N> res(m);
