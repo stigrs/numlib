@@ -109,29 +109,6 @@ void translate(Mat<double>& xyz, double dx, double dy, double dz);
 // Perform rotation given a rotation matrix.
 void rotate(Mat<double>& xyz, const Mat<double>& rotm);
 
-// Create two-dmensional grid based on coordinates in the vectors x and y.
-template <typename T>
-void meshgrid(const Vec<T>& x, const Vec<T>& y, Mat<T>& xx, Mat<T>& yy)
-{
-    Index nc = x.size();
-    Index nr = y.size();
-
-    xx.resize(nr, nc);
-    yy.resize(nr, nc);
-
-    // xx is a matrix where each row is a copy of x:
-
-    for (Index i = 0; i < nr; ++i) {
-        xx.row(i) = x;
-    }
-
-    // yy is a matrix where each column is a copy of y:
-
-    for (Index j = 0; j < nc; ++j) {
-        yy.column(j) = y;
-    }
-}
-
 } // namespace Numlib
 
 #endif // NUMLIB_MATH_GEOMETRY_H

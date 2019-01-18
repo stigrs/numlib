@@ -52,29 +52,4 @@ TEST_CASE("test_math_geometry")
             }
         }
     }
-
-    SECTION("meshgrid")
-    {
-        Mat<double> ans = {{2.0, 5.0, 10.0},
-                           {5.0, 8.0, 13.0},
-                           {10.0, 13.0, 18.0},
-                           {17.0, 20.0, 25.0},
-                           {26.0, 29.0, 34.0}};
-
-        Vec<double> x = {1.0, 2.0, 3.0};
-        Vec<double> y = {1.0, 2.0, 3.0, 4.0, 5.0};
-
-        Mat<double> xx;
-        Mat<double> yy;
-
-        meshgrid(x, y, xx, yy);
-
-        auto zz = pow(xx, 2.0) + pow(yy, 2.0);
-
-        for (Index i = 0; i < zz.rows(); ++i) {
-            for (Index j = 0; j < zz.cols(); ++j) {
-                CHECK(zz(i, j) == ans(i, j));
-            }
-        }
-    }
 }

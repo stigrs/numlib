@@ -1091,6 +1091,50 @@ std::istream& operator>>(std::istream& from, Matrix<T, 2>& a)
     return from;
 }
 
+// Output stream operator for 3D matrices:
+
+template <typename T>
+std::ostream& operator<<(std::ostream& to, const Matrix<T, 3>& a)
+{
+    to << a.extent(0) << " x " << a.extent(1) << " x " << a.extent(2) << "\n[";
+    for (Index k = 0; k < a.extent(2); ++k) {
+        for (Index i = 0; i < a.extent(0); ++i) {
+            for (Index j = 0; j < a.extent(1); ++j) {
+                to << std::setw(9) << a(i, j, k) << " ";
+            }
+            if (i != (a.extent(0) - 1)) {
+                to << "\n ";
+            }
+        }
+        if (k != (a.extent(2) - 1)) {
+            to << "\n\n ";
+        }
+    }
+    to << "]\n";
+    return to;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& to, const Matrix_ref<T, 3>& a)
+{
+    to << a.extent(0) << " x " << a.extent(1) << " x " << a.extent(2) << "\n[";
+    for (Index k = 0; k < a.extent(2); ++k) {
+        for (Index i = 0; i < a.extent(0); ++i) {
+            for (Index j = 0; j < a.extent(1); ++j) {
+                to << std::setw(9) << a(i, j, k) << " ";
+            }
+            if (i != (a.extent(0) - 1)) {
+                to << "\n ";
+            }
+        }
+        if (k != (a.extent(2) - 1)) {
+            to << "\n\n ";
+        }
+    }
+    to << "]\n";
+    return to;
+}
+
 } // namespace Numlib
 
 #endif // NUMLIB_DENSE_MATRIX_OPERATIONS_H

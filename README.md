@@ -20,6 +20,7 @@ and Intel MKL are supported.
 * Transformations between rotation matrix, Euler angles and quaternions
 * Vector convolution
 * Forward and inverse discrete Fourier transform (FFT and IFFT)
+* Generation of mesh grids
 * Statistical methods
 * Mathematical constants, metric prefixes, physical constants, and
   conversion factors
