@@ -12,6 +12,16 @@ TEST_CASE("test_math_linalg")
 {
     using namespace Numlib;
 
+    SECTION("axpy")
+    {
+        Vec<int> ans = {4, 8, 12, 16, 20};
+        Vec<int> x = {1, 2, 3, 4, 5};
+        Vec<int> y = {2, 4, 6, 8, 10};
+
+        axpy(2, x, y);
+        CHECK(y == ans);
+    }
+
     SECTION("linspace")
     {
         Vec<double> ans = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0};

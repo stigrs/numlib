@@ -259,22 +259,8 @@ template <typename T>
 inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
 {
     assert(same_extents(x, y));
-#pragma omp parallel for shared(a, x, y)
-    for (Index i = 0; i < x.size(); ++i) {
-        y(i) = a * x(i) + y(i);
-    }
-}
-
-// Compute vector-scalar product and add the result to a vector.
-inline void axpy(const double a, const Vec<double>& x, Vec<double>& y)
-{
-    assert(same_extents(x, y));
-
-    const BLAS_INT n = narrow_cast<BLAS_INT>(y.size());
-    const BLAS_INT incx = narrow_cast<BLAS_INT>(x.descriptor().strides[0]);
-    const BLAS_INT incy = narrow_cast<BLAS_INT>(y.descriptor().strides[0]);
-
-    cblas_daxpy(n, a, x.data(), incx, y.data(), incy);
+    std::transform(x.begin(), x.end(), y.begin(), y.begin(),
+                   [&](T xi, T yi) { return a * xi + yi; });
 }
 
 // Matrix-matrix multiplication.
