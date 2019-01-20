@@ -7,6 +7,7 @@
 #include <numlib/math.h>
 #include <numlib/constants.h>
 #include <limits>
+#include <cmath>
 
 Numlib::Mat<double> Numlib::eul2rotm(double z, double y, double x)
 {
@@ -88,7 +89,7 @@ Numlib::Vec<double> Numlib::rotm2eul(const Numlib::Mat<double>& rotm)
         z = 0.0;
     }
     else if ((std::abs(m11) < tol) && (std::abs(m21) > tol)) {
-        z = sign(0.5, m21) * Constants::pi;
+        z = std::copysign(0.5, m21) * Constants::pi;
     }
     else {
         z = std::atan(m21 / m11);
@@ -98,7 +99,7 @@ Numlib::Vec<double> Numlib::rotm2eul(const Numlib::Mat<double>& rotm)
         y = 0.0;
     }
     else if ((std::abs(div) < tol) && (std::abs(m31) > tol)) {
-        y = sign(0.5, -m31) * Constants::pi;
+        y = std::copysign(0.5, -m31) * Constants::pi;
     }
     else {
         y = std::atan(-m31 / div);
@@ -107,7 +108,7 @@ Numlib::Vec<double> Numlib::rotm2eul(const Numlib::Mat<double>& rotm)
         x = 0.0;
     }
     else if ((std::abs(m33) < tol) && (std::abs(m32) > tol)) {
-        x = sign(0.5, m32) * Constants::pi;
+        x = std::copysign(0.5, m32) * Constants::pi;
     }
     else {
         x = std::atan(m32 / m33);

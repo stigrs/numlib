@@ -6,6 +6,7 @@
 
 #include <numlib/math.h>
 #include <algorithm>
+#include <cmath>
 
 double Numlib::harmmean(const Numlib::Vec<double>& x)
 {
@@ -136,7 +137,7 @@ double Numlib::kabsch_rmsd(const Numlib::Mat<double>& p,
     // Ensure right-handedness:
     double d = det(v * ut);
     Mat<double> eye = identity(3);
-    eye(2, 2) = sign(1.0, d);
+    eye(2, 2) = std::copysign(1.0, d);
 
     // Optimal rotation matrix:
     Mat<double> rotm = v * eye * ut;

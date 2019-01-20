@@ -49,17 +49,16 @@ TEST_CASE("test_math_core")
         CHECK(round<int>(x) == 3);
     }
 
-    SECTION("sign")
-    {
-        int x = 1;
-        int y = -1;
-        CHECK(sign(x, y) == -x);
-    }
-
-    SECTION("sqr")
+    SECTION("square")
     {
         int x = 2;
-        CHECK(sqr(x) == 4);
+        CHECK(square(x) == 4);
+    }
+
+    SECTION("cube")
+    {
+        int x = 2;
+        CHECK(cube(x) == 8);
     }
 
     SECTION("abs")

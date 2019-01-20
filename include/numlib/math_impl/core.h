@@ -46,18 +46,18 @@ inline Enable_if<Integer_type<T>(), T> round(double x)
     return static_cast<T>(std::round(x));
 }
 
-// Sign transfer function.
-template <typename T>
-inline T sign(const T& x, const T& y)
-{
-    return (y >= 0) ? std::abs(x) : -std::abs(x);
-}
-
 // Raise argument to the power of 2.
 template <typename T>
-inline T sqr(const T& x)
+inline T square(const T& x)
 {
     return x * x;
+}
+
+// Raise argument to the power of 3.
+template <typename T>
+inline T cube(const T& x)
+{
+    return x * x * x;
 }
 
 //------------------------------------------------------------------------------
@@ -106,10 +106,34 @@ inline Enable_if<Real_type<T>(), Matrix<T, N>> exp(const Matrix<T, N>& m)
 }
 
 template <typename T, std::size_t N>
+inline Enable_if<Real_type<T>(), Matrix<T, N>> expm1(const Matrix<T, N>& m)
+{
+    Matrix<T, N> res(m);
+    res.apply([](T& x) { x = std::expm1(x); });
+    return res;
+}
+
+template <typename T, std::size_t N>
 inline Enable_if<Real_type<T>(), Matrix<T, N>> log(const Matrix<T, N>& m)
 {
     Matrix<T, N> res(m);
     res.apply([](T& x) { x = std::log(x); });
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Enable_if<Real_type<T>(), Matrix<T, N>> log10(const Matrix<T, N>& m)
+{
+    Matrix<T, N> res(m);
+    res.apply([](T& x) { x = std::log10(x); });
+    return res;
+}
+
+template <typename T, std::size_t N>
+inline Enable_if<Real_type<T>(), Matrix<T, N>> log2(const Matrix<T, N>& m)
+{
+    Matrix<T, N> res(m);
+    res.apply([](T& x) { x = std::log2(x); });
     return res;
 }
 
