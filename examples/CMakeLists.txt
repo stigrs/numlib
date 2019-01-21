@@ -25,7 +25,6 @@ set(
     linear_algebra
     linear_least_squares
     lsoda_stiff
-    lsode_stiff
     matrix_decomposition 
     matrix_inversion 
     matrix_properties 
@@ -47,6 +46,5 @@ foreach(program ${PROGRAMS})
 	    num
 	    ${BLAS_LIBRARIES}
 	    ${LAPACK_LIBRARIES}
-        ${ODEPACK_LIBRARIES}
 	) 
 endforeach()

@@ -13,7 +13,18 @@
 
 namespace Numlib {
 
-// Class providing Livermore Solver for Ordinary Differential Equations.
+// Class providing Livermore Solver for Ordinary Differential Equations
+// with automatic method switching for stiff and nonstiff problems (LSODA).
+//
+// LSODA solves the initial value problem for stiff or nonstiff
+// systems of first order ODEs:
+//
+//     dy/dt = f(t,y) ,  or, in component form,
+//     dy(i)/dt = f(i) = f(i,t,y(0),y(1),...,y(neq-1)) (i = 0,...,neq-1).
+//
+// The function to be integrated must be of the form:
+//
+//     void f(double t, double* y, double* ydot, void* data);
 //
 class Odeint {
 public:
@@ -26,8 +37,8 @@ public:
         : fptr(fsys), data_ptr(dptr)
     {
         rtol.push_back(0.0);
-        rtol.push_back(rtol_);
         atol.push_back(0.0);
+        rtol.push_back(rtol_);
         atol.push_back(atol_);
         itol = 1;
         set_defaults();
@@ -63,7 +74,7 @@ public:
         lsoda(fptr, neq, y0.data(), &t0, t1, itol, rtol.data(), atol.data(),
               itask, &istate, iopt, jt, iwork1, iwork2, iwork5, iwork6, iwork7,
               iwork8, iwork9, rwork1, rwork5, rwork6, rwork7, data_ptr);
-        for (std::size_t i = 1; i < y0.size(); ++i) {
+        for (std::size_t i = 1; i < y0.size(); ++i) { // lsoda start index at 1
             y(i - 1) = y0[i];
         }
     }
@@ -124,7 +135,7 @@ inline void Odeint::set_defaults()
 inline void Odeint::set_init_value(const Vec<double>& yinit)
 {
     neq = narrow_cast<int>(yinit.size());
-    y0.push_back(0.0);
+    y0.push_back(0.0); // note: lsoda start array index at 1
     for (auto yi : yinit) {
         y0.push_back(yi);
     }
