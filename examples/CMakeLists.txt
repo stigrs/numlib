@@ -24,6 +24,7 @@ set(
     integration
     linear_algebra
     linear_least_squares
+    lsoda_stiff
     lsode_stiff
     matrix_decomposition 
     matrix_inversion 

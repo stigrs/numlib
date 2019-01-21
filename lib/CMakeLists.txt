@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.3)
-project(libnum CXX)
+project(libnum C CXX)
 
 include_directories(${numlib_SOURCE_DIR}/include)
 include_directories(${Boost_INCLUDE_DIRS})
@@ -21,6 +21,7 @@ set(
     geometry.cpp
     grid.cpp
     linalg.cpp
+    lsoda.c
     quaternion.cpp
     signal.cpp
     statistics.cpp

@@ -28,6 +28,7 @@ struct Math_error : std::runtime_error {
 #include <numlib/math_impl/calculus.h>
 #include <numlib/math_impl/odepack.h>
 #include <numlib/math_impl/lsode.h>
+#include <numlib/math_impl/odeint.h>
 #include <numlib/math_impl/linalg.h>
 #include <numlib/math_impl/geometry.h>
 #include <numlib/math_impl/euler.h>
