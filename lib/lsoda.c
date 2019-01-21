@@ -45,6 +45,12 @@
 
 /* typedef void (*_lsoda_f)(double, double*, double*, void*); */
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4131)
+#pragma warning(disable : 4459)
+#endif
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -1078,7 +1084,7 @@ lsoda(f, neq, y, t, tout, itol, rtol, atol, itask, istate,
     }                      /* end if ( *istate == 1 || *istate == 3 )   */
     /*
        If *istate = 1, meth is initialized to 1.
-    
+    
        Also allocate memory for yh, wm, ewt, savf, acor, ipvt.
     */
     if (*istate == 1) {
@@ -1416,9 +1422,9 @@ lsoda(f, neq, y, t, tout, itol, rtol, atol, itask, istate,
        Block e.
        The next block is normally executed for all calls and contains
        the call to the one-step core integrator stoda.
-    
+    
        This is a looping point for the integration steps.
-    
+    
        First check for too many steps being taken, update ewt ( if not at
        start of problem).  Check for too much accuracy being requested, and
        check for h below the roundoff level in *t.
@@ -2441,7 +2447,7 @@ static void correction(int neq,
           /*
              Test for convergence.  If *m > 0, an estimate of the convergence
              rate constant is stored in crate, and this is used in the test.
-  
+  
              We first check for a change of iterates that is the size of
              roundoff error.  If this occurs, the iteration has converged, and a
              new rate estimate is not formed.
@@ -2953,4 +2959,8 @@ int main(void)
  at t=   4.0000e+09 y=   4.658667e-07   1.863468e-12   9.999995e-01
  at t=   4.0000e+10 y=   1.431100e-08   5.724404e-14   1.000000e+00
  */
+#endif
+
+#ifdef _MSC_VER
+#pragma warning(pop)
 #endif
