@@ -366,39 +366,25 @@ Generated output:
     At t = 0.4, y = -2.96399 -8.25055 28.2875
     At t = 0.5, y = -6.21703 -8.27847 25.1686
 
-Example program for stiff ODEs with user-supplied Jacobian:
+Example program for stiff ODEs:
 
     #include <numlib/math.h>
     #include <iostream>
+    #include <iomanip>
 
-
-    void fsys(int& /* neq */, double& /* t */, double* y, double* ydot)
+    void fsys(double /* t */, double* y, double* ydot, void* /* data */)
     {
         ydot[0] = -0.04 * y[0] + 1.0e4 * y[1] * y[2];
         ydot[2] = 3.0e7 * y[1] * y[1];
         ydot[1] = -ydot[0] - ydot[2];
     }
 
-    void jsys(
-        int& /* neq */, double& /* t */, double* y, int& /* ml */, 
-        int& /* mu */, double* pd, int& /* nrowpd */)
-    {
-        // Colum-major storage:
-        pd[0] = -0.04;
-        pd[1] = 0.04;
-        pd[2] = 0.0;
-        pd[3] = 1.0e4 * y[2];
-        pd[5] = 6.0e7 * y[1];
-        pd[4] = -pd[3] - pd[5];
-        pd[6] = 1.0e4 * y[1];
-        pd[7] = -pd[6];
-        pd[8] = 0.0;
-    }
-
     int main()
     {
-    #ifdef ENABLE_ODEPACK
-        Numlib::Lsode ode(my_fsys, my_jsys);
+        Numlib::Vec<double> rtol = {1.0e-4, 1.0e-8, 1.0e-4};
+        Numlib::Vec<double> atol = {1.0e-6, 1.0e-10, 1.0e-6};
+
+        Numlib::Odeint ode(fsys, rtol, atol);
 
         Numlib::Vec<double> y = {1.0, 0.0, 0.0};
 
@@ -406,30 +392,28 @@ Example program for stiff ODEs with user-supplied Jacobian:
         double t1 = 0.4;
 
         for (int i = 0; i < 12; ++i) {
-            ode.integrate(t0, t1, y);
-            std::cout << "At t = " << t0 << ", y = " << y(0) << " " 
+            ode.integrate(y, t0, t1);
+            std::cout << std::scientific << std::setprecision(6) 
+                      << "At t = " << t0 << ", y = " << y(0) << " " 
                       << y(1) << " " << y(2) << '\n';
             t1 *= 10.0;
         }
-    #else
-        std::cout << "Fortran compiler is needed\n";
-    #endif
     }
 
 Generated output:
 
-    At t = 0.4, y = 0.985173 3.38641e-05 0.0147936
-    At t = 4, y = 0.905514 2.24042e-05 0.0944634
-    At t = 40, y = 0.715805 9.18462e-06 0.284186
-    At t = 400, y = 0.450485 3.22243e-06 0.549512
-    At t = 4000, y = 0.18317 8.94038e-07 0.816829
-    At t = 40000, y = 0.0389702 1.62119e-07 0.96103
-    At t = 400000, y = 0.00493521 1.98376e-08 0.995065
-    At t = 4e+06, y = 0.000515927 2.06476e-09 0.999484
-    At t = 4e+07, y = 5.30641e-05 2.12268e-10 0.999947
-    At t = 4e+08, y = 5.49453e-06 2.19782e-11 0.999995
-    At t = 4e+09, y = 5.12946e-07 2.05178e-12 0.999999
-    At t = 4e+10, y = -7.17056e-08 -2.86822e-13 1
+    At t = 4.000000e-01, y = 9.851712e-01 3.386380e-05 1.479493e-02
+    At t = 4.000000e+00, y = 9.055333e-01 2.240655e-05 9.444430e-02
+    At t = 4.000000e+01, y = 7.158403e-01 9.186334e-06 2.841505e-01
+    At t = 4.000000e+02, y = 4.505250e-01 3.222964e-06 5.494717e-01
+    At t = 4.000000e+03, y = 1.831976e-01 8.941773e-07 8.168015e-01
+    At t = 4.000000e+04, y = 3.898729e-02 1.621940e-07 9.610125e-01
+    At t = 4.000000e+05, y = 4.936362e-03 1.984221e-08 9.950636e-01
+    At t = 4.000000e+06, y = 5.161833e-04 2.065787e-09 9.994838e-01
+    At t = 4.000000e+07, y = 5.179804e-05 2.072027e-10 9.999482e-01
+    At t = 4.000000e+08, y = 5.283686e-06 2.113485e-11 9.999947e-01
+    At t = 4.000000e+09, y = 4.658646e-07 1.863459e-12 9.999995e-01
+    At t = 4.000000e+10, y = 1.431682e-08 5.726733e-14 1.000000e+00
 
 ## Linear Algebra
  
