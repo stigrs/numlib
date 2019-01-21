@@ -28,7 +28,7 @@ public:
         rtol.push_back(0.0);
         rtol.push_back(rtol_);
         atol.push_back(0.0);
-        atol.push_back(rtol_);
+        atol.push_back(atol_);
         itol = 1;
         set_defaults();
     }
