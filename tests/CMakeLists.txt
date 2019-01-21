@@ -72,6 +72,7 @@ set(PROGRAMS
     test_math_geometry
     test_math_grid
     test_math_linalg
+    test_math_odeint
     test_math_quaternion
     test_math_signal
     test_math_special_functions 
