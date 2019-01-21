@@ -49,6 +49,7 @@
 #pragma warning(push)
 #pragma warning(disable : 4131)
 #pragma warning(disable : 4459)
+#pragma warning(disable : 4701)
 #endif
 
 #include <stdio.h>
