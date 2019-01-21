@@ -582,10 +582,10 @@ Wolfram Research, Inc.
 tam@wri.com
 */
 
-/*
+#ifndef _MSC_VER
 #define max( a , b )  ( (a) > (b) ? (a) : (b) )
 #define min( a , b )  ( (a) < (b) ? (a) : (b) )
-*/
+#endif
 
 #define ETA 2.2204460492503131e-16
 
@@ -1094,7 +1094,7 @@ lsoda(f, neq, y, t, tout, itol, rtol, atol, itask, istate,
         */
         sqrteta = sqrt(ETA);
         meth = 1;
-        g_nyh = nyh = n;
+        g_nyh = nyh = n; 
         g_lenyh = lenyh = 1 + max(mxordn, mxords);
 
         yh = (double**) calloc(1 + lenyh, sizeof(*yh));
@@ -1104,7 +1104,7 @@ lsoda(f, neq, y, t, tout, itol, rtol, atol, itask, istate,
             return;
         }
         for (i = 1; i <= lenyh; i++)
-            yh[i] = (double*) calloc(1 + nyh, sizeof(double));
+            yh[i] = (double*) calloc(1 + nyh, sizeof(double)); 
 
         wm = (double**) calloc(1 + nyh, sizeof(*wm));
         if (wm == NULL) {
