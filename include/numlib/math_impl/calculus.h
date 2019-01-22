@@ -13,19 +13,23 @@
 #pragma warning(disable : 4127) // caused by boost/numeric/odeint.hpp
 #endif
 
+#ifdef __APPLE__
+#pragma clang system_header
+#endif
+#include <boost/numeric/odeint.hpp>
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 #include <numlib/matrix.h>
 #include <numlib/traits.h>
-#include <boost/numeric/odeint.hpp>
 #include <array>
 #include <cassert>
 #include <cmath>
 #include <functional>
 #include <limits>
 #include <string>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #ifdef ENABLE_QUADPACK
 #include <numlib/math_impl/quadpack.h>
