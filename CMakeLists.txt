@@ -23,20 +23,6 @@ option(BUILD_TESTS "Build tests." ON)
 option(BUILD_BENCH "Build benchmarks." OFF)
 option(BUILD_EXAMPLES "Build examples." ON)
 
-# Build external Fortran libraries if Fortran compiler is available.
-include(CMakeDetermineFortranCompiler)
-if(NOT CMAKE_Fortran_COMPILER)
-    option(BUILD_QUADPACK "Build external QUADPACK library." OFF)
-else()
-    option(BUILD_QUADPACK "Build external QUADPACK library." ON)
-    if(WIN32) 
-        set(QUADPACK_DEFINITIONS /DENABLE_QUADPACK)
-    else()
-        set(QUADPACK_DEFINITIONS -DENABLE_QUADPACK)
-    endif()
-    add_definitions(${QUADPACK_DEFINITIONS})
-endif()
-
 # Set default MSVC compiler options to avoid D9025 error.
 if(MSVC)
     set(CMAKE_CXX_FLAGS "/DWIN32 /D_WINDOWS")
@@ -97,11 +83,6 @@ install(
     DESTINATION include
     FILES_MATCHING PATTERN "*.h"
 )
-
-if(BUILD_QUADPACK)
-    set(QUADPACK_LIBRARIES quadpack)
-    add_subdirectory(quadpack)
-endif()
 
 add_subdirectory(lib)
 

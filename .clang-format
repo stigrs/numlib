@@ -26,3 +26,4 @@ SpaceAfterCStyleCast: true
 SpaceAfterTemplateKeyword: true
 FixNamespaceComments: true
 IndentCaseLabels: false
+

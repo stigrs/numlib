@@ -9,13 +9,16 @@ link_directories(${numlib_BINARY_DIR})
 if(MKL_FOUND)
     link_directories(${MKL_LIBRARY_DIRS})
 endif()
-if(ENABLE_QUADPACK)
-    link_directories(${CMAKE_BINARY_DIR}/quadpack)
-endif()
 
 set(
     SRC_FILES
     calculus.cpp
+    cquadpack_dqagi.c
+    cquadpack_dqags.c
+    cquadpack_dqext.c
+    cquadpack_dqk15i.c
+    cquadpack_dqk21.c
+    cquadpack_dqsort.c
     euler.cpp
     faddeeva.cpp
     geometry.cpp
@@ -33,7 +36,6 @@ add_library(
 target_link_libraries(
     num 
     ${BLAS_LIBRARIES}
-    ${QUADPACK_LIBRARIES}
 ) 
 
 install(

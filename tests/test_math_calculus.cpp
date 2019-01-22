@@ -13,8 +13,8 @@
 #include <limits>
 
 double f(double x) { return x * x; }
-double sinf(double& x) { return std::sin(x); }
-double invexp(double& x) { return std::exp(-x); }
+double sinf(double x, void*) { return std::sin(x); }
+double invexp(double x, void*) { return std::exp(-x); }
 
 void lorenz(const Numlib::Vec<double>& y,
             Numlib::Vec<double>& ydot,
@@ -67,7 +67,6 @@ TEST_CASE("test_math_calculus")
         CHECK(std::abs(res - 2.0) < eps);
     }
 
-#ifdef ENABLE_QUADPACK
     SECTION("qags")
     {
         using namespace Numlib;
@@ -90,7 +89,6 @@ TEST_CASE("test_math_calculus")
         double res = qagi(invexp, bound, inf);
         CHECK(std::abs(res - 1.0) < 1.0e-15);
     }
-#endif // ENABLE_QUADPACK
 
     SECTION("solve_ivp")
     {

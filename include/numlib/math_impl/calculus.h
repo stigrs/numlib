@@ -31,9 +31,7 @@
 #include <limits>
 #include <string>
 
-#ifdef ENABLE_QUADPACK
-#include <numlib/math_impl/quadpack.h>
-#endif
+#include <numlib/math_impl/cquadpack.h>
 
 namespace boost {
 namespace numeric {
@@ -156,63 +154,49 @@ double quad(std::function<double(double)> f, double a, double b)
     return res;
 }
 
-#ifdef ENABLE_QUADPACK
 // Wrapper to the QAGS subroutine from QUADPACK.
-inline double qags(quadpack_fptr f,
+inline double qags(dq_function_type f,
                    double a,
                    double b,
                    double epsabs = 1.0e-15,
-                   double epsrel = 1.0e-12,
-                   int limit = 1000)
+                   double epsrel = 1.0e-12)
 {
     int neval;
     int ier;
-    int lenw = limit * 4;
-    int last;
 
-    Vec<int> iwork(limit);
-    Vec<double> work(lenw);
-
-    double result;
+    double res;
     double abserr;
 
-    dqags_(f, a, b, epsabs, epsrel, result, abserr, neval, ier, limit, lenw,
-           last, iwork.data(), work.data());
+    res = cquadpack_dqags(f, a, b, epsabs, epsrel, &abserr, &neval, &ier,
+                          nullptr);
     if (ier != 0) {
-        throw Math_error("dqags_ failed with error " + std::to_string(ier));
+        throw Math_error("dqags failed with error " + std::to_string(ier));
     }
-    return result;
+    return res;
 }
 
 // Wrapper to the QAGI subroutine from QUADPACK.
-inline double qagi(quadpack_fptr f,
+inline double qagi(dq_function_type f,
                    double bound,
                    int inf,
                    double epsabs = 1.0e-15,
-                   double epsrel = 1.0e-12,
-                   int limit = 1000)
+                   double epsrel = 1.0e-12)
 {
     assert(inf == 1 || inf == -1 || inf == 2); // see description for dqagi
 
     int neval;
     int ier;
-    int lenw = limit * 4;
-    int last;
 
-    Vec<int> iwork(limit);
-    Vec<double> work(lenw);
-
-    double result;
+    double res;
     double abserr;
 
-    dqagi_(f, bound, inf, epsabs, epsrel, result, abserr, neval, ier, limit,
-           lenw, last, iwork.data(), work.data());
+    res = cquadpack_dqagi(f, bound, inf, epsabs, epsrel, &abserr, &neval, &ier,
+                          nullptr);
     if (ier != 0) {
-        throw Math_error("dqagi_ failed with error " + std::to_string(ier));
+        throw Math_error("dqagi failed with error " + std::to_string(ier));
     }
-    return result;
+    return res;
 }
-#endif // ENABLE_QUADPACK
 
 //------------------------------------------------------------------------------
 //

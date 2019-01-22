@@ -14,8 +14,8 @@ and Intel MKL are supported.
 * Selected mathematical functions not provided by the STL
 * Faddeeva package (w, erf, erfc, erfcx, erfi, Dawson)
 * Numerical derivation and integration methods (including QAGS and QAGI from 
-  QUADPACK)
-* Solvers for ordinary differential equations (DOPRI5, LSODA, and LSODE)
+  CQUADPACK)
+* Solvers for ordinary differential equations (DOPRI5 and LSODA)
 * Linear algebra methods
 * Transformations between rotation matrix, Euler angles and quaternions
 * Vector convolution
@@ -43,9 +43,8 @@ This project makes use of code from the following third-party libraries:
 * [Catch2](https://github.com/catchorg/Catch2)
 * [origin](http://code.google.com/p/origin)
 * [Faddeeva package](http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package) 
-* [ODEPACK](https://computation.llnl.gov/casc/odepack/)
+* [CQUADPACK](https://github.com/ESSS/cquadpack.git) 
 * [LSODA](https://github.com/lh3/misc.git)
-* [QUADPACK](http://www.netlib.org/quadpack/) 
 
 Please see the [ThirdPartyNotices.txt](ThirdPartyNotices.txt) file for details
 regarding the licensing of these libraries.
