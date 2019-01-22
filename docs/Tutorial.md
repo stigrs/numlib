@@ -308,11 +308,9 @@ Example program:
                   << quad<5>([](double x) { return std::sin(x); }, a, b) 
                   << '\n';
 
-    #ifdef ENABLE_QUADPACK
         std::cout << "qags: " 
-                  << qags([](double& x) { return std::sin(x); }, a, b) 
+                  << qags([](double x, void*) { return std::sin(x); }, a, b) 
                   << '\n';
-    #endif
     }
 
 Generated output:
