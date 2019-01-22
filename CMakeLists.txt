@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.3)
-project(numlib CXX)
+project(numlib C CXX)
 
 include(ExternalProject)
 find_package(Git)
@@ -49,6 +49,10 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 endif()
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wpedantic -Wall -Wshadow -Wextra -Wno-missing-braces -Werror -Wno-error=strict-overflow")
+endif()
+if (CMAKE_C_COMPILER_ID MATCHES "Clang")
+    # disable aggresive optimizations for lsoda.c
+    set(CMAKE_C_FLAGS_RELEASE "-Wall -O1")
 endif()
 if(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "/DNDEBUG /std:c++14 /W4 /WX /wd4100 /GR /EHsc /MT /O2")
