@@ -35,10 +35,6 @@
 #include <numlib/math_impl/quadpack.h>
 #endif
 
-#ifdef ENABLE_ODEPACK
-#include <numlib/math_impl/odepack.h>
-#endif
-
 namespace boost {
 namespace numeric {
     namespace odeint {
