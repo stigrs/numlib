@@ -26,6 +26,12 @@
  *
  *    epsrel - relative accuracy requested.
  */
+
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4701)
+#endif
+
 double cquadpack_dqags(dq_function_type f,double a,double b,double epsabs,
     double epsrel,double *abserr,int *neval,int *ier, void* user_data)
 {
@@ -260,3 +266,8 @@ _140:
     *neval = 42 * last - 21;
     return result;
 }
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+

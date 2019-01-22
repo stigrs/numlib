@@ -35,6 +35,12 @@
  *
  *    epsrel - relative accuracy requested.
  */
+
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4701)
+#endif
+
 double cquadpack_dqagi(dq_function_type f,double bound,int inf,double epsabs,
     double epsrel,double *abserr,int *neval,int *ier, void* user_data)
 {
@@ -271,3 +277,7 @@ _130:
     if (*ier > 2) (*ier)--;
     return result;
 }
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
