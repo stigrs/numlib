@@ -11,6 +11,7 @@
 #include <numlib/matrix.h>
 #include <cstdlib>
 #include <cmath>
+#include <complex>
 
 namespace Numlib {
 
@@ -262,6 +263,16 @@ inline Enable_if<Real_type<T>(), Matrix<T, N>> atanh(const Matrix<T, N>& m)
 {
     Matrix<T, N> res(m);
     res.apply([](T& x) { x = std::atanh(x); });
+    return res;
+}
+
+// Complex conjugate.
+template <std::size_t N>
+inline Matrix<std::complex<double>, N>
+conj(const Matrix<std::complex<double>, N>& m)
+{
+    Matrix<std::complex<double>, N> res(m);
+    res.apply([](std::complex<double>& x) { x = std::conj(x); });
     return res;
 }
 

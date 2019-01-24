@@ -112,4 +112,22 @@ TEST_CASE("test_math_core")
             CHECK(std::abs(res(i) - ans(i)) < 1.0e-15);
         }
     }
+
+    SECTION("conj")
+    {
+        Mat<std::complex<double>> ans = {{{1.0, -0.0}, {1.0, -1.0}},
+                                         {{-2.0, 1.0}, {0.0, -1.0}},
+                                         {{5.0, -0.0}, {4.0, 2.0}}};
+
+        Mat<std::complex<double>> m = {{{1.0, 0.0}, {1.0, 1.0}},
+                                       {{-2.0, -1.0}, {0.0, 1.0}},
+                                       {{5.0, 0.0}, {4.0, -2.0}}};
+
+        auto res = conj(m);
+        for (Index i = 0; i < res.rows(); ++i) {
+            for (Index j = 0; j < res.cols(); ++j) {
+                CHECK(res(i, j) == ans(i, j));
+            }
+        }
+    }
 }
