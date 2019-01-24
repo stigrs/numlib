@@ -179,6 +179,88 @@ prod(const M& mat, Index dim)
 
 //------------------------------------------------------------------------------
 //
+// Find cumulative sum and product of elements:
+
+template <typename M>
+inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
+cumsum(const M& vec)
+{
+    static_assert(M::order == 1, "bad rank for cumsum(vec)");
+    using T = typename M::value_type;
+
+    Vec<T> result(vec.size());
+
+    T sum = T{0};
+    for (Index i = 0; i < vec.size(); ++i) {
+        sum += vec(i);
+        result(i) = sum;
+    }
+    return result;
+}
+
+template <typename M>
+inline Enable_if<Matrix_type<M>(), Mat<typename M::value_type>>
+cumsum(const M& mat, Index dim)
+{
+    static_assert(M::order == 2, "bad rank for cumsum(mat)");
+    using T = typename M::value_type;
+
+    Mat<T> result(mat.rows(), mat.cols());
+
+    if (dim == 0) { // row
+        for (Index i = 0; i < mat.rows(); ++i) {
+            result.row(i) = cumsum(mat.row(i));
+        }
+    }
+    else { // column
+        for (Index j = 0; j < mat.cols(); ++j) {
+            result.column(j) = cumsum(mat.column(j));
+        }
+    }
+    return result;
+}
+
+template <typename M>
+inline Enable_if<Matrix_type<M>(), Vec<typename M::value_type>>
+cumprod(const M& vec)
+{
+    static_assert(M::order == 1, "bad rank for cumprod(vec)");
+    using T = typename M::value_type;
+
+    Vec<T> result(vec.size());
+
+    T prod = T{1};
+    for (Index i = 0; i < vec.size(); ++i) {
+        prod *= vec(i);
+        result(i) = prod;
+    }
+    return result;
+}
+
+template <typename M>
+inline Enable_if<Matrix_type<M>(), Mat<typename M::value_type>>
+cumprod(const M& mat, Index dim)
+{
+    static_assert(M::order == 2, "bad rank for cumprod(mat)");
+    using T = typename M::value_type;
+
+    Mat<T> result(mat.rows(), mat.cols());
+
+    if (dim == 0) { // row
+        for (Index i = 0; i < mat.rows(); ++i) {
+            result.row(i) = cumprod(mat.row(i));
+        }
+    }
+    else { // column
+        for (Index j = 0; j < mat.cols(); ++j) {
+            result.column(j) = cumprod(mat.column(j));
+        }
+    }
+    return result;
+}
+
+//------------------------------------------------------------------------------
+//
 // Matrix and vector products:
 
 // Dot product of dense vectors.
@@ -264,13 +346,15 @@ inline void axpy(const T& a, const Vec<T>& x, Vec<T>& y)
 }
 
 // Matrix-matrix multiplication.
-inline void matmul(const Mat<double>& a, const Mat<double>& b, Mat<double>& res)
+template <typename T>
+inline void matmul(const Mat<T>& a, const Mat<T>& b, Mat<T>& res)
 {
     mm_mul(a, b, res);
 }
 
 // Matrix-vector multiplication.
-inline void matmul(const Mat<double>& a, const Vec<double>& x, Vec<double>& y)
+template <typename T>
+inline void matmul(const Mat<T>& a, const Vec<T>& x, Vec<T>& y)
 {
     mv_mul(a, x, y);
 }

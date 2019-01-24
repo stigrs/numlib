@@ -95,6 +95,30 @@ TEST_CASE("test_math_linalg")
         CHECK(prod(m, 1) == prod_col);
     }
 
+    SECTION("cumsum_vec")
+    {
+        Vec<int> ans = {1, 3, 6, 10, 15};
+        Vec<int> v = {1, 2, 3, 4, 5};
+        CHECK(cumsum(v) == ans);
+    }
+
+    SECTION("cumsum_mat")
+    {
+        Mat<int> ans1 = {{1, 4, 7}, {3, 9, 15}, {6, 15, 24}};
+        Mat<int> ans2 = {{1, 4, 9}, {2, 6, 12}};
+        Mat<int> m1 = {{1, 4, 7}, {2, 5, 8}, {3, 6, 9}};
+        Mat<int> m2 = {{1, 3, 5}, {2, 4, 6}};
+        CHECK(cumsum(m1, 1) == ans1);
+        CHECK(cumsum(m2, 0) == ans2);
+    }
+
+    SECTION("cumprod")
+    {
+        Vec<int> ans = {1, 2, 6, 24, 120};
+        Vec<int> v = {1, 2, 3, 4, 5};
+        CHECK(cumprod(v) == ans);
+    }
+
     SECTION("norm_vector")
     {
         Vec<double> v = {1.0, 2.0, 3.0};
