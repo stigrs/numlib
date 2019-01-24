@@ -23,6 +23,7 @@
 #include <random>
 #include <iomanip>
 #include <iostream>
+#include <complex>
 
 namespace Numlib {
 
@@ -780,6 +781,28 @@ inline void mm_mul(const Matrix<double, 2>& a,
                 a.data(), lda, b.data(), ldb, beta, res.data(), ldc);
 }
 
+// Use BLAS for std::complex<double> matrices.
+inline void mm_mul(const Matrix<std::complex<double>, 2>& a,
+                   const Matrix<std::complex<double>, 2>& b,
+                   Matrix<std::complex<double>, 2>& res)
+{
+    constexpr std::complex<double> alpha = {1.0, 0.0};
+    constexpr std::complex<double> beta = {0.0, 0.0};
+
+    const BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    const BLAS_INT n = narrow_cast<BLAS_INT>(b.cols());
+    const BLAS_INT k = narrow_cast<BLAS_INT>(a.cols());
+
+    const BLAS_INT lda = k;
+    const BLAS_INT ldb = n;
+    const BLAS_INT ldc = n;
+
+    res.resize(m, n);
+
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, &alpha,
+                a.data(), lda, b.data(), ldb, &beta, res.data(), ldc);
+}
+
 template <typename T>
 inline Matrix<T, 2> operator*(const Matrix<T, 2>& a, const Matrix<T, 2>& b)
 {
@@ -897,6 +920,29 @@ inline void mv_mul(const Matrix<double, 2>& a,
 
     cblas_dgemv(CblasRowMajor, CblasNoTrans, m, n, alpha, a.data(), lda,
                 x.data(), incx, beta, y.data(), incy);
+}
+
+// Use BLAS for std::complex<double> matrices and vectors.
+inline void mv_mul(const Matrix<std::complex<double>, 2>& a,
+                   const Matrix<std::complex<double>, 1>& x,
+                   Matrix<std::complex<double>, 1>& y)
+{
+    constexpr std::complex<double> alpha = {1.0, 0.0};
+    constexpr std::complex<double> beta = {0.0, 0.0};
+
+    assert(x.size() == a.cols());
+
+    const BLAS_INT m = narrow_cast<BLAS_INT>(a.rows());
+    const BLAS_INT n = narrow_cast<BLAS_INT>(a.cols());
+
+    y.resize(m);
+
+    const BLAS_INT lda = n;
+    const BLAS_INT incx = narrow_cast<BLAS_INT>(x.descriptor().strides[0]);
+    const BLAS_INT incy = narrow_cast<BLAS_INT>(y.descriptor().strides[0]);
+
+    cblas_zgemv(CblasRowMajor, CblasNoTrans, m, n, &alpha, a.data(), lda,
+                x.data(), incx, &beta, y.data(), incy);
 }
 
 template <typename T>

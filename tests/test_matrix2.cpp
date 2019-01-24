@@ -6,6 +6,7 @@
 
 #include <numlib/matrix.h>
 #include <catch2/catch.hpp>
+#include <complex>
 
 TEST_CASE("test_matrix2")
 {
@@ -248,6 +249,18 @@ TEST_CASE("test_matrix2")
         Matrix<int, 2> a = {{1, 2, 3}, {4, 5, 6}};
         Matrix<int, 2> b = {{7, 8}, {9, 10}, {11, 12}};
         Matrix<int, 2> ans = {{58, 64}, {139, 154}};
+
+        CHECK((a * b) == ans);
+    }
+
+    SECTION("mm_mul_complex")
+    {
+        Matrix<std::complex<double>, 2> a = {{{1.0, 2.0}, {3.0, 4.0}},
+                                             {{5.0, 6.0}, {7.0, 8.0}}};
+        Matrix<std::complex<double>, 2> b = {{{1.0, -2.0}, {3.0, -4.0}},
+                                             {{5.0, -6.0}, {7.0, -8.0}}};
+        Matrix<std::complex<double>, 2> ans = {{{44.0, 2.0}, {64.0, 6.0}},
+                                               {{100.0, -6.0}, {152.0, -2.0}}};
 
         CHECK((a * b) == ans);
     }
