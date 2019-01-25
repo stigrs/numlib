@@ -781,6 +781,7 @@ inline void mm_mul(const Matrix<double, 2>& a,
                 a.data(), lda, b.data(), ldb, beta, res.data(), ldc);
 }
 
+#ifdef USE_MKL
 // Use BLAS for std::complex<double> matrices.
 inline void mm_mul(const Matrix<std::complex<double>, 2>& a,
                    const Matrix<std::complex<double>, 2>& b,
@@ -802,6 +803,7 @@ inline void mm_mul(const Matrix<std::complex<double>, 2>& a,
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, &alpha,
                 a.data(), lda, b.data(), ldb, &beta, res.data(), ldc);
 }
+#endif
 
 template <typename T>
 inline Matrix<T, 2> operator*(const Matrix<T, 2>& a, const Matrix<T, 2>& b)
@@ -922,6 +924,7 @@ inline void mv_mul(const Matrix<double, 2>& a,
                 x.data(), incx, beta, y.data(), incy);
 }
 
+#ifdef USE_MKL
 // Use BLAS for std::complex<double> matrices and vectors.
 inline void mv_mul(const Matrix<std::complex<double>, 2>& a,
                    const Matrix<std::complex<double>, 1>& x,
@@ -944,6 +947,7 @@ inline void mv_mul(const Matrix<std::complex<double>, 2>& a,
     cblas_zgemv(CblasRowMajor, CblasNoTrans, m, n, &alpha, a.data(), lda,
                 x.data(), incx, &beta, y.data(), incy);
 }
+#endif
 
 template <typename T>
 inline Matrix<T, 1> operator*(const Matrix<T, 2>& a, const Matrix<T, 1>& x)
