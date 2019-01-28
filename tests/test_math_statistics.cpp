@@ -23,6 +23,37 @@ TEST_CASE("test_math_statistics")
         CHECK(std::abs(rms(a) - 26.136819495365792) < 1.0e-8);
     }
 
+    SECTION("movmean")
+    {
+        Vec<double> ans1 = {4.0,  8.0,  6.0, -1.0, -2.0,
+                            -3.0, -1.0, 3.0, 4.0,  5.0};
+        Vec<double> ans3 = {6.0,  6.0,     4.3333, 1.0, -2.0,
+                            -2.0, -0.3333, 2.0,    4.0, 4.5};
+        Vec<double> ans10 = {3.0, 2.0,    1.5714, 1.75,   2.0,
+                             2.3, 2.1111, 1.375,  0.7143, 1.0};
+        Vec<double> ans40 = {4.0, 6.0,  6.0,  4.25, 3.0,
+                             1.6, -0.2, -0.8, 0.2,  1.6};
+
+        Vec<double> v = {4.0, 8.0, 6.0, -1.0, -2.0, -3.0, -1.0, 3.0, 4.0, 5.0};
+
+        auto res = movmean(v, 1);
+        for (Index i = 0; i < v.size(); ++i) {
+            CHECK(std::abs(res(i) - ans1(i)) < 5.0e-5);
+        }
+        res = movmean(v, 3);
+        for (Index i = 0; i < v.size(); ++i) {
+            CHECK(std::abs(res(i) - ans3(i)) < 5.0e-5);
+        }
+        res = movmean(v, 10);
+        for (Index i = 0; i < v.size(); ++i) {
+            CHECK(std::abs(res(i) - ans10(i)) < 5.0e-5);
+        }
+        res = movmean(v, {4, 0});
+        for (Index i = 0; i < v.size(); ++i) {
+            CHECK(std::abs(res(i) - ans40(i)) < 5.0e-5);
+        }
+    }
+
     SECTION("cov")
     {
         Vec<double> b = {3.0,  13.0, 7.0,  5.0,  21.0, 23.0, 23.0,

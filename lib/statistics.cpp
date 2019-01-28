@@ -7,6 +7,7 @@
 #include <numlib/math.h>
 #include <algorithm>
 #include <cmath>
+#include <cassert>
 
 double Numlib::harmmean(const Numlib::Vec<double>& x)
 {
@@ -17,6 +18,43 @@ double Numlib::harmmean(const Numlib::Vec<double>& x)
     }
     assert(sumi != 0.0);
     return x.size() / sumi;
+}
+
+Numlib::Vec<double> Numlib::movmean(const Numlib::Vec<double>& vec, Index k)
+{
+    assert(k >= 0 && k <= vec.size());
+    Numlib::Vec<double> res(vec.size());
+    for (Index i = 0; i < vec.size(); ++i) {
+        Index khalf = 0;
+        Index kmin = 0;
+        Index kmax = 0;
+        if (Numlib::even(k)) {
+            khalf = Numlib::round<Index>(k / 2.0);
+            kmin = std::max(Index{0}, -khalf + i);
+            kmax = std::min(vec.size(), khalf + i);
+        }
+        else {
+            khalf = Numlib::round<Index>((k - 1) / 2.0);
+            kmin = std::max(Index{0}, -khalf + i);
+            kmax = std::min(vec.size(), khalf + i + 1);
+        }
+        auto window = vec(Numlib::slice{kmin, kmax - kmin});
+        res(i) = Numlib::mean(window);
+    }
+    return res;
+}
+
+Numlib::Vec<double> Numlib::movmean(const Numlib::Vec<double>& vec,
+                                    const std::array<int, 2>& k)
+{
+    Numlib::Vec<double> res(vec.size());
+    for (Index i = 0; i < vec.size(); ++i) {
+        Index kmin = std::max(Index{0}, -k[0] + i);
+        Index kmax = std::min(vec.size(), k[1] + i + 1);
+        auto window = vec(Numlib::slice{kmin, kmax - kmin});
+        res(i) = Numlib::mean(window);
+    }
+    return res;
 }
 
 double Numlib::median(Numlib::Vec<double>& x)

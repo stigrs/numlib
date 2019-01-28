@@ -8,6 +8,7 @@
 #define NUMLIB_MATH_STATISTICS_H
 
 #include <numlib/matrix.h>
+#include <array>
 #include <cmath>
 
 namespace Numlib {
@@ -23,6 +24,12 @@ inline double geomean(const Vec<double>& x)
 
 // Harmonic mean.
 double harmmean(const Vec<double>& x);
+
+// Centered moving average over a window of length k.
+Vec<double> movmean(const Vec<double>& vec, Index k);
+
+// Centered moving average over a window of length [kb kf].
+Vec<double> movmean(const Vec<double>& vec, const std::array<int, 2>& k);
 
 // Median.
 double median(Vec<double>& x);
