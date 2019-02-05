@@ -25,8 +25,7 @@ and Intel MKL are supported.
 * Mathematical constants, metric prefixes, physical constants, and
   conversion factors
 
-_Note: Some features are only available if a Fortran compiler is available 
-and Intel MKL is used._
+_Note: Some features are only available if Intel MKL is used._
 
 ## Code of Conduct
 
