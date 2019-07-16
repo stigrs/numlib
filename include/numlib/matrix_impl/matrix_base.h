@@ -23,7 +23,8 @@ public:
     using value_type = T;
     using size_type = Index;
 
-    Matrix_base() = default;
+    // Matrix_base() = default gives undesired behaviour with g++ (size != 0)
+    Matrix_base() : desc() {}
 
     // Need a static_cast to avoid narrowing error:
     template <typename... Exts>
