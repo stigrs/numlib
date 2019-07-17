@@ -12,13 +12,13 @@ double cquadpack_dqext(int *n,double epstab[],double *abserr,
     (*nres)++;
     NN = *n;
     NN++;   /* make NN a FORTRAN array index */
-    *abserr = overflow;
+    *abserr = oflow_;
     result = epstab[*n];
     if (NN < 3) goto _100;        /* N < 3 */
     limexp = 50;            /* limexp = 50 */
     epstab[*n+2] = epstab[*n];
     newelm = (*n)/2;      /* (n-1)/2 */
-    epstab[*n] = overflow;
+    epstab[*n] = oflow_;
     num = NN;
     k1 = NN;
     for (i = 1; i <= newelm; i++) {
@@ -82,7 +82,7 @@ _50:
 _80:
     if (*nres > 3) goto _90;       /* nres >= 4 */
     res3la[(*nres)-1] = result;
-    *abserr = overflow;
+    *abserr = oflow_;
     goto _100;
 _90:
     *abserr = fabs(result - res3la[2]) + fabs(result - res3la[1]) +

@@ -81,7 +81,7 @@ double cquadpack_G_K21(dq_function_type f,double a,double b,double *abserr,
     *abserr = fabs((resk - resg) * hlgth);
     if ((*resasc != 0.0) && (*abserr != 0.0))
         *abserr = (*resasc) * fmin(1.0,pow((200.0 * (*abserr)/(*resasc)),1.5));
-    if (*resabs > underflow/(50.0 * epmach))
+    if (*resabs > uflow_/(50.0 * epmach))
         *abserr = fmax(epmach * 50.0 * (*resabs),(*abserr));
     return result;
 }
