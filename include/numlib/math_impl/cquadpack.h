@@ -32,8 +32,8 @@
 #include <math.h>
 #include <float.h>
 
-#define uflow DBL_MIN
-#define oflow DBL_MAX
+#define underflow DBL_MIN
+#define overflow DBL_MAX
 #define epmach DBL_EPSILON
 #define LIMIT 500
 

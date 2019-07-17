@@ -83,7 +83,7 @@ double cquadpack_dqags(dq_function_type f,double a,double b,double epsabs,
     maxerr = 0;             /* maxerr = 1 */
     area = result;
     errsum = *abserr;
-    *abserr = oflow;
+    *abserr = overflow;
     nrmax = 0;
     nres = 0;          /* nres = 0 */
     numrl2 = 1;            /* numrl2 = 2 */
@@ -143,7 +143,7 @@ _15:
 /* Set error flag in the case of bad integrand behavior at some
     points in the integration range. */
         if (fmax(fabs(a1),fabs(b2)) <= (1.0 +1000.0 * epmach) *
-            (fabs(a2) + 1000.0*uflow))
+            (fabs(a2) + 1000.0*underflow))
             *ier = 4;
 
 /* Append the newly-created intervals to the list. */
@@ -235,7 +235,7 @@ _90:
         ;
     }                    /* 90: */
 _100:
-    if (*abserr == oflow) goto _115;
+    if (*abserr == overflow) goto _115;
     if ((*ier + ierro) == 0) goto _110;
     if (ierro == 3) *abserr += correc;
     if (*ier == 0) *ier = 3;
