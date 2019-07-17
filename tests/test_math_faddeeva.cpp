@@ -474,6 +474,7 @@ TEST_CASE("test_math_faddeeva")
     }
     {
 #undef NTST
+#ifndef _MSC_VER
 #define NTST 48 // define instead of const for C compatibility
         cmplx z[NTST] = {C(2, 1),           C(-2, 1),
                          C(2, -1),          C(-2, -1),
@@ -573,7 +574,6 @@ TEST_CASE("test_math_faddeeva")
                          C(5.00000000000000000000000002500000000000000000e-14,
                            -1.20000000000000000000000001800000000000000000e-42),
                          C(5e-301, 0)};
-#ifndef _MSC_VER
         TST(Dawson, 1e-20);
 #endif
     }
