@@ -14,9 +14,11 @@ endif()
 
 set(
     PROGRAMS 
+    aliasing
     arithmetic
     band_matrix
     constants
+    const_correctness
     convolution
     derivation
     eigensolvers
