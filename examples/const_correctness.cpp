@@ -14,7 +14,7 @@ int main()
 {
     using namespace Numlib;
 
-    Matrix<int, 2> a(5, 5);
+    Matrix<Index, 2> a(5, 5);
 
     for (Index i = 0; i < a.rows(); ++i) {
         for (Index j = 0; j < a.cols(); ++j) {
