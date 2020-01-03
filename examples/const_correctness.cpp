@@ -6,7 +6,7 @@ void beast(const Numlib::Matrix<Index, 2>& a)
     using namespace Numlib;
 
     // auto b = a(slice{5}, slice{5}); // does not compile
-    Matrix<int, 2> b = a(slice{5}, slice{5});
+    Matrix<Index, 2> b = a(slice{5}, slice{5});
     b(1, 1) = 666;
 }
 
