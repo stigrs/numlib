@@ -1,7 +1,7 @@
 #include <iostream>
 #include <numlib/matrix.h>
 
-void beast(const Numlib::Matrix<int, 2>& a)
+void beast(const Numlib::Matrix<Index, 2>& a)
 {
     using namespace Numlib;
 
