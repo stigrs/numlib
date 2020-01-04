@@ -63,8 +63,8 @@ The test suite that exercises Numlib has been built and passes successfully
 on the following platforms:
 * GNU/Linux using GCC 6.4.0, 7.3.0
 * GNU/Linux using Clang 6.0
-* OS X Sierra (10.12) using Apple Xcode 9.2
 * OS X High Sierra (10.13) using Apple Xcode 9.4, 10.0 
+* macOS Mojave (10.14) using Apple Xcode 11.3 
 * Windows using Visual Studio 2017 (x86 and x64)
 
 ### Obtaining the Source Code
