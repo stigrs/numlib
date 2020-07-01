@@ -150,6 +150,29 @@ randi(Args... args)
     return res;
 }
 
+// Create a random spin matrix.
+template <typename M, typename... Args>
+inline Enable_if<Matrix_type<M>() && Real_type<typename M::value_type>(), M>
+rand_spin(Args... args)
+{
+    assert(M::order == sizeof...(args));
+    M res(args...);
+
+    std::random_device rd{};
+    std::mt19937_64 gen{rd()};
+
+    std::uniform_real_distribution<> ur{};
+    for (auto& x : res) {
+        if (ur(gen) >= 0.5) {
+            x = M::value_type(1);
+        }
+        else {
+            x = M::value_type(-1);
+        }
+    }
+    return res;
+}
+
 //------------------------------------------------------------------------------
 //
 // Special methods for 2D matrices:
