@@ -152,7 +152,7 @@ randi(Args... args)
 
 // Create a random spin matrix.
 template <typename M, typename... Args>
-inline Enable_if<Matrix_type<M>() && Real_type<typename M::value_type>(), M>
+inline Enable_if<Matrix_type<M>() && Integer_type<typename M::value_type>(), M>
 rand_spin(Args... args)
 {
     assert(M::order == sizeof...(args));
