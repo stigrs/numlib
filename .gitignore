@@ -9,6 +9,7 @@
 *.log
 *.tmp
 *.swp
+.DS_Store
 tmp.*
 .vscode/.cmaketools.json
 .vscode/c_cpp_properties.json
